@@ -168,14 +168,7 @@ export function SearchView() {
             .sort((a, b) => a.finalPrice.amount - b.finalPrice.amount)
             .slice(2, 6)
             .map((p) => (
-              <button
-                key={p.id}
-                onClick={() => setDetail(p)}
-                className="text-left"
-                aria-label={p.name}
-              >
-                <ProductCard product={p} />
-              </button>
+              <ProductCard key={p.id} product={p} onOpenDetail={setDetail} />
             ))}
         </div>
       </section>
