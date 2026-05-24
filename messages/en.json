@@ -126,6 +126,21 @@
     "support4": "Privacy",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "verdict": {
+    "label": "Tony's verdict",
+    "tagline": "Stop debating. Tony picked one for you.",
+    "pickReason": "Buy this. You won't regret it.",
+    "evidence": "Why this one wins",
+    "reasonScore": "Highest Tony Score ({score}/100)",
+    "reasonPrice": "Reasonable {price} incl. shipping",
+    "reasonShip": "Arrives {eta}",
+    "reasonAuth": "Authenticity {pct}%",
+    "reasonReviews": "{n} reviews (★ {rating})",
+    "reasonOfficial": "Official {store} listing",
+    "cta": "Take this one",
+    "alternative": "Curious about other options? See TOP 3 below",
+    "compareNote": "Not sure? Save to compare for later"
+  },
   "search": {
     "title": "Search · Tony Shopping",
     "back": "New search",

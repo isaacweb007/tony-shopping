@@ -99,6 +99,15 @@ Phase 1에서는 `NEXT_PUBLIC_SITE_URL`만 사용됩니다. Phase 4 이후 외�
    NAVER_CLIENT_SECRET=...
    ```
 
+### SerpAPI Google Shopping (메타 검색 — 강력 추천)
+1. https://serpapi.com 가입 (무료 100건/월)
+2. Dashboard → API Key 복사
+3. `.env.local`:
+   ```
+   SERPAPI_KEY=...
+   ```
+한 번 호출로 Amazon · Walmart · eBay · Target · Best Buy · Coupang · Naver 등 수십 곳의 상품을 합법적으로 가져옵니다. **메타 쇼핑 에이전트로서 가장 빠르게 데이터 폭을 확장하는 길**.
+
 ### eBay Browse API (무료 5,000 req/일)
 1. https://developer.ebay.com 무료 가입
 2. **Application Keys > Production keyset** 발급

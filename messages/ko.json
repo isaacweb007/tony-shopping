@@ -126,6 +126,21 @@
     "support4": "개인정보처리방침",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "verdict": {
+    "label": "토니의 결론",
+    "tagline": "고민하지 마세요. 토니가 정해드릴게요.",
+    "pickReason": "이거 사세요. 후회 안 합니다.",
+    "evidence": "이걸 추천하는 이유",
+    "reasonScore": "Tony Score {score}점으로 가장 높음",
+    "reasonPrice": "배송비 포함 {price}로 합리적",
+    "reasonShip": "{eta} 도착 가능",
+    "reasonAuth": "정품 신뢰도 {pct}%",
+    "reasonReviews": "리뷰 {n}개 (★ {rating})",
+    "reasonOfficial": "{store} 공식 판매처",
+    "cta": "이걸로 결정",
+    "alternative": "다른 선택지도 궁금하면 아래 TOP 3",
+    "compareNote": "주저되면 비교함에 담아두세요"
+  },
   "search": {
     "title": "검색 결과 · Tony Shopping",
     "back": "새 검색",

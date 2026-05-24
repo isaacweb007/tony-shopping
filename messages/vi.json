@@ -126,6 +126,21 @@
     "support4": "Quyền riêng tư",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "verdict": {
+    "label": "Kết luận của Tony",
+    "tagline": "Đừng phân vân nữa. Tony đã chọn giúp bạn.",
+    "pickReason": "Mua cái này. Bạn sẽ không hối hận.",
+    "evidence": "Vì sao chọn cái này",
+    "reasonScore": "Tony Score cao nhất ({score}/100)",
+    "reasonPrice": "Giá hợp lý {price} gồm phí ship",
+    "reasonShip": "Giao {eta}",
+    "reasonAuth": "Chính hãng {pct}%",
+    "reasonReviews": "{n} đánh giá (★ {rating})",
+    "reasonOfficial": "Nhà bán chính thức {store}",
+    "cta": "Chọn cái này",
+    "alternative": "Muốn xem lựa chọn khác? Xem TOP 3 bên dưới",
+    "compareNote": "Chưa chắc? Lưu vào so sánh để xem lại"
+  },
   "search": {
     "title": "Kết quả · Tony Shopping",
     "back": "Tìm mới",

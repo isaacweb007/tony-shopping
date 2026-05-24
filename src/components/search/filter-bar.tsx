@@ -15,6 +15,7 @@ const STORE_KEYS: StoreFilter[] = [
   'Shopee',
   'Lazada',
   'AliExpress',
+  'GoogleShopping',
 ];
 
 const STORE_LABEL: Record<StoreFilter, string> = {
@@ -29,6 +30,7 @@ const STORE_LABEL: Record<StoreFilter, string> = {
   Gmarket: 'Gmarket',
   '11st': '11번가',
   TikTokShop: 'TikTok Shop',
+  GoogleShopping: 'Google Shopping',
 };
 
 export function FilterBar() {

@@ -10,6 +10,7 @@ import { ShareButton } from '@/components/ui/share-button';
 import { useSearchStore } from '@/stores/search-store';
 import { useSearch } from '@/hooks/use-search';
 import { ReportCard } from './report-card';
+import { VerdictCard } from './verdict-card';
 import { ProductCard } from './product-card';
 import { FilterBar } from './filter-bar';
 import { ProductDetailDialog } from './product-detail-dialog';
@@ -127,6 +128,8 @@ export function SearchView() {
           </div>
         </div>
       </div>
+
+      <VerdictCard product={result.report.best} />
 
       <ReportCard report={result.report} />
 

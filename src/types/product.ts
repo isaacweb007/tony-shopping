@@ -15,7 +15,8 @@ export type StoreId =
   | 'AliExpress'
   | 'Gmarket'
   | '11st'
-  | 'TikTokShop';
+  | 'TikTokShop'
+  | 'GoogleShopping';
 
 export type CountryCode = 'KR' | 'VN' | 'US' | 'JP' | 'TH' | 'MY' | 'SG';
 
