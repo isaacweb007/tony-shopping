@@ -155,13 +155,39 @@ export function AskBox() {
     });
   }
 
-  function onPasteLink() {
+  async function onPasteLink() {
     const url = window.prompt(t('linkPrompt'), '');
-    if (url && url.trim()) {
-      setAttachments((prev) => [
-        ...prev,
-        { id: nanoid(6), type: 'link', value: url.trim(), label: url.trim() },
-      ]);
+    if (!url || !url.trim()) return;
+    const trimmed = url.trim();
+    setAttachments((prev) => [
+      ...prev,
+      { id: nanoid(6), type: 'link', value: trimmed, label: trimmed },
+    ]);
+
+    setExtracting(true);
+    try {
+      const res = await fetch('/api/extract', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ link: trimmed }),
+      });
+      if (res.ok) {
+        const data = (await res.json()) as {
+          suggestedQuery?: string;
+          source?: 'vision' | 'fallback' | 'og' | 'oembed';
+        };
+        if (data.suggestedQuery && !text.trim()) {
+          setText(data.suggestedQuery);
+          requestAnimationFrame(() => textareaRef.current && autoGrow(textareaRef.current));
+        }
+        if ((data.source === 'oembed' || data.source === 'og') && data.suggestedQuery) {
+          toast.success(tg('extract.detected', { query: data.suggestedQuery }));
+        }
+      }
+    } catch {
+      /* silent */
+    } finally {
+      setExtracting(false);
     }
   }
 
