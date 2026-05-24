@@ -108,6 +108,30 @@ Phase 1에서는 `NEXT_PUBLIC_SITE_URL`만 사용됩니다. Phase 4 이후 외�
    EBAY_CLIENT_SECRET=...
    ```
 
+### Amazon PA-API 5.0 (가입 + 매출 조건)
+1. https://affiliate-program.amazon.com 에서 마켓플레이스별 Associates 가입
+2. 180일 안에 3건 유효 판매 발생 시 PA-API 활성화
+3. Associates 콘솔에서 access key + secret + partner tag 발급
+4. `.env.local`:
+   ```
+   AMAZON_ACCESS_KEY=AKIA...
+   AMAZON_SECRET_KEY=...
+   AMAZON_PARTNER_TAG=tonyshop-20
+   # 비미국 마켓플레이스라면:
+   # AMAZON_HOST=webservices.amazon.co.jp
+   # AMAZON_REGION=us-west-2
+   # AMAZON_MARKETPLACE=www.amazon.co.jp
+   ```
+
+### Coupang Partners (가입 + 승인 필요)
+1. https://partners.coupang.com/ 에서 파트너스 가입 + 사이트 정보 등록 후 승인
+2. 마이 페이지 → 개발자 도구 → Open API 에서 access key + secret 발급
+3. `.env.local`:
+   ```
+   COUPANG_ACCESS_KEY=...
+   COUPANG_SECRET_KEY=...
+   ```
+
 ### 강제 mock 모드
 ```
 MOCK_MODE=true

@@ -37,6 +37,10 @@ const nextConfig = {
       { protocol: 'https', hostname: 'shopping-phinf.pstatic.net' },
       { protocol: 'https', hostname: 'shop-phinf.pstatic.net' },
       { protocol: 'https', hostname: '**.pstatic.net' },
+      { protocol: 'https', hostname: 'm.media-amazon.com' },
+      { protocol: 'https', hostname: 'images-na.ssl-images-amazon.com' },
+      { protocol: 'https', hostname: 'image*.coupangcdn.com' },
+      { protocol: 'https', hostname: '**.coupangcdn.com' },
     ],
   },
   async headers() {
