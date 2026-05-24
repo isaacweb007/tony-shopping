@@ -27,7 +27,7 @@ export function useDashboardStats(): MergedStats {
   const user = useAuthStore((s) => s.user);
   const localClicks = useClickStore((s) => s.events);
   const localHistory = useHistoryStore((s) => s.entries);
-  const localShortlist = useShortlistStore((s) => s.ids);
+  const localShortlistCount = useShortlistStore((s) => Object.keys(s.items).length);
 
   const server = useQuery({
     queryKey: ['dashboard-stats', user?.id ?? 'anon'],
@@ -54,7 +54,7 @@ export function useDashboardStats(): MergedStats {
       return {
         signedIn: false,
         searches: localHistory.length,
-        shortlist: localShortlist.length,
+        shortlist: localShortlistCount,
         clicks: localClicks.length,
         verdictClicks: verdict,
         storeBreakdown: [...localStoreMap.entries()]
@@ -72,7 +72,7 @@ export function useDashboardStats(): MergedStats {
     const stats: MergedStats = {
       signedIn: true,
       searches: Math.max(server.data.searches, localHistory.length),
-      shortlist: Math.max(server.data.shortlist, localShortlist.length),
+      shortlist: Math.max(server.data.shortlist, localShortlistCount),
       clicks: Math.max(server.data.clicks, localClicks.length),
       verdictClicks: Math.max(server.data.verdictClicks, verdict),
       storeBreakdown:
@@ -89,5 +89,5 @@ export function useDashboardStats(): MergedStats {
               .map(([tag, count]) => ({ tag, count })),
     };
     return stats;
-  }, [server.data, localClicks, localHistory.length, localShortlist.length]);
+  }, [server.data, localClicks, localHistory.length, localShortlistCount]);
 }

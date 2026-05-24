@@ -2,40 +2,53 @@
 
 import * as React from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { Bookmark, ExternalLink, TrendingDown, TrendingUp } from 'lucide-react';
+import { Bookmark, ExternalLink, GitCompare, Share2, TrendingDown, TrendingUp } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { useShortlistStore } from '@/stores/shortlist-store';
-import { useSearchStore } from '@/stores/search-store';
 import { useUIStore } from '@/stores/ui-store';
 import { usePriceWatchStore } from '@/stores/price-watch-store';
+import { deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { formatMoneyLocale } from '@/lib/format';
+import { Link } from '@/i18n/routing';
+import { shareOrCopy } from '@/lib/share';
 import type { AppLocale } from '@/i18n/routing';
 
 export function ShortlistDrawer() {
   const t = useTranslations('header');
   const td = useTranslations('drawer');
+  const tc = useTranslations('compare');
   const tg = useTranslations();
   const locale = useLocale() as AppLocale;
 
   const open = useUIStore((s) => s.shortlistOpen);
   const setOpen = useUIStore((s) => s.setShortlistOpen);
 
-  const ids = useShortlistStore((s) => s.ids);
-  const toggle = useShortlistStore((s) => s.toggle);
+  const items = useShortlistStore((s) => s.items);
+  const remove = useShortlistStore((s) => s.remove);
   const clearAll = useShortlistStore((s) => s.clear);
-
-  const products = useSearchStore((s) => s.result?.products);
   const delta = usePriceWatchStore((s) => s.delta);
 
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
   const list = React.useMemo(() => {
-    if (!mounted || !products) return [];
-    return ids
-      .map((id) => products.find((p) => p.id === id))
-      .filter((p): p is NonNullable<typeof p> => Boolean(p));
-  }, [mounted, ids, products]);
+    if (!mounted) return [];
+    return Object.values(items).sort((a, b) => b.addedAt - a.addedAt);
+  }, [mounted, items]);
+
+  async function shareSet() {
+    if (list.length === 0) return;
+    const ids = list.map((s) => s.id).join(',');
+    const path = locale === 'ko' ? `/compare?ids=${ids}` : `/${locale}/compare?ids=${ids}`;
+    const url = `${window.location.origin}${path}`;
+    await shareOrCopy({
+      title: tc('shareTitle'),
+      text: tc('shareText', { n: list.length }),
+      url,
+      copiedLabel: tg('toast.linkCopied'),
+      failedLabel: tg('toast.shareFailed'),
+    });
+  }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -58,55 +71,76 @@ export function ShortlistDrawer() {
               <p className="mt-1 text-[11.5px]">{td('shortlistHint')}</p>
             </div>
           ) : (
-            <ul className="space-y-3">
-              {list.map((p) => (
-                <li
-                  key={p.id}
-                  className="flex items-center gap-3 rounded-2xl border border-ink-200 p-2.5 dark:border-ink-800"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={p.imageUrl}
-                    alt=""
-                    className="h-16 w-16 rounded-xl bg-ink-50 object-cover dark:bg-ink-800"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="text-[11px] font-semibold text-ink-500 dark:text-ink-400">
-                      {p.store}
+            <>
+              <div className="mb-3 grid grid-cols-2 gap-2">
+                <Button asChild variant="primary" size="sm" className="h-10 rounded-xl">
+                  <Link href="/compare" onClick={() => setOpen(false)}>
+                    <GitCompare className="h-3.5 w-3.5" strokeWidth={2} />
+                    {tc('openCompare')}
+                  </Link>
+                </Button>
+                <Button variant="outline" size="sm" className="h-10 rounded-xl" onClick={shareSet}>
+                  <Share2 className="h-3.5 w-3.5" strokeWidth={2} />
+                  {tc('shareSet')}
+                </Button>
+              </div>
+              <ul className="space-y-3">
+                {list.map((p) => (
+                  <li
+                    key={p.id}
+                    className="flex items-center gap-3 rounded-2xl border border-ink-200 p-2.5 dark:border-ink-800"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={p.imageUrl ?? '/icon.svg'}
+                      alt=""
+                      className="h-16 w-16 rounded-xl bg-ink-50 object-cover dark:bg-ink-800"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[11px] font-semibold text-ink-500 dark:text-ink-400">
+                        {p.store}
+                      </div>
+                      <div className="truncate text-[13px] font-semibold tracking-tight">
+                        {p.name}
+                      </div>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-[14px] font-extrabold tracking-tighter2">
+                          {formatMoneyLocale(p.finalPrice, locale)}
+                        </span>
+                        <PriceDelta value={delta(p.id)} />
+                      </div>
+                      {p.score && (
+                        <div className="text-[10px] font-medium text-ink-400 dark:text-ink-500">
+                          Tony {p.score.total}
+                        </div>
+                      )}
                     </div>
-                    <div className="truncate text-[13px] font-semibold tracking-tight">
-                      {p.name}
+                    <div className="flex flex-col gap-1">
+                      {p.buyUrl ? (
+                        <a
+                          href={p.buyUrl}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-ink-200 hover:bg-ink-50 dark:border-ink-700 dark:hover:bg-ink-800"
+                          aria-label="Open"
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" strokeWidth={1.7} />
+                        </a>
+                      ) : null}
+                      <button
+                        onClick={() => {
+                          remove(p.id);
+                          void deleteShortlistItem(p.id);
+                        }}
+                        className="text-[11px] text-ink-500 hover:text-red-600 dark:text-ink-400 dark:hover:text-red-400"
+                      >
+                        {td('remove')}
+                      </button>
                     </div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-[14px] font-extrabold tracking-tighter2">
-                        {formatMoneyLocale(p.finalPrice, locale)}
-                      </span>
-                      <PriceDelta value={delta(p.id)} />
-                    </div>
-                    <div className="text-[10px] font-medium text-ink-400 dark:text-ink-500">
-                      Tony {p.score.total}
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <a
-                      href={p.buyUrl}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-ink-200 hover:bg-ink-50 dark:border-ink-700 dark:hover:bg-ink-800"
-                      aria-label="Open"
-                    >
-                      <ExternalLink className="h-3.5 w-3.5" strokeWidth={1.7} />
-                    </a>
-                    <button
-                      onClick={() => toggle(p.id)}
-                      className="text-[11px] text-ink-500 hover:text-red-600 dark:text-ink-400 dark:hover:text-red-400"
-                    >
-                      {td('remove')}
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
         </div>
       </SheetContent>

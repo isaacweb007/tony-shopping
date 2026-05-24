@@ -35,7 +35,7 @@ export function ProductDetailDialog({ product, onOpenChange }: Props) {
   const params = useSearchParams();
   const q = params.get('q') ?? '';
   const locale = useLocale() as AppLocale;
-  const inShortlist = useShortlistStore((s) => (product ? s.ids.includes(product.id) : false));
+  const inShortlist = useShortlistStore((s) => (product ? product.id in s.items : false));
   const toggle = useShortlistStore((s) => s.toggle);
 
   const open = product !== null;
@@ -129,9 +129,8 @@ export function ProductDetailDialog({ product, onOpenChange }: Props) {
                 variant="outline"
                 className="h-11 rounded-xl"
                 onClick={() => {
-                  const willAdd = !inShortlist;
-                  toggle(product.id);
-                  if (willAdd) void pushShortlistItem(product);
+                  const added = toggle(product);
+                  if (added) void pushShortlistItem(product);
                   else void deleteShortlistItem(product.id);
                 }}
               >

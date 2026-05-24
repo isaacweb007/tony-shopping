@@ -21,9 +21,9 @@ export function AuthBridge() {
     let cancelled = false;
 
     async function pullServerState() {
-      const rows = await fetchServerShortlist();
-      if (!rows || cancelled) return;
-      hydrateShortlist(rows.map((r) => r.product_id));
+      const snaps = await fetchServerShortlist();
+      if (!snaps || cancelled) return;
+      hydrateShortlist(snaps);
     }
 
     void supabase.auth.getUser().then(({ data }) => {

@@ -152,6 +152,43 @@
     "other": "Other",
     "menu": "My dashboard"
   },
+  "compare": {
+    "title": "Compare · Tony Shopping",
+    "eyebrow": "Tony's compare",
+    "heading": "Your shortlist, side by side",
+    "subtitle": "Comparing {n} candidates across every criterion",
+    "openCompare": "Open compare view",
+    "shareSet": "Share this set",
+    "shareTitle": "Tony's compare set",
+    "shareText": "I'm weighing {n} candidates. Help me pick.",
+    "emptyTitle": "Nothing to compare yet",
+    "emptyHint": "Tap the bookmark on a search result to drop it into your shortlist — the compare view picks it up here.",
+    "goSearch": "Start a search",
+    "needMore": "Add at least 2 candidates and Tony will pick one for you.",
+    "noWinner": "These candidates are too evenly matched to declare a single winner.",
+    "cohortLabel": "Tony's verdict",
+    "cohortTagline": "Out of {count}, Tony picks this one",
+    "cohortScore": "Cohort score {score}/100",
+    "product": "Product",
+    "action": "Buy",
+    "bestBadge": "BEST",
+    "openBuy": "Open on {store}",
+    "removeAria": "Remove {name} from compare",
+    "criteria": {
+      "price": "Final price",
+      "score": "Tony score",
+      "ship": "Ships in",
+      "reviews": "Reviews",
+      "authenticity": "Authenticity"
+    },
+    "reasons": {
+      "price": "Strongest price in the cohort",
+      "score": "Highest overall Tony score",
+      "ship": "Arrives fastest",
+      "reviews": "Rich review base with strong ratings",
+      "authenticity": "Most likely to be authentic"
+    }
+  },
   "auth": {
     "signIn": "Sign in",
     "signUp": "Sign up",

@@ -29,23 +29,19 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
   const t = useTranslations();
   const params = useSearchParams();
   const q = params?.get('q') ?? '';
-  const inShortlist = useShortlistStore((s) => s.ids.includes(product.id));
+  const inShortlist = useShortlistStore((s) => product.id in s.items);
   const toggleRaw = useShortlistStore((s) => s.toggle);
   const buyHref = affiliateUrl({ store: product.store, url: product.buyUrl });
 
-  const toggle = React.useCallback(
-    (id: string) => {
-      const willAdd = !inShortlist;
-      toggleRaw(id);
-      toast.success(
-        willAdd ? t('toast.shortlistAdded') : t('toast.shortlistRemoved'),
-        product.name,
-      );
-      if (willAdd) void pushShortlistItem(product);
-      else void deleteShortlistItem(product.id);
-    },
-    [inShortlist, toggleRaw, t, product],
-  );
+  const toggle = React.useCallback(() => {
+    const added = toggleRaw(product);
+    toast.success(
+      added ? t('toast.shortlistAdded') : t('toast.shortlistRemoved'),
+      product.name,
+    );
+    if (added) void pushShortlistItem(product);
+    else void deleteShortlistItem(product.id);
+  }, [toggleRaw, t, product]);
 
   const isFeature = variant === 'feature';
 
@@ -60,7 +56,7 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
       {isFeature ? (
         <div className="flex items-center justify-between">
           <TagBadge tag={product.tag} />
-          <BookmarkBtn pressed={inShortlist} onClick={() => toggle(product.id)} />
+          <BookmarkBtn pressed={inShortlist} onClick={toggle} />
         </div>
       ) : null}
 
@@ -84,7 +80,7 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
             </div>
             <BookmarkBtn
               pressed={inShortlist}
-              onClick={() => toggle(product.id)}
+              onClick={toggle}
               floating
             />
             {product.discountPct > 0 && (

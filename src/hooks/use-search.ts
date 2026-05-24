@@ -20,7 +20,7 @@ import { toast } from '@/stores/toast-store';
  */
 export function useSearch(q: string) {
   const setResult = useSearchStore((s) => s.setResult);
-  const watchedIds = useShortlistStore((s) => s.ids);
+  const watchedItems = useShortlistStore((s) => s.items);
   const observe = usePriceWatchStore((s) => s.observe);
   const tw = useTranslations('watch');
 
@@ -36,13 +36,13 @@ export function useSearch(q: string) {
     setResult(query.data);
 
     // Reconcile prices for compare-list items present in this result set.
-    const watched = query.data.products.filter((p) => watchedIds.includes(p.id));
+    const watched = query.data.products.filter((p) => p.id in watchedItems);
     if (watched.length === 0) return;
     const dropped = observe(watched);
     for (const p of dropped) {
       toast.success(tw('dropTitle'), tw('dropDesc', { name: p.name }));
     }
-  }, [query.data, setResult, watchedIds, observe, tw]);
+  }, [query.data, setResult, watchedItems, observe, tw]);
 
   return query;
 }

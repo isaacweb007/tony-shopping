@@ -29,17 +29,16 @@ export function ProductDetailView({ product, q }: Props) {
   const locale = useLocale() as AppLocale;
   const router = useRouter();
 
-  const inShortlist = useShortlistStore((s) => s.ids.includes(product.id));
+  const inShortlist = useShortlistStore((s) => product.id in s.items);
   const toggleRaw = useShortlistStore((s) => s.toggle);
 
   function toggle() {
-    const willAdd = !inShortlist;
-    toggleRaw(product.id);
+    const added = toggleRaw(product);
     toast.success(
-      willAdd ? tg('toast.shortlistAdded') : tg('toast.shortlistRemoved'),
+      added ? tg('toast.shortlistAdded') : tg('toast.shortlistRemoved'),
       product.name,
     );
-    if (willAdd) void pushShortlistItem(product);
+    if (added) void pushShortlistItem(product);
     else void deleteShortlistItem(product.id);
   }
 

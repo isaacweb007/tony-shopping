@@ -152,6 +152,43 @@
     "other": "Khác",
     "menu": "Bảng điều khiển"
   },
+  "compare": {
+    "title": "So sánh · Tony Shopping",
+    "eyebrow": "Tony so sánh",
+    "heading": "Danh sách của bạn, đặt cạnh nhau",
+    "subtitle": "Đang so sánh {n} ứng viên theo từng tiêu chí",
+    "openCompare": "Mở bảng so sánh",
+    "shareSet": "Chia sẻ bộ này",
+    "shareTitle": "Bộ so sánh của Tony",
+    "shareText": "Mình đang cân nhắc {n} ứng viên. Giúp mình chọn nhé.",
+    "emptyTitle": "Chưa có gì để so sánh",
+    "emptyHint": "Bấm dấu trang trên kết quả tìm kiếm để thêm vào danh sách — bảng so sánh ở đây sẽ tự cập nhật.",
+    "goSearch": "Bắt đầu tìm kiếm",
+    "needMore": "Thêm ít nhất 2 ứng viên để Tony chọn giúp bạn.",
+    "noWinner": "Các ứng viên quá cân bằng nên khó tuyên bố người chiến thắng.",
+    "cohortLabel": "Kết luận của Tony",
+    "cohortTagline": "Trong {count} ứng viên, Tony chọn cái này",
+    "cohortScore": "Điểm so sánh {score}/100",
+    "product": "Sản phẩm",
+    "action": "Mua",
+    "bestBadge": "BEST",
+    "openBuy": "Mở trên {store}",
+    "removeAria": "Bỏ {name} khỏi so sánh",
+    "criteria": {
+      "price": "Giá cuối",
+      "score": "Điểm Tony",
+      "ship": "Giao hàng",
+      "reviews": "Đánh giá",
+      "authenticity": "Xác thực"
+    },
+    "reasons": {
+      "price": "Giá cạnh tranh nhất nhóm",
+      "score": "Điểm Tony tổng thể cao nhất",
+      "ship": "Đến nhanh nhất",
+      "reviews": "Lượng đánh giá phong phú, điểm tốt",
+      "authenticity": "Khả năng chính hãng cao nhất"
+    }
+  },
   "auth": {
     "signIn": "Đăng nhập",
     "signUp": "Đăng ký",

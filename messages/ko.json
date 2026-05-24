@@ -152,6 +152,43 @@
     "other": "기타",
     "menu": "내 대시보드"
   },
+  "compare": {
+    "title": "비교 분석 · Tony Shopping",
+    "eyebrow": "토니 비교 분석",
+    "heading": "내 비교함, 한눈에",
+    "subtitle": "{n}개 상품을 항목별로 비교하고 있어요",
+    "openCompare": "비교 분석 열기",
+    "shareSet": "비교 링크 공유",
+    "shareTitle": "토니가 추린 비교 후보",
+    "shareText": "{n}개 후보를 비교 중이에요. 같이 골라봐요.",
+    "emptyTitle": "아직 비교할 상품이 없어요",
+    "emptyHint": "검색 결과에서 북마크 아이콘을 눌러 후보로 추가하면 여기서 한눈에 비교할 수 있어요.",
+    "goSearch": "검색하러 가기",
+    "needMore": "2개 이상 추가하면 토니가 한 개를 골라드릴게요.",
+    "noWinner": "후보들이 너무 비슷해서 우열을 가리기 어려워요.",
+    "cohortLabel": "토니의 비교 결론",
+    "cohortTagline": "{count}개 중에서, 토니는 이걸 추천해요",
+    "cohortScore": "비교 점수 {score}/100",
+    "product": "상품",
+    "action": "구매",
+    "bestBadge": "BEST",
+    "openBuy": "{store}에서 구매",
+    "removeAria": "{name} 비교에서 제거",
+    "criteria": {
+      "price": "최종 가격",
+      "score": "토니 점수",
+      "ship": "배송",
+      "reviews": "리뷰",
+      "authenticity": "정품 가능성"
+    },
+    "reasons": {
+      "price": "가격 경쟁력이 가장 강해요",
+      "score": "토니 종합 점수가 가장 높아요",
+      "ship": "도착이 가장 빨라요",
+      "reviews": "리뷰가 풍부하고 평점도 우수해요",
+      "authenticity": "정품 가능성이 가장 높아요"
+    }
+  },
   "auth": {
     "signIn": "로그인",
     "signUp": "회원가입",

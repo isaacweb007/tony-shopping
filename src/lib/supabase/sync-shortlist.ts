@@ -1,6 +1,7 @@
 'use client';
 
 import type { Product } from '@/types/product';
+import type { ShortlistSnap } from '@/types/shortlist';
 
 interface ServerRow {
   product_id: string;
@@ -11,16 +12,44 @@ interface ServerRow {
   image_url: string | null;
   buy_url: string | null;
   tony_score: number | null;
+  added_at?: string;
 }
 
-/** Pull the user's server-side shortlist; returns null when not signed in. */
-export async function fetchServerShortlist(): Promise<ServerRow[] | null> {
+const ALLOWED_CURRENCIES = new Set(['KRW', 'USD', 'VND', 'JPY']);
+
+function rowToSnap(row: ServerRow): ShortlistSnap {
+  const currency = ALLOWED_CURRENCIES.has(row.price_currency)
+    ? (row.price_currency as ShortlistSnap['finalPrice']['currency'])
+    : 'USD';
+  const addedAt = row.added_at ? Date.parse(row.added_at) : Date.now();
+  return {
+    id: row.product_id,
+    name: row.name,
+    store: row.store,
+    imageUrl: row.image_url ?? undefined,
+    buyUrl: row.buy_url ?? undefined,
+    finalPrice: { amount: row.price_amount, currency },
+    score: row.tony_score != null
+      ? {
+          total: row.tony_score,
+          similarity: row.tony_score,
+          priceEdge: row.tony_score,
+          reviewTrust: row.tony_score,
+          authenticity: row.tony_score,
+        }
+      : undefined,
+    addedAt: Number.isFinite(addedAt) ? addedAt : Date.now(),
+  };
+}
+
+/** Pull the user's server-side shortlist as snapshots; returns null when not signed in. */
+export async function fetchServerShortlist(): Promise<ShortlistSnap[] | null> {
   try {
     const res = await fetch('/api/shortlist', { cache: 'no-store' });
     if (res.status === 401) return null;
     if (!res.ok) return null;
     const j = (await res.json()) as { items?: ServerRow[] };
-    return j.items ?? [];
+    return (j.items ?? []).map(rowToSnap);
   } catch {
     return null;
   }

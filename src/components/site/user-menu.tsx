@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useTranslations } from 'next-intl';
-import { LayoutDashboard, LogOut, User as UserIcon } from 'lucide-react';
+import { GitCompare, LayoutDashboard, LogOut, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -19,6 +19,7 @@ export function UserMenu({ compact = false }: { compact?: boolean }) {
   const t = useTranslations('auth');
   const tDash = useTranslations('dashboard');
   const tHead = useTranslations('header');
+  const tCmp = useTranslations('compare');
   const user = useAuthStore((s) => s.user);
   const router = useRouter();
   const [mounted, setMounted] = React.useState(false);
@@ -62,6 +63,12 @@ export function UserMenu({ compact = false }: { compact?: boolean }) {
           <Link href="/dashboard" className="flex w-full items-center gap-2">
             <LayoutDashboard className="h-4 w-4" strokeWidth={1.7} />
             {tDash('menu')}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/compare" className="flex w-full items-center gap-2">
+            <GitCompare className="h-4 w-4" strokeWidth={1.7} />
+            {tCmp('openCompare')}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem disabled>

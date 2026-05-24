@@ -20,7 +20,7 @@ export function Header() {
   const setShortlistOpen = useUIStore((s) => s.setShortlistOpen);
   const openHistory = React.useCallback(() => setHistoryOpen(true), [setHistoryOpen]);
   const openShortlist = React.useCallback(() => setShortlistOpen(true), [setShortlistOpen]);
-  const shortlistCount = useShortlistStore((s) => s.ids.length);
+  const shortlistCount = useShortlistStore((s) => Object.keys(s.items).length);
 
   // hydration guard for badge
   const [mounted, setMounted] = React.useState(false);
