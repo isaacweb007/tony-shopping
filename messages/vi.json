@@ -34,6 +34,47 @@
     "p4": "Tìm nơi rẻ hơn Coupang",
     "p5": "Gợi ý quà tặng phù hợp"
   },
+  "recommend": {
+    "heading": "Tony gợi ý cho bạn",
+    "subFirst": "Bắt đầu bằng một ảnh hoặc link — Tony sẽ học từ đó.",
+    "subReturning": "Dựa trên những gì bạn vừa tìm.",
+    "subPower": "Tony hiểu khẩu vị của bạn. Cùng khám phá hôm nay nhé.",
+    "shuffle": "Xem gợi ý khác",
+    "default": {
+      "bag": "Tìm chiếc túi trong bài Instagram này",
+      "shoes": "Tìm giày tương tự, dưới 2 triệu",
+      "lamp": "Tìm đèn mood mua được ở Việt Nam",
+      "cheaper": "Tìm nơi rẻ hơn Coupang",
+      "gift": "Gợi ý quà tặng phù hợp"
+    },
+    "foryou": {
+      "category": "Quan tâm {cat}? Gợi ý mới cho bạn",
+      "similar": "Thêm sản phẩm giống {cat}",
+      "cheaperThan": "Rẻ hơn {store}",
+      "bestValue": "Đáng giá nhất hôm nay"
+    },
+    "price": {
+      "low": "Đáng giá dưới 500 nghìn",
+      "mid": "Top dưới 2 triệu",
+      "high": "Cho mình xem dòng cao cấp"
+    },
+    "cat": {
+      "shoes": "giày",
+      "bag": "túi",
+      "lighting": "đèn",
+      "clothes": "quần áo",
+      "beauty": "làm đẹp",
+      "electronics": "điện tử",
+      "furniture": "nội thất",
+      "kitchen": "nhà bếp",
+      "food": "thực phẩm",
+      "sports": "thể thao",
+      "toy": "đồ chơi",
+      "pet": "thú cưng",
+      "jewelry": "trang sức",
+      "baby": "trẻ em"
+    }
+  },
   "features": {
     "f1": {
       "title": "Tìm bằng ảnh",
@@ -216,6 +257,11 @@
     "titleSearch": "Kết quả Tony Shopping",
     "titleProduct": "Đề xuất Tony Shopping",
     "fallbackTitle": "Chia sẻ"
+  },
+  "extract": {
+    "detected": "Đã phát hiện \"{query}\" trong ảnh",
+    "extracting": "Đang phân tích ảnh…",
+    "linkAnalyzing": "Đang đọc liên kết…"
   },
   "voice": {
     "startListening": "Tìm bằng giọng nói",

@@ -2,39 +2,29 @@
 
 import * as React from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import {
-  ImageIcon,
-  Link2,
-  AlignLeft,
-  Footprints,
-  Lightbulb,
-  DollarSign,
-  Gift,
-  Search,
-  ShoppingBag,
-  X,
-} from 'lucide-react';
+import { ImageIcon, Link2, AlignLeft, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useRouter } from '@/i18n/routing';
 import type { AppLocale } from '@/i18n/routing';
 import { useHistoryStore } from '@/stores/history-store';
+import { useUserProfileStore } from '@/stores/user-profile-store';
+import { categorize } from '@/lib/categorize';
 import { nanoid } from 'nanoid';
 import type { SearchAttachment } from '@/types/search';
 import { useSpeechRecognition } from '@/hooks/use-speech-recognition';
 import { MicButton } from '@/components/voice/mic-button';
 import { toast } from '@/stores/toast-store';
-
-const PROMPT_ICONS = [ImageIcon, Footprints, Lightbulb, DollarSign, Gift];
+import { PromptChips } from './prompt-chips';
 
 export function AskBox() {
   const t = useTranslations('ask');
-  const tp = useTranslations('prompts');
   const tv = useTranslations('voice');
   const tg = useTranslations();
   const locale = useLocale() as AppLocale;
   const router = useRouter();
   const addHistory = useHistoryStore((s) => s.add);
+  const recordSearch = useUserProfileStore((s) => s.recordSearch);
   const [text, setText] = React.useState('');
   const [attachments, setAttachments] = React.useState<SearchAttachment[]>([]);
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
@@ -111,21 +101,58 @@ export function AskBox() {
     }
   }
 
-  function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  const [extracting, setExtracting] = React.useState(false);
+
+  async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
     if (!f) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const value = ev.target?.result;
-      if (typeof value === 'string') {
-        setAttachments((prev) => [
-          ...prev,
-          { id: nanoid(6), type: 'image', value, label: f.name },
-        ]);
-      }
-    };
-    reader.readAsDataURL(f);
     e.target.value = '';
+    const dataUrl = await readFileAsDataUrl(f);
+    if (!dataUrl) return;
+    setAttachments((prev) => [
+      ...prev,
+      { id: nanoid(6), type: 'image', value: dataUrl, label: f.name },
+    ]);
+
+    // Try to enrich the prompt via /api/extract (Vision when available).
+    setExtracting(true);
+    try {
+      const res = await fetch('/api/extract', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageDataUrl: dataUrl }),
+      });
+      if (res.ok) {
+        const data = (await res.json()) as {
+          suggestedQuery?: string;
+          tags?: string[];
+          source?: 'vision' | 'fallback' | 'og';
+        };
+        if (data.suggestedQuery && !text.trim()) {
+          setText(data.suggestedQuery);
+          requestAnimationFrame(() => textareaRef.current && autoGrow(textareaRef.current));
+        }
+        if (data.source === 'vision' && data.suggestedQuery) {
+          toast.success(tg('extract.detected', { query: data.suggestedQuery }));
+        }
+      }
+    } catch {
+      /* silent */
+    } finally {
+      setExtracting(false);
+    }
+  }
+
+  function readFileAsDataUrl(f: File): Promise<string | null> {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const v = ev.target?.result;
+        resolve(typeof v === 'string' ? v : null);
+      };
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(f);
+    });
   }
 
   function onPasteLink() {
@@ -150,6 +177,7 @@ export function AskBox() {
     }
     const query = { q, attachments };
     addHistory(query);
+    recordSearch({ q, categories: categorize(q) });
     const params = new URLSearchParams({ q });
     router.push(`/search?${params.toString()}`);
   }
@@ -164,7 +192,6 @@ export function AskBox() {
     });
   }
 
-  const promptKeys = ['p1', 'p2', 'p3', 'p4', 'p5'] as const;
 
   return (
     <div className="animate-fade-up" style={{ animationDelay: '0.24s' }}>
@@ -215,7 +242,13 @@ export function AskBox() {
           <textarea
             ref={textareaRef}
             rows={2}
-            placeholder={speech.listening ? tv('listening') : t('placeholder')}
+            placeholder={
+              speech.listening
+                ? tv('listening')
+                : extracting
+                  ? tg('extract.extracting')
+                  : t('placeholder')
+            }
             value={text}
             onChange={onTextChange}
             onKeyDown={onKey}
@@ -287,23 +320,7 @@ export function AskBox() {
         </div>
       </div>
 
-      {/* example chips */}
-      <div className="mt-5 flex flex-wrap justify-center gap-2">
-        {promptKeys.map((k, i) => {
-          const Icon = PROMPT_ICONS[i] ?? ShoppingBag;
-          const label = tp(k);
-          return (
-            <button
-              key={k}
-              onClick={() => applyPrompt(label)}
-              className="inline-flex items-center gap-2 rounded-full border border-ink-200 bg-white px-3.5 py-2 text-[13px] font-medium text-ink-700 transition hover:-translate-y-px hover:border-ink-300 hover:bg-ink-50 dark:border-ink-800 dark:bg-ink-900 dark:text-ink-200 dark:hover:border-ink-700 dark:hover:bg-ink-800"
-            >
-              <Icon className="h-[15px] w-[15px]" strokeWidth={1.6} />
-              <span>{label}</span>
-            </button>
-          );
-        })}
-      </div>
+      <PromptChips onPick={applyPrompt} />
     </div>
   );
 }

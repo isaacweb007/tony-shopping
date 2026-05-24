@@ -28,6 +28,7 @@ function decide(...required: Array<string | undefined>): AdapterMode {
 export const ADAPTER_MODE = {
   ebay: () => decide(process.env.EBAY_CLIENT_ID, process.env.EBAY_CLIENT_SECRET),
   naver: () => decide(process.env.NAVER_CLIENT_ID, process.env.NAVER_CLIENT_SECRET),
+  vision: () => decide(process.env.GOOGLE_VISION_API_KEY),
   // Mock-only adapters until partner credentials land.
   amazon: () => decide(process.env.AMAZON_ACCESS_KEY, process.env.AMAZON_SECRET_KEY, process.env.AMAZON_PARTNER_TAG),
   coupang: () => decide(process.env.COUPANG_ACCESS_KEY, process.env.COUPANG_SECRET_KEY),

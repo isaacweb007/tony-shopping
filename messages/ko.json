@@ -34,6 +34,47 @@
     "p4": "쿠팡보다 더 싼 곳 찾아줘",
     "p5": "선물용으로 괜찮은 거 추천해줘"
   },
+  "recommend": {
+    "heading": "토니의 추천",
+    "subFirst": "사진이나 링크로 시작해보세요. 토니가 학습합니다.",
+    "subReturning": "최근 검색을 바탕으로 골라봤어요.",
+    "subPower": "당신의 취향을 잘 알고 있어요. 오늘의 발견을 즐겨보세요.",
+    "shuffle": "다른 추천 보기",
+    "default": {
+      "bag": "이 인스타 사진 속 가방 찾아줘",
+      "shoes": "이 신발과 비슷한 제품을 10만원 이하로",
+      "lamp": "베트남에서 살 수 있는 무드 조명 찾아줘",
+      "cheaper": "쿠팡보다 더 싼 곳 찾아줘",
+      "gift": "선물용으로 괜찮은 거 추천해줘"
+    },
+    "foryou": {
+      "category": "최근 {cat}에 관심 있으셨죠? 새로 추천",
+      "similar": "{cat} 비슷한 스타일로 더 보기",
+      "cheaperThan": "{store}보다 저렴한 곳",
+      "bestValue": "오늘 가장 가성비 좋은 상품"
+    },
+    "price": {
+      "low": "3만원 이하로 가성비 추천",
+      "mid": "10만원 이하 베스트",
+      "high": "프리미엄 라인 골라줘"
+    },
+    "cat": {
+      "shoes": "신발",
+      "bag": "가방",
+      "lighting": "조명",
+      "clothes": "옷",
+      "beauty": "뷰티",
+      "electronics": "전자제품",
+      "furniture": "가구",
+      "kitchen": "주방용품",
+      "food": "식품",
+      "sports": "스포츠",
+      "toy": "장난감",
+      "pet": "반려용품",
+      "jewelry": "주얼리",
+      "baby": "유아용품"
+    }
+  },
   "features": {
     "f1": {
       "title": "사진으로 검색",
@@ -216,6 +257,11 @@
     "titleSearch": "토니쇼핑 검색 결과",
     "titleProduct": "토니쇼핑 추천 상품",
     "fallbackTitle": "공유"
+  },
+  "extract": {
+    "detected": "이미지에서 \"{query}\"를 감지했어요",
+    "extracting": "이미지를 분석 중…",
+    "linkAnalyzing": "링크를 분석 중…"
   },
   "voice": {
     "startListening": "음성으로 검색",

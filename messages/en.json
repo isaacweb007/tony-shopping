@@ -34,6 +34,47 @@
     "p4": "Find a place cheaper than Coupang",
     "p5": "Recommend something good as a gift"
   },
+  "recommend": {
+    "heading": "Tony picks for you",
+    "subFirst": "Drop a photo or link to get started — Tony will learn from it.",
+    "subReturning": "Based on what you've been searching lately.",
+    "subPower": "Tony knows your taste. Enjoy today's discoveries.",
+    "shuffle": "Show different picks",
+    "default": {
+      "bag": "Find this bag from an Instagram post",
+      "shoes": "Find sneakers like these, under $80",
+      "lamp": "Find this mood lamp available in Vietnam",
+      "cheaper": "Find a place cheaper than Coupang",
+      "gift": "Recommend something good as a gift"
+    },
+    "foryou": {
+      "category": "Into {cat} lately? New picks for you",
+      "similar": "More items similar to {cat}",
+      "cheaperThan": "Cheaper than {store}",
+      "bestValue": "Best value pick today"
+    },
+    "price": {
+      "low": "Best value under $25",
+      "mid": "Top picks under $80",
+      "high": "Show me the premium line"
+    },
+    "cat": {
+      "shoes": "shoes",
+      "bag": "bags",
+      "lighting": "lighting",
+      "clothes": "clothes",
+      "beauty": "beauty",
+      "electronics": "electronics",
+      "furniture": "furniture",
+      "kitchen": "kitchen",
+      "food": "food",
+      "sports": "sports",
+      "toy": "toys",
+      "pet": "pet items",
+      "jewelry": "jewelry",
+      "baby": "baby items"
+    }
+  },
   "features": {
     "f1": {
       "title": "Visual search",
@@ -216,6 +257,11 @@
     "titleSearch": "Tony Shopping search",
     "titleProduct": "Tony Shopping pick",
     "fallbackTitle": "Share"
+  },
+  "extract": {
+    "detected": "Detected \"{query}\" in the image",
+    "extracting": "Analysing the image…",
+    "linkAnalyzing": "Reading the link…"
   },
   "voice": {
     "startListening": "Voice search",
