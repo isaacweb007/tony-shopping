@@ -126,6 +126,19 @@
     "support4": "Privacy",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "review": {
+    "label": "Tony's review analysis",
+    "loading": "Reading the reviews…",
+    "good": "What people love",
+    "bad": "Watch out",
+    "authenticityHigh": "Reviews look organic",
+    "authenticityMid": "Some bot-like reviews",
+    "authenticityLow": "Lots of bot-like reviews",
+    "authenticityBar": "Review trust",
+    "byTony": "Tony analysed {n} review samples",
+    "engineLlm": "LLM-powered",
+    "engineHeuristic": "Heuristic"
+  },
   "watch": {
     "dropTitle": "Price dropped",
     "dropDesc": "{name} just got cheaper.",

@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { ShareButton } from '@/components/ui/share-button';
+import { ReviewAnalysis } from './review-analysis';
 import { useShortlistStore } from '@/stores/shortlist-store';
 import { recordProductClick } from '@/stores/click-store';
 import { affiliateUrl } from '@/lib/affiliate';
@@ -119,6 +120,8 @@ export function ProductDetailDialog({ product, onOpenChange }: Props) {
                 <Kv label={td('kAuth')} value={`${product.score.authenticity}%`} />
               </div>
             </div>
+
+            <ReviewAnalysis product={product} />
 
             <div className="mt-auto grid grid-cols-[1fr_1fr_auto] gap-2 pt-5">
               <Button variant="outline" className="h-11 rounded-xl" onClick={() => toggle(product.id)}>

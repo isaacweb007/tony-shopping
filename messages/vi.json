@@ -126,6 +126,19 @@
     "support4": "Quyền riêng tư",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "review": {
+    "label": "Phân tích đánh giá của Tony",
+    "loading": "Đang đọc đánh giá…",
+    "good": "Điểm được khen",
+    "bad": "Cần lưu ý",
+    "authenticityHigh": "Đánh giá có vẻ tự nhiên",
+    "authenticityMid": "Một số đánh giá nghi bot",
+    "authenticityLow": "Nhiều đánh giá có vẻ bot",
+    "authenticityBar": "Độ tin cậy đánh giá",
+    "byTony": "Tony đã đọc {n} đánh giá",
+    "engineLlm": "LLM",
+    "engineHeuristic": "Heuristic"
+  },
   "watch": {
     "dropTitle": "Giá đã giảm",
     "dropDesc": "{name} vừa rẻ hơn.",

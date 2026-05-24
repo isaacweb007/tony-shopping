@@ -9,6 +9,7 @@ import { useShortlistStore } from '@/stores/shortlist-store';
 import { toast } from '@/stores/toast-store';
 import { recordProductClick } from '@/stores/click-store';
 import { affiliateUrl } from '@/lib/affiliate';
+import { ReviewAnalysis } from '@/components/search/review-analysis';
 import { useRouter } from '@/i18n/routing';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
 import type { AppLocale } from '@/i18n/routing';
@@ -153,6 +154,8 @@ export function ProductDetailView({ product, q }: Props) {
           </div>
         </div>
       </div>
+
+      <ReviewAnalysis product={product} />
     </div>
   );
 }

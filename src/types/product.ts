@@ -65,6 +65,13 @@ export interface Product {
   score: TonyScore;
   /** External buy URL (Phase 4 fills with affiliate-tagged URL). */
   buyUrl: string;
+  /**
+   * Optional sample of real review text. Adapters fill this when their API
+   * returns review bodies (Phase H+ on supported merchants); mock adapters
+   * generate a deterministic mix of genuine and bot-like patterns. Used by
+   * Tony's LLM review summariser.
+   */
+  reviewSamples?: string[];
 }
 
 export interface TonyReport {

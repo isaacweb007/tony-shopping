@@ -61,6 +61,65 @@ const ADJ = [
   'Vivid ',
 ];
 
+/** Genuine-looking review snippets. Multilingual so the demo feels real. */
+const POSITIVE_REVIEWS = [
+  '사이즈가 정사이즈예요. 평소 신던대로 주문하시면 됩니다.',
+  '배송이 생각보다 빨라서 만족합니다. 박스 상태도 깔끔했어요.',
+  'Quality is excellent for this price point. Highly recommend.',
+  'Color exactly matches the photo. Tag tells me it is authentic.',
+  'Chất lượng tốt, giao hàng nhanh. Sẽ mua lại.',
+  '두 번째 구매입니다. 친구한테 선물로도 줬는데 좋아하더라고요.',
+  'Fits perfectly. Shipped from US within 2 days.',
+  '리뷰 보고 샀는데 후회 없어요. 색상도 사진이랑 똑같아요.',
+];
+
+const NEUTRAL_REVIEWS = [
+  '나쁘지 않은데 사진보다 색이 조금 어두워요.',
+  "It's fine. Smaller than I expected but usable.",
+  '배송은 약속한 날짜에 왔는데 박스가 좀 찌그러져 있었습니다.',
+  'Average quality. Same as what you find on AliExpress.',
+];
+
+const NEGATIVE_REVIEWS = [
+  '사이즈가 한 치수 작게 나와요. 한 사이즈 크게 주문하세요.',
+  'Stitching came apart after two weeks. Disappointing.',
+  '광고와 다릅니다. 환불 요청했지만 응답이 늦어요.',
+];
+
+/** Stereotypical bot-review patterns: short, repeated, formulaic. */
+const BOT_REVIEWS = [
+  'good product',
+  'good',
+  'fast shipping good seller',
+  'good item recommend',
+  '잘 받았습니다',
+  '좋아요',
+  '굿굿',
+  'nice nice nice',
+];
+
+/**
+ * Deterministic per-seed review mix. Lower review counts → more bot-flavored;
+ * higher review counts → more balanced. Used by Tony's LLM summariser.
+ */
+export function generateMockReviews(seed: number, reviewCount: number, sampleSize = 10): string[] {
+  const rng = mulberry32(seed * 2654435761);
+  const botShare = reviewCount < 200 ? 0.45 : reviewCount < 800 ? 0.25 : 0.1;
+  const negShare = 0.1;
+  const out: string[] = [];
+  for (let i = 0; i < sampleSize; i++) {
+    const r = rng();
+    let pool: string[];
+    if (r < botShare) pool = BOT_REVIEWS;
+    else if (r < botShare + negShare) pool = NEGATIVE_REVIEWS;
+    else if (r < botShare + negShare + 0.2) pool = NEUTRAL_REVIEWS;
+    else pool = POSITIVE_REVIEWS;
+    const idx = Math.floor(rng() * pool.length);
+    out.push(pool[idx] ?? pool[0]!);
+  }
+  return out;
+}
+
 export interface AdapterProfile {
   store: StoreId;
   /** Base price multiplier vs reference. */
@@ -135,6 +194,7 @@ export async function generateMockProducts(
       tag: 'value',
       score,
       buyUrl: `https://example.com/${profile.store.toLowerCase()}/${seed.toString(36)}`,
+      reviewSamples: generateMockReviews(seed, reviewCount, 10),
     });
   }
   return products;

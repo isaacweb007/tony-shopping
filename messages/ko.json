@@ -126,6 +126,19 @@
     "support4": "개인정보처리방침",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "review": {
+    "label": "토니의 리뷰 분석",
+    "loading": "리뷰를 읽고 있어요…",
+    "good": "이 상품이 좋은 점",
+    "bad": "주의할 점",
+    "authenticityHigh": "리뷰가 자연스러워 보여요",
+    "authenticityMid": "일부 봇 리뷰 의심",
+    "authenticityLow": "봇 리뷰가 많이 섞여 있어요",
+    "authenticityBar": "리뷰 신뢰도",
+    "byTony": "토니가 {n}개 리뷰 샘플을 분석했어요",
+    "engineLlm": "LLM 분석",
+    "engineHeuristic": "휴리스틱 분석"
+  },
   "watch": {
     "dropTitle": "가격이 떨어졌어요",
     "dropDesc": "{name}의 가격이 하락했습니다.",

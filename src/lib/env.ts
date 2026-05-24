@@ -31,6 +31,11 @@ export const ADAPTER_MODE = {
   vision: () => decide(process.env.GOOGLE_VISION_API_KEY),
   /** Meta-search SaaS: SerpAPI's Google Shopping wrapper. One call → many stores. */
   serpapi: () => decide(process.env.SERPAPI_KEY),
+  /** LLM provider for review summarisation. Prefers Anthropic when both are set. */
+  llm: () =>
+    decide(
+      process.env.ANTHROPIC_API_KEY ? process.env.ANTHROPIC_API_KEY : process.env.OPENAI_API_KEY,
+    ),
   // Mock-only adapters until partner credentials land.
   amazon: () => decide(process.env.AMAZON_ACCESS_KEY, process.env.AMAZON_SECRET_KEY, process.env.AMAZON_PARTNER_TAG),
   coupang: () => decide(process.env.COUPANG_ACCESS_KEY, process.env.COUPANG_SECRET_KEY),
