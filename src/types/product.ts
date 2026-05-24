@@ -8,6 +8,7 @@
 export type StoreId =
   | 'Coupang'
   | 'Amazon'
+  | 'eBay'
   | 'Shopee'
   | 'Lazada'
   | 'NaverShopping'

@@ -1,7 +1,8 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { Sparkles, Star } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { ExternalLink, Sparkles, Star } from 'lucide-react';
 import type { Product } from '@/types/product';
 import {
   Dialog,
@@ -13,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { ShareButton } from '@/components/ui/share-button';
 import { useShortlistStore } from '@/stores/shortlist-store';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
+import { Link } from '@/i18n/routing';
 import type { AppLocale } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
 
@@ -26,6 +28,8 @@ export function ProductDetailDialog({ product, onOpenChange }: Props) {
   const tc = useTranslations('card');
   const tg = useTranslations();
   const tShare = useTranslations('share');
+  const params = useSearchParams();
+  const q = params.get('q') ?? '';
   const locale = useLocale() as AppLocale;
   const inShortlist = useShortlistStore((s) => (product ? s.ids.includes(product.id) : false));
   const toggle = useShortlistStore((s) => s.toggle);
@@ -131,6 +135,15 @@ export function ProductDetailDialog({ product, onOpenChange }: Props) {
                 variant="outline"
               />
             </div>
+            {q && (
+              <Link
+                href={`/product/${product.id}?q=${encodeURIComponent(q)}`}
+                className="mt-2 inline-flex items-center justify-center gap-1 rounded-md px-2 py-1 text-[11.5px] font-semibold text-ink-500 hover:text-ink-900 dark:text-ink-400 dark:hover:text-ink-50"
+              >
+                <ExternalLink className="h-3 w-3" strokeWidth={1.8} />
+                Full page
+              </Link>
+            )}
           </div>
         </div>
       </DialogContent>

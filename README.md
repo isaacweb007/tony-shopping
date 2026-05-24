@@ -77,9 +77,42 @@ Phase 1에서는 `NEXT_PUBLIC_SITE_URL`만 사용됩니다. Phase 4 이후 외�
 - ✅ **Phase 1** — 스캐폴딩, 홈 페이지, 다크모드, i18n
 - ✅ **Phase 2** — 검색 결과 페이지, 상품/Tony Score 모델, Zustand 상태관리
 - ✅ **Phase 3** — AI 채팅 패널(intent matching), 히스토리/비교함 드로어, LocalStorage 영속
-- ✅ **Phase 4** — API Routes (`/api/search`, `/api/extract`), 5개 어댑터(Coupang/Naver/Amazon/Shopee/Lazada), React Query, AbortSignal
+- ✅ **Phase 4** — API Routes (`/api/search`, `/api/extract`), 6개 어댑터(Coupang/Naver/Amazon/eBay/Shopee/Lazada), React Query, AbortSignal
 - ✅ **Phase 6** — SEO 메타데이터, sitemap, robots, 동적 OG 이미지, JSON-LD, 404/loading/error 페이지, Vercel Analytics + Speed Insights, 보안 헤더, Vercel 배포 설정
+- ✅ **Voice** — Web Speech API 음성 입력(KO/EN/VI), TTS 답변 재생, 자동 검색 트리거
+- ✅ **Round A** — Toast 시스템(success/error/info/warning), 음성 자동 검색, 공유 버튼(Web Share + clipboard fallback), 비교함 토스트 피드백
+- ✅ **Round B** — 실 API 어댑터(Naver Shopping, eBay Browse), env 자동 mock/real 토글, 상품 상세 라우트(`/[locale]/product/[id]`), 빈 상태 UI
 - ⏳ **Phase 5** (보류) — Supabase 인증 + 유저별 데이터 + 결제(제휴 링크 추적)
+- ⏳ **Phase 8** — Amazon PA-API / Coupang Partners / Shopee / Lazada 실 어댑터, 결제 트래킹
+
+## 실제 쇼핑 API 키 등록
+
+키가 없으면 모든 어댑터는 결정론적 mock으로 자동 fallback합니다. 키가 있으면 자동으로 실 API를 호출합니다.
+
+### Naver Shopping Search (가장 추천 — 무료 25,000 req/일)
+1. https://developers.naver.com 로그인
+2. **Application > 애플리케이션 등록** → 사용 API: "검색"
+3. Web service URL: `http://localhost:3000` + 프로덕션 도메인 추가
+4. 생성된 Client ID / Secret을 `.env.local`에 입력
+   ```
+   NAVER_CLIENT_ID=...
+   NAVER_CLIENT_SECRET=...
+   ```
+
+### eBay Browse API (무료 5,000 req/일)
+1. https://developer.ebay.com 무료 가입
+2. **Application Keys > Production keyset** 발급
+3. `.env.local`:
+   ```
+   EBAY_CLIENT_ID=...
+   EBAY_CLIENT_SECRET=...
+   ```
+
+### 강제 mock 모드
+```
+MOCK_MODE=true
+```
+로 설정하면 키와 무관하게 모든 어댑터가 mock으로 작동합니다 (오프라인 데모용).
 
 ## 배포
 

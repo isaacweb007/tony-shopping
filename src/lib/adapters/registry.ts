@@ -1,6 +1,7 @@
 import type { SearchAdapter } from './base';
 import { amazonAdapter } from './amazon';
 import { coupangAdapter } from './coupang';
+import { ebayAdapter } from './ebay';
 import { shopeeAdapter } from './shopee';
 import { lazadaAdapter } from './lazada';
 import { naverAdapter } from './naver';
@@ -10,6 +11,7 @@ export const ALL_ADAPTERS: SearchAdapter[] = [
   coupangAdapter,
   naverAdapter,
   amazonAdapter,
+  ebayAdapter,
   shopeeAdapter,
   lazadaAdapter,
 ];

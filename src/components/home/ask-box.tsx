@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import {
-  ArrowRight,
   ImageIcon,
   Link2,
   AlignLeft,
@@ -11,6 +10,7 @@ import {
   Lightbulb,
   DollarSign,
   Gift,
+  Search,
   ShoppingBag,
   X,
 } from 'lucide-react';
@@ -274,9 +274,15 @@ export function AskBox() {
               {t('typeText')}
             </Button>
           </div>
-          <Button variant="primary" size="pillLg" onClick={() => submit()} className="font-bold">
+          <Button
+            variant="primary"
+            size="pillLg"
+            onClick={() => submit()}
+            className="font-bold"
+            aria-label={t('submitAria')}
+          >
+            <Search className="h-[18px] w-[18px]" strokeWidth={2.2} />
             <span>{t('submit')}</span>
-            <ArrowRight className="h-4 w-4" strokeWidth={2.2} />
           </Button>
         </div>
       </div>

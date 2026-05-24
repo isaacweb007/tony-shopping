@@ -23,7 +23,8 @@
     "uploadPhoto": "Ảnh",
     "pasteLink": "Link",
     "typeText": "Văn bản",
-    "submit": "Hỏi Tony",
+    "submit": "Tìm",
+    "submitAria": "Gửi tìm kiếm cho Tony",
     "linkPrompt": "Dán link mạng xã hội hoặc cửa hàng"
   },
   "prompts": {
@@ -106,7 +107,11 @@
     "warn2": "Hàng quốc tế có thể chịu thuế và chậm giao — kiểm tra giá cuối cùng.",
     "warn3": "Người bán mới với dưới 100 đánh giá có thể kém tin cậy.",
     "warn4": "Hàng chưa nhận sau 24 tháng có thể không được hoàn tiền.",
-    "empty": "Không có sản phẩm trùng cửa hàng đã chọn."
+    "empty": "Không có sản phẩm trùng cửa hàng đã chọn.",
+    "emptyAction": "Xoá bộ lọc",
+    "noResultsTitle": "Chưa có kết quả",
+    "noResultsDesc": "Thử cụm từ khác, hoặc đính kèm ảnh / link.",
+    "noResultsCta": "Tìm mới"
   },
   "sort": {
     "tony": "Theo Tony Score",

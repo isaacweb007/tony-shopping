@@ -28,6 +28,7 @@ export function SearchView() {
   const products = useSearchStore((s) => s.result?.products);
   const sort = useSearchStore((s) => s.sort);
   const store = useSearchStore((s) => s.store);
+  const setStore = useSearchStore((s) => s.setStore);
 
   const visible = React.useMemo<Product[]>(() => {
     if (!products) return [];
@@ -77,6 +78,22 @@ export function SearchView() {
 
   if (!result || (isFetching && visible.length === 0)) {
     return <SearchSkeleton />;
+  }
+
+  if (result.products.length === 0) {
+    return (
+      <div className="container max-w-2xl py-20 text-center">
+        <h1 className="text-2xl font-extrabold tracking-tighter2 md:text-3xl">
+          {t('noResultsTitle')}
+        </h1>
+        <p className="mx-auto mt-3 max-w-md text-ink-500 dark:text-ink-400">
+          {t('noResultsDesc')}
+        </p>
+        <Button variant="primary" className="mt-6" onClick={() => router.push('/')}>
+          {t('noResultsCta')}
+        </Button>
+      </div>
+    );
   }
 
   const top3: Product[] = pickTop3(result.products);
@@ -147,8 +164,16 @@ export function SearchView() {
         </div>
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-4">
           {visible.length === 0 ? (
-            <div className="col-span-full rounded-2xl border border-dashed border-ink-200 py-12 text-center text-ink-500 dark:border-ink-700 dark:text-ink-400">
-              {t('empty')}
+            <div className="col-span-full rounded-2xl border border-dashed border-ink-200 px-6 py-12 text-center text-ink-500 dark:border-ink-700 dark:text-ink-400">
+              <p>{t('empty')}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-3"
+                onClick={() => setStore('all')}
+              >
+                {t('emptyAction')}
+              </Button>
             </div>
           ) : (
             visible.map((p) => (

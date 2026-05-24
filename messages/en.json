@@ -23,7 +23,8 @@
     "uploadPhoto": "Photo",
     "pasteLink": "Link",
     "typeText": "Text",
-    "submit": "Ask Tony",
+    "submit": "Find",
+    "submitAria": "Send search to Tony",
     "linkPrompt": "Paste a social or shop link"
   },
   "prompts": {
@@ -106,7 +107,11 @@
     "warn2": "Overseas items may incur customs and delivery delays — verify final price.",
     "warn3": "New sellers with fewer than 100 reviews may be less reliable.",
     "warn4": "Items unclaimed for over 24 months may not be refundable.",
-    "empty": "No items match the selected store."
+    "empty": "No items match the selected store.",
+    "emptyAction": "Reset filters",
+    "noResultsTitle": "No results yet",
+    "noResultsDesc": "Try a different phrase, or attach a photo or link.",
+    "noResultsCta": "New search"
   },
   "sort": {
     "tony": "Tony Score",

@@ -31,6 +31,12 @@ const nextConfig = {
       { protocol: 'https', hostname: '**.amazonaws.com' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'cdn.tonyshopping.io' },
+      // Real adapter hosts
+      { protocol: 'https', hostname: 'i.ebayimg.com' },
+      { protocol: 'https', hostname: '**.ebayimg.com' },
+      { protocol: 'https', hostname: 'shopping-phinf.pstatic.net' },
+      { protocol: 'https', hostname: 'shop-phinf.pstatic.net' },
+      { protocol: 'https', hostname: '**.pstatic.net' },
     ],
   },
   async headers() {

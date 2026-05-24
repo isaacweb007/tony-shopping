@@ -9,10 +9,11 @@ const SORT_KEYS: SortKey[] = ['tony', 'price', 'ship', 'review', 'authentic'];
 const STORE_KEYS: StoreFilter[] = [
   'all',
   'Coupang',
+  'NaverShopping',
   'Amazon',
+  'eBay',
   'Shopee',
   'Lazada',
-  'NaverShopping',
   'AliExpress',
 ];
 
@@ -20,6 +21,7 @@ const STORE_LABEL: Record<StoreFilter, string> = {
   all: '',
   Coupang: 'Coupang',
   Amazon: 'Amazon',
+  eBay: 'eBay',
   Shopee: 'Shopee',
   Lazada: 'Lazada',
   NaverShopping: '네이버쇼핑',
