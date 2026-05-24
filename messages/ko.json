@@ -126,6 +126,32 @@
     "support4": "개인정보처리방침",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "dashboard": {
+    "title": "내 대시보드 · Tony Shopping",
+    "heading": "내 쇼핑 대시보드",
+    "subtitle": "토니가 모은 당신의 쇼핑 활동",
+    "loggedInBadge": "기기 간 동기화 중",
+    "anonymousBadge": "이 기기에만 저장됨",
+    "searches": "검색",
+    "shortlist": "비교함",
+    "clicks": "쇼핑몰 클릭",
+    "verdictRate": "토니 1순위 추천 채택률",
+    "byStore": "쇼핑몰 분포",
+    "byTag": "추천 유형 분포",
+    "byCategory": "카테고리 관심도",
+    "emptyChart": "데이터가 쌓이면 여기에 보여드릴게요.",
+    "tag": {
+      "best": "BEST 추천",
+      "cheap": "최저가",
+      "fast": "빠른배송",
+      "genuine": "정품안심",
+      "value": "가성비",
+      "alt": "대체상품",
+      "not": "비추천"
+    },
+    "other": "기타",
+    "menu": "내 대시보드"
+  },
   "auth": {
     "signIn": "로그인",
     "signUp": "회원가입",

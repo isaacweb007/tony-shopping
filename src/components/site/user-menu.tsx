@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useTranslations } from 'next-intl';
-import { LogOut, User as UserIcon } from 'lucide-react';
+import { LayoutDashboard, LogOut, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -17,6 +17,7 @@ import { isSupabaseConfigured } from '@/lib/supabase/config';
 
 export function UserMenu({ compact = false }: { compact?: boolean }) {
   const t = useTranslations('auth');
+  const tDash = useTranslations('dashboard');
   const tHead = useTranslations('header');
   const user = useAuthStore((s) => s.user);
   const router = useRouter();
@@ -57,6 +58,12 @@ export function UserMenu({ compact = false }: { compact?: boolean }) {
           <div className="text-[11px] text-ink-500 dark:text-ink-400">{t('welcome', { name: display.split('@')[0] ?? display })}</div>
           <div className="truncate text-[12.5px] font-semibold">{user.email}</div>
         </div>
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard" className="flex w-full items-center gap-2">
+            <LayoutDashboard className="h-4 w-4" strokeWidth={1.7} />
+            {tDash('menu')}
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem disabled>
           <UserIcon className="h-4 w-4" strokeWidth={1.7} />
           {t('settings')}

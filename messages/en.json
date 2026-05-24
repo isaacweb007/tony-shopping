@@ -126,6 +126,32 @@
     "support4": "Privacy",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "dashboard": {
+    "title": "Dashboard · Tony Shopping",
+    "heading": "Your shopping dashboard",
+    "subtitle": "What Tony has learned about you",
+    "loggedInBadge": "Synced across devices",
+    "anonymousBadge": "On this device only",
+    "searches": "Searches",
+    "shortlist": "Saved to compare",
+    "clicks": "Outbound clicks",
+    "verdictRate": "Verdict pick adoption",
+    "byStore": "Stores you click",
+    "byTag": "Recommendation types",
+    "byCategory": "Category interest",
+    "emptyChart": "Data will appear here as you shop.",
+    "tag": {
+      "best": "BEST pick",
+      "cheap": "Cheapest",
+      "fast": "Fastest",
+      "genuine": "Authentic",
+      "value": "Best value",
+      "alt": "Alternative",
+      "not": "Avoid"
+    },
+    "other": "Other",
+    "menu": "My dashboard"
+  },
   "auth": {
     "signIn": "Sign in",
     "signUp": "Sign up",

@@ -126,6 +126,32 @@
     "support4": "Quyền riêng tư",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "dashboard": {
+    "title": "Bảng điều khiển · Tony Shopping",
+    "heading": "Bảng điều khiển mua sắm",
+    "subtitle": "Những gì Tony học được về bạn",
+    "loggedInBadge": "Đồng bộ trên các thiết bị",
+    "anonymousBadge": "Chỉ trên thiết bị này",
+    "searches": "Lượt tìm",
+    "shortlist": "Đã lưu so sánh",
+    "clicks": "Lượt click",
+    "verdictRate": "Tỷ lệ chấp nhận đề xuất Tony",
+    "byStore": "Cửa hàng bạn click",
+    "byTag": "Loại đề xuất",
+    "byCategory": "Mức quan tâm danh mục",
+    "emptyChart": "Dữ liệu sẽ xuất hiện khi bạn mua sắm.",
+    "tag": {
+      "best": "TỐT NHẤT",
+      "cheap": "RẺ NHẤT",
+      "fast": "NHANH NHẤT",
+      "genuine": "CHÍNH HÃNG",
+      "value": "ĐÁNG GIÁ",
+      "alt": "THAY THẾ",
+      "not": "TRÁNH"
+    },
+    "other": "Khác",
+    "menu": "Bảng điều khiển"
+  },
   "auth": {
     "signIn": "Đăng nhập",
     "signUp": "Đăng ký",
