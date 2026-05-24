@@ -11,6 +11,7 @@ import { HistoryDrawer } from '@/components/site/history-drawer';
 import { ShortlistDrawer } from '@/components/site/shortlist-drawer';
 import { ChatPanel } from '@/components/chat/chat-panel';
 import { JsonLd } from '@/components/site/json-ld';
+import { ToastViewport } from '@/components/ui/toast-viewport';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { routing } from '@/i18n/routing';
@@ -116,6 +117,7 @@ export default async function LocaleLayout({
               <HistoryDrawer />
               <ShortlistDrawer />
               <ChatPanel />
+              <ToastViewport />
               <Analytics />
               <SpeedInsights />
             </QueryProvider>

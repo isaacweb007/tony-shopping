@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { ChevronLeft, AlertCircle } from 'lucide-react';
 import { useRouter } from '@/i18n/routing';
 import { Button } from '@/components/ui/button';
+import { ShareButton } from '@/components/ui/share-button';
 import { useSearchStore } from '@/stores/search-store';
 import { useSearch } from '@/hooks/use-search';
 import { ReportCard } from './report-card';
@@ -20,6 +21,7 @@ export function SearchView() {
   const router = useRouter();
   const params = useSearchParams();
   const t = useTranslations('search');
+  const tShare = useTranslations('share');
 
   const q = params.get('q') ?? '';
   const { data: result, isFetching, isError, refetch } = useSearch(q);
@@ -81,10 +83,19 @@ export function SearchView() {
 
   return (
     <div className="container max-w-7xl pb-32 pt-6 md:pb-20">
-      <Button variant="ghost" size="pill" onClick={() => router.push('/')} className="pl-2">
-        <ChevronLeft className="h-4 w-4" strokeWidth={1.8} />
-        {t('back')}
-      </Button>
+      <div className="flex items-center justify-between gap-2">
+        <Button variant="ghost" size="pill" onClick={() => router.push('/')} className="pl-2">
+          <ChevronLeft className="h-4 w-4" strokeWidth={1.8} />
+          {t('back')}
+        </Button>
+        <ShareButton
+          title={tShare('titleSearch')}
+          text={q}
+          url={typeof window === 'undefined' ? '' : window.location.href}
+          size="sm"
+          variant="outline"
+        />
+      </div>
 
       <div className="mt-4 flex items-start gap-3">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-ink-900 text-sm font-bold text-white dark:bg-white dark:text-ink-900">

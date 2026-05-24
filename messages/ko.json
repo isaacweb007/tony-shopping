@@ -193,6 +193,25 @@
     "clearAll": "모두 지우기",
     "close": "닫기"
   },
+  "toast": {
+    "shortlistAdded": "비교함에 담았어요",
+    "shortlistRemoved": "비교함에서 제거했어요",
+    "linkCopied": "링크가 복사됐어요",
+    "shareFailed": "공유에 실패했어요",
+    "searchFailed": "검색 중 문제가 발생했어요",
+    "voicePermissionTitle": "마이크 권한이 필요해요",
+    "voicePermissionDesc": "브라우저 주소창에서 마이크 권한을 허용해주세요.",
+    "voiceUnsupported": "음성 인식이 지원되지 않는 브라우저예요",
+    "ttsUnsupported": "음성 재생이 지원되지 않는 브라우저예요",
+    "voiceCaptured": "들었어요. 토니가 검색해드릴게요."
+  },
+  "share": {
+    "button": "공유",
+    "copy": "링크 복사",
+    "titleSearch": "토니쇼핑 검색 결과",
+    "titleProduct": "토니쇼핑 추천 상품",
+    "fallbackTitle": "공유"
+  },
   "voice": {
     "startListening": "음성으로 검색",
     "stopListening": "음성 입력 중지",

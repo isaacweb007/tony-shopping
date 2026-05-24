@@ -193,6 +193,25 @@
     "clearAll": "Xoá tất cả",
     "close": "Đóng"
   },
+  "toast": {
+    "shortlistAdded": "Đã thêm vào so sánh",
+    "shortlistRemoved": "Đã xoá khỏi so sánh",
+    "linkCopied": "Đã sao chép liên kết",
+    "shareFailed": "Không thể chia sẻ",
+    "searchFailed": "Tìm kiếm thất bại",
+    "voicePermissionTitle": "Cần quyền microphone",
+    "voicePermissionDesc": "Hãy cấp quyền từ thanh địa chỉ trình duyệt.",
+    "voiceUnsupported": "Trình duyệt không hỗ trợ nhập giọng nói",
+    "ttsUnsupported": "Trình duyệt không hỗ trợ phát giọng nói",
+    "voiceCaptured": "Đã nghe — Tony đang tìm."
+  },
+  "share": {
+    "button": "Chia sẻ",
+    "copy": "Sao chép liên kết",
+    "titleSearch": "Kết quả Tony Shopping",
+    "titleProduct": "Đề xuất Tony Shopping",
+    "fallbackTitle": "Chia sẻ"
+  },
   "voice": {
     "startListening": "Tìm bằng giọng nói",
     "stopListening": "Dừng nhập giọng nói",

@@ -23,6 +23,7 @@ import { nanoid } from 'nanoid';
 import type { SearchAttachment } from '@/types/search';
 import { useSpeechRecognition } from '@/hooks/use-speech-recognition';
 import { MicButton } from '@/components/voice/mic-button';
+import { toast } from '@/stores/toast-store';
 
 const PROMPT_ICONS = [ImageIcon, Footprints, Lightbulb, DollarSign, Gift];
 
@@ -30,6 +31,7 @@ export function AskBox() {
   const t = useTranslations('ask');
   const tp = useTranslations('prompts');
   const tv = useTranslations('voice');
+  const tg = useTranslations();
   const locale = useLocale() as AppLocale;
   const router = useRouter();
   const addHistory = useHistoryStore((s) => s.add);
@@ -48,7 +50,46 @@ export function AskBox() {
     }
   }, [speech.listening, speech.transcript]);
 
+  // When the user stops speaking and we have a final transcript, auto-submit.
+  const lastSubmittedRef = React.useRef('');
+  React.useEffect(() => {
+    if (
+      !speech.listening &&
+      speech.finalTranscript.trim() &&
+      speech.finalTranscript !== lastSubmittedRef.current
+    ) {
+      lastSubmittedRef.current = speech.finalTranscript;
+      toast.success(tv('listening'), tg('toast.voiceCaptured'));
+      setText(speech.finalTranscript);
+      // Defer to next tick so the React state settles before navigation.
+      setTimeout(() => submit(speech.finalTranscript), 50);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [speech.listening, speech.finalTranscript]);
+
+  // Surface voice errors as toasts.
+  React.useEffect(() => {
+    if (!speech.error) return;
+    if (speech.error === 'permission-denied') {
+      toast.warning(tg('toast.voicePermissionTitle'), tg('toast.voicePermissionDesc'));
+    } else if (speech.error === 'unsupported') {
+      toast.warning(tg('toast.voiceUnsupported'));
+    } else if (speech.error === 'no-speech') {
+      // Subtle: keep it quiet, info-level.
+      toast.info(tv('error.noSpeech'));
+    } else if (speech.error === 'network') {
+      toast.error(tv('error.network'));
+    } else {
+      toast.error(tv('error.unknown'));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [speech.error]);
+
   function toggleMic() {
+    if (!speech.supported) {
+      toast.warning(tg('toast.voiceUnsupported'));
+      return;
+    }
     if (speech.listening) speech.stop();
     else speech.start();
   }
@@ -101,8 +142,8 @@ export function AskBox() {
     setAttachments((prev) => prev.filter((_, idx) => idx !== i));
   }
 
-  function submit() {
-    const q = text.trim() || (attachments.length ? '(attachments)' : '');
+  function submit(override?: string) {
+    const q = (override ?? text).trim() || (attachments.length ? '(attachments)' : '');
     if (!q) {
       textareaRef.current?.focus();
       return;
@@ -233,7 +274,7 @@ export function AskBox() {
               {t('typeText')}
             </Button>
           </div>
-          <Button variant="primary" size="pillLg" onClick={submit} className="font-bold">
+          <Button variant="primary" size="pillLg" onClick={() => submit()} className="font-bold">
             <span>{t('submit')}</span>
             <ArrowRight className="h-4 w-4" strokeWidth={2.2} />
           </Button>

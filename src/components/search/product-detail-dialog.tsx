@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { ShareButton } from '@/components/ui/share-button';
 import { useShortlistStore } from '@/stores/shortlist-store';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
 import type { AppLocale } from '@/i18n/routing';
@@ -24,6 +25,7 @@ export function ProductDetailDialog({ product, onOpenChange }: Props) {
   const td = useTranslations('detail');
   const tc = useTranslations('card');
   const tg = useTranslations();
+  const tShare = useTranslations('share');
   const locale = useLocale() as AppLocale;
   const inShortlist = useShortlistStore((s) => (product ? s.ids.includes(product.id) : false));
   const toggle = useShortlistStore((s) => s.toggle);
@@ -112,7 +114,7 @@ export function ProductDetailDialog({ product, onOpenChange }: Props) {
               </div>
             </div>
 
-            <div className="mt-auto grid grid-cols-2 gap-2 pt-5">
+            <div className="mt-auto grid grid-cols-[1fr_1fr_auto] gap-2 pt-5">
               <Button variant="outline" className="h-11 rounded-xl" onClick={() => toggle(product.id)}>
                 {inShortlist ? td('removeCompare') : td('addCompare')}
               </Button>
@@ -121,6 +123,13 @@ export function ProductDetailDialog({ product, onOpenChange }: Props) {
                   {td('buyAt', { store: product.store })}
                 </a>
               </Button>
+              <ShareButton
+                title={tShare('titleProduct')}
+                text={product.name}
+                url={typeof window === 'undefined' ? '' : window.location.href}
+                iconOnly
+                variant="outline"
+              />
             </div>
           </div>
         </div>

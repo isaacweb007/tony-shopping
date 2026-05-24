@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Bookmark, Star } from 'lucide-react';
 import type { Product } from '@/types/product';
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { TagBadge } from './tag-badge';
 import { TonyBar } from './tony-bar';
 import { useShortlistStore } from '@/stores/shortlist-store';
+import { toast } from '@/stores/toast-store';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
 import type { AppLocale } from '@/i18n/routing';
 
@@ -22,7 +24,19 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
   const locale = useLocale() as AppLocale;
   const t = useTranslations();
   const inShortlist = useShortlistStore((s) => s.ids.includes(product.id));
-  const toggle = useShortlistStore((s) => s.toggle);
+  const toggleRaw = useShortlistStore((s) => s.toggle);
+
+  const toggle = React.useCallback(
+    (id: string) => {
+      const willAdd = !inShortlist;
+      toggleRaw(id);
+      toast.success(
+        willAdd ? t('toast.shortlistAdded') : t('toast.shortlistRemoved'),
+        product.name,
+      );
+    },
+    [inShortlist, toggleRaw, t, product.name],
+  );
 
   const isFeature = variant === 'feature';
 

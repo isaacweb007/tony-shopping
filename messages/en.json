@@ -193,6 +193,25 @@
     "clearAll": "Clear all",
     "close": "Close"
   },
+  "toast": {
+    "shortlistAdded": "Added to compare",
+    "shortlistRemoved": "Removed from compare",
+    "linkCopied": "Link copied",
+    "shareFailed": "Couldn't share",
+    "searchFailed": "Search failed",
+    "voicePermissionTitle": "Microphone permission needed",
+    "voicePermissionDesc": "Allow microphone access from the browser address bar.",
+    "voiceUnsupported": "Voice input isn't supported in this browser",
+    "ttsUnsupported": "Speech playback isn't supported in this browser",
+    "voiceCaptured": "Got it — Tony is searching."
+  },
+  "share": {
+    "button": "Share",
+    "copy": "Copy link",
+    "titleSearch": "Tony Shopping search",
+    "titleProduct": "Tony Shopping pick",
+    "fallbackTitle": "Share"
+  },
   "voice": {
     "startListening": "Voice search",
     "stopListening": "Stop voice input",
