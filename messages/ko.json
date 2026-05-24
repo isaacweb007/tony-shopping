@@ -1,0 +1,219 @@
+{
+  "meta": {
+    "title": "토니쇼핑 — AI 메타쇼핑 에이전트",
+    "description": "사진 한 장이면 전 세계 쇼핑몰을 토니가 비교해드립니다. 가격·배송·리뷰·정품 가능성까지 AI가 분석합니다."
+  },
+  "header": {
+    "tagline": "AI 메타쇼핑 에이전트",
+    "history": "최근 검색",
+    "shortlist": "비교함",
+    "login": "로그인",
+    "theme": "테마",
+    "menu": "메뉴",
+    "language": "언어"
+  },
+  "hero": {
+    "eyebrow": "Amazon · Coupang · Shopee · Lazada · 네이버 · TikTok Shop 동시 비교",
+    "title1": "상품명을 몰라도 괜찮아요.",
+    "title2": "사진 한 장이면, 토니가 찾아드립니다.",
+    "subtitle": "SNS 링크, 상품 사진, 자연어 한 줄이면 됩니다. 토니가 여러 쇼핑몰을 비교해 가격·배송·리뷰·정품 가능성까지 분석하고 가장 합리적인 선택을 추천합니다."
+  },
+  "ask": {
+    "placeholder": "SNS 링크를 붙여넣거나 상품 사진을 업로드하세요. 예) 이 인스타 사진 속 가방, 한국에서 10만원 이하로",
+    "uploadPhoto": "사진",
+    "pasteLink": "링크",
+    "typeText": "자연어",
+    "submit": "토니에게 물어보기",
+    "linkPrompt": "SNS 또는 쇼핑몰 링크를 붙여넣으세요"
+  },
+  "prompts": {
+    "p1": "이 인스타 사진 속 가방 찾아줘",
+    "p2": "이 신발과 비슷한 제품을 10만원 이하로",
+    "p3": "베트남에서 살 수 있는 무드 조명 찾아줘",
+    "p4": "쿠팡보다 더 싼 곳 찾아줘",
+    "p5": "선물용으로 괜찮은 거 추천해줘"
+  },
+  "features": {
+    "f1": {
+      "title": "사진으로 검색",
+      "desc": "이미지 한 장만 올리면 AI가 상품을 인식하고 유사 상품을 자동으로 찾아드립니다."
+    },
+    "f2": {
+      "title": "SNS 링크 분석",
+      "desc": "인스타, 틱톡, 유튜브 쇼츠에서 본 그 상품. 링크만 붙여넣으세요."
+    },
+    "f3": {
+      "title": "전 세계 쇼핑몰 비교",
+      "desc": "Amazon, Coupang, Shopee, Lazada, 네이버까지 동시에 비교합니다."
+    },
+    "f4": {
+      "title": "Tony Score",
+      "desc": "가격·리뷰·신뢰도·배송을 종합한 100점 만점 AI 구매 판단 점수."
+    }
+  },
+  "howto": {
+    "eyebrow": "How it works",
+    "title": "검색은 토니가, 선택은 더 똑똑하게.",
+    "step1": {
+      "label": "01 · INPUT",
+      "title": "유저가 입력",
+      "desc": "SNS 링크, 상품 사진, 쇼핑몰 URL, 또는 자연어 한 줄."
+    },
+    "step2": {
+      "label": "02 · ANALYZE",
+      "title": "토니가 분석",
+      "desc": "브랜드·색상·디자인·카테고리·가격대를 추정하고 유사 상품 후보를 추출."
+    },
+    "step3": {
+      "label": "03 · ADVISE",
+      "title": "구매 조언",
+      "desc": "BEST · 최저가 · 빠른배송 · 정품안심 · 가성비로 분류해 추천."
+    }
+  },
+  "footer": {
+    "tagline": "AI가 찾고, 비교하고, 추천하는 메타쇼핑 플랫폼. 쇼핑몰을 돌아다니지 마세요. 토니에게 맡기세요.",
+    "service": "서비스",
+    "service1": "AI 상품 검색",
+    "service2": "가격 비교",
+    "service3": "구매 상담",
+    "service4": "Tony Score",
+    "support": "고객 지원",
+    "support1": "도움말 센터",
+    "support2": "제휴 문의",
+    "support3": "이용약관",
+    "support4": "개인정보처리방침",
+    "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
+  },
+  "search": {
+    "title": "검색 결과 · Tony Shopping",
+    "back": "새 검색",
+    "yourRequest": "당신의 요청",
+    "noQuery": "검색어가 없습니다. 첫 화면에서 다시 시작해주세요.",
+    "report": "토니 AI 리포트",
+    "reportTpl": "총 {total}개 상품을 찾았습니다. 동일 상품 가능성이 높은 상품 {high}개, 유사 상품 {sim}개입니다. 한국 배송 기준으로는 {fastestStore} 상품이 가장 빠르고 ({fastestEta}), 가격 기준으로는 {cheapestStore} 상품이 가장 저렴합니다 ({cheapestPrice}). 리뷰 신뢰도까지 고려하면 {bestStore}의 {bestName}을 추천합니다.",
+    "avgScore": "Tony Score 평균 {n}",
+    "avgAuth": "정품 가능성 평균 {n}%",
+    "minPriceFastEta": "최저 {price} · 최단 {eta}",
+    "top3": "추천 상품 TOP 3",
+    "top3Sub": "토니가 선별한 가장 합리적인 선택",
+    "byScore": "Tony Score 기준",
+    "all": "전체 상품 비교",
+    "allSub": "필터로 빠르게 좁혀보세요",
+    "alt": "대체상품 추천",
+    "altSub": "원본과 유사하지만 더 합리적인 선택지",
+    "warnTitle": "구매 전 주의사항",
+    "warn1": "가격이 비정상적으로 낮은 상품은 정품 가능성 또는 배송에 주의가 필요할 수 있습니다.",
+    "warn2": "해외직구 상품은 관세·배송 지연 가능성이 있으니 최종 결제가를 확인하세요.",
+    "warn3": "리뷰가 100개 미만인 신규 판매자는 신뢰도가 낮을 수 있습니다.",
+    "warn4": "24개월 이상 미수령 시 환불·교환이 어려울 수 있으니 빠른 결정을 권장합니다.",
+    "empty": "선택한 쇼핑몰에 해당하는 상품이 없습니다."
+  },
+  "sort": {
+    "tony": "토니 스코어순",
+    "price": "가격 낮은순",
+    "ship": "배송 빠른순",
+    "review": "리뷰 많은순",
+    "authentic": "정품 가능성"
+  },
+  "store": { "all": "전체" },
+  "ship": {
+    "today": "오늘 도착",
+    "tomorrow": "내일 도착",
+    "days": "{d}일 이내"
+  },
+  "tags": {
+    "best": "BEST 추천",
+    "cheap": "최저가",
+    "fast": "빠른배송",
+    "genuine": "정품안심",
+    "value": "가성비",
+    "alt": "대체상품",
+    "not": "비추천"
+  },
+  "card": {
+    "official": "공식",
+    "similarity": "유사도",
+    "reviews": "리뷰",
+    "score": "Tony Score",
+    "incShip": "배송비 포함",
+    "authentic": "정품",
+    "viewReport": "AI 분석 보기",
+    "buyNow": "구매하러 가기",
+    "report": "AI 분석",
+    "buy": "구매"
+  },
+  "detail": {
+    "title": "상품 상세",
+    "buyAt": "{store}에서 구매하기",
+    "addCompare": "비교함에 담기",
+    "removeCompare": "비교함에서 제거",
+    "shippingEta": "예상 배송",
+    "reviews": "리뷰",
+    "authentic": "정품 가능성",
+    "productPrice": "상품가",
+    "shipFee": "배송비",
+    "shipFree": "무료",
+    "reportTitle": "토니의 AI 구매 리포트",
+    "kSim": "상품 유사도",
+    "kPrice": "가격 경쟁력",
+    "kReview": "리뷰 신뢰도",
+    "kAuth": "정품 가능성",
+    "verdictGood": "매우 합리적인 선택",
+    "verdictOk": "무난한 선택",
+    "verdictWeak": "보완이 필요한 선택"
+  },
+  "chat": {
+    "fabLong": "토니에게 더 물어보기",
+    "fabShort": "토니",
+    "title": "Tony · AI 쇼핑 비서",
+    "online": "온라인",
+    "placeholder": "토니에게 다시 물어보세요…",
+    "send": "전송",
+    "greet": "안녕하세요, 토니예요. 결과가 마음에 들지 않거나 더 좁히고 싶으면 자유롭게 물어보세요. 가격·색상·국가·배송 기준으로 다시 추천해드릴 수 있어요.",
+    "quick": {
+      "cheaper": "더 싼 거 찾아줘",
+      "genuine": "정품 가능성 높은 것만",
+      "fast": "배송 빠른순",
+      "review": "리뷰 많은 거"
+    },
+    "intent": {
+      "cheap": "가격 낮은 순으로 정렬했어요. 배송비 포함 {min}부터 시작합니다.",
+      "fast": "배송 빠른 순으로 정렬했어요. 가장 빠른 옵션은 {eta}입니다.",
+      "authentic": "정품 가능성이 높은 상품부터 정렬했어요. 공식몰 위주로 보여드릴게요.",
+      "review": "리뷰 많은 순으로 정렬했어요. 가장 많은 상품은 {n}개의 리뷰가 있어요.",
+      "vn": "베트남에서 구매 가능한 상품으로 좁혔어요. Shopee·Lazada 위주 결과입니다.",
+      "fallback": "좀 더 구체적으로 알려주세요. 예: \"검정색으로 10만원 이하\", \"한국에서 빠르게\", \"리뷰 많은 거\"."
+    }
+  },
+  "drawer": {
+    "historyEmpty": "아직 검색 기록이 없습니다.",
+    "shortlistEmpty": "아직 비교함이 비어 있습니다.",
+    "shortlistHint": "상품 카드의 북마크 아이콘으로 담아보세요.",
+    "remove": "제거",
+    "clearAll": "모두 지우기",
+    "close": "닫기"
+  },
+  "voice": {
+    "startListening": "음성으로 검색",
+    "stopListening": "음성 입력 중지",
+    "listening": "듣고 있어요…",
+    "speak": "음성으로 듣기",
+    "stopSpeaking": "재생 중지",
+    "error": {
+      "unsupported": "이 브라우저는 음성 인식을 지원하지 않아요. (Chrome, Safari, Edge에서 사용해주세요)",
+      "permission": "마이크 권한이 필요해요. 브라우저 주소창에서 권한을 허용해주세요.",
+      "noSpeech": "음성이 감지되지 않았어요. 다시 시도해주세요.",
+      "network": "네트워크 문제로 음성 인식이 중단됐어요.",
+      "unknown": "음성 인식 중 문제가 발생했어요. 다시 시도해주세요."
+    }
+  },
+  "boundary": {
+    "notFoundTitle": "찾을 수 없는 페이지",
+    "notFoundDesc": "주소를 다시 확인해주세요. 토니 메인으로 돌아가시겠어요?",
+    "goHome": "메인으로",
+    "errorTitle": "잠시 문제가 발생했어요",
+    "errorDesc": "토니가 잠깐 길을 잃었어요. 다시 시도하거나 메인으로 돌아가세요.",
+    "retry": "다시 시도",
+    "loading": "토니가 결과를 정리하고 있어요…"
+  }
+}

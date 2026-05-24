@@ -1,0 +1,219 @@
+{
+  "meta": {
+    "title": "Tony Shopping — Trợ lý Mua sắm AI Meta",
+    "description": "Một tấm ảnh — Tony so sánh các cửa hàng toàn cầu về giá, vận chuyển, đánh giá và độ chính hãng, rồi đề xuất lựa chọn hợp lý nhất."
+  },
+  "header": {
+    "tagline": "Trợ lý Mua sắm AI Meta",
+    "history": "Lịch sử",
+    "shortlist": "So sánh",
+    "login": "Đăng nhập",
+    "theme": "Giao diện",
+    "menu": "Menu",
+    "language": "Ngôn ngữ"
+  },
+  "hero": {
+    "eyebrow": "So sánh Amazon · Coupang · Shopee · Lazada · Naver · TikTok Shop cùng lúc",
+    "title1": "Không cần biết tên sản phẩm.",
+    "title2": "Một tấm ảnh — Tony tìm giúp bạn.",
+    "subtitle": "Dán link mạng xã hội, ảnh sản phẩm, hoặc chỉ một câu. Tony so sánh các cửa hàng toàn cầu về giá, vận chuyển, đánh giá và độ chính hãng — rồi đề xuất lựa chọn hợp lý nhất."
+  },
+  "ask": {
+    "placeholder": "Dán link mạng xã hội hoặc tải ảnh sản phẩm. Vd: chiếc túi trong bài Instagram này, dưới 2 triệu",
+    "uploadPhoto": "Ảnh",
+    "pasteLink": "Link",
+    "typeText": "Văn bản",
+    "submit": "Hỏi Tony",
+    "linkPrompt": "Dán link mạng xã hội hoặc cửa hàng"
+  },
+  "prompts": {
+    "p1": "Tìm chiếc túi trong bài Instagram này",
+    "p2": "Tìm giày tương tự, dưới 2 triệu",
+    "p3": "Tìm đèn mood mua được ở Việt Nam",
+    "p4": "Tìm nơi rẻ hơn Coupang",
+    "p5": "Gợi ý quà tặng phù hợp"
+  },
+  "features": {
+    "f1": {
+      "title": "Tìm bằng ảnh",
+      "desc": "Tải lên một ảnh, AI sẽ nhận diện sản phẩm và tìm các mẫu tương tự."
+    },
+    "f2": {
+      "title": "Phân tích link MXH",
+      "desc": "Sản phẩm bạn thấy trên Instagram, TikTok hay YouTube Shorts — chỉ cần dán link."
+    },
+    "f3": {
+      "title": "So giá toàn cầu",
+      "desc": "So sánh đồng thời Amazon, Coupang, Shopee, Lazada, Naver và nhiều hơn."
+    },
+    "f4": {
+      "title": "Tony Score",
+      "desc": "Điểm AI 100 tổng hợp giá, đánh giá, độ tin cậy và vận chuyển."
+    }
+  },
+  "howto": {
+    "eyebrow": "Cách hoạt động",
+    "title": "Tìm kiếm để Tony lo, lựa chọn thì thông minh hơn.",
+    "step1": {
+      "label": "01 · NHẬP",
+      "title": "Bạn nhập",
+      "desc": "Link MXH, ảnh sản phẩm, URL cửa hàng hoặc một câu mô tả."
+    },
+    "step2": {
+      "label": "02 · PHÂN TÍCH",
+      "title": "Tony phân tích",
+      "desc": "Thương hiệu, màu sắc, thiết kế, danh mục và khoảng giá — rồi đưa ra ứng viên."
+    },
+    "step3": {
+      "label": "03 · GỢI Ý",
+      "title": "Bạn quyết định",
+      "desc": "Đề xuất chia thành Best, Rẻ nhất, Nhanh nhất, Chính hãng, Đáng giá nhất."
+    }
+  },
+  "footer": {
+    "tagline": "Nền tảng meta shopping nơi AI tìm, so sánh và gợi ý. Đừng chạy giữa các cửa hàng — để Tony lo.",
+    "service": "Dịch vụ",
+    "service1": "Tìm sản phẩm AI",
+    "service2": "So giá",
+    "service3": "Tư vấn mua hàng",
+    "service4": "Tony Score",
+    "support": "Hỗ trợ",
+    "support1": "Trung tâm hỗ trợ",
+    "support2": "Đối tác",
+    "support3": "Điều khoản",
+    "support4": "Quyền riêng tư",
+    "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
+  },
+  "search": {
+    "title": "Kết quả · Tony Shopping",
+    "back": "Tìm mới",
+    "yourRequest": "Yêu cầu của bạn",
+    "noQuery": "Chưa có yêu cầu. Hãy bắt đầu từ trang chủ.",
+    "report": "Báo cáo Tony AI",
+    "reportTpl": "Tìm thấy {total} kết quả — {high} rất giống và {sim} tương tự. Nhanh nhất tại Hàn là {fastestStore} ({fastestEta}); rẻ nhất là {cheapestStore} với {cheapestPrice}. Xét độ tin cậy đánh giá, tôi đề xuất {bestStore} — {bestName}.",
+    "avgScore": "Tony Score TB {n}",
+    "avgAuth": "Chính hãng TB {n}%",
+    "minPriceFastEta": "Từ {price} · sớm nhất {eta}",
+    "top3": "Top 3 đề xuất",
+    "top3Sub": "Lựa chọn hợp lý nhất theo Tony",
+    "byScore": "Theo Tony Score",
+    "all": "Tất cả kết quả",
+    "allSub": "Thu hẹp bằng bộ lọc",
+    "alt": "Sản phẩm thay thế",
+    "altSub": "Tương tự nhưng hợp lý hơn",
+    "warnTitle": "Trước khi mua",
+    "warn1": "Giá thấp bất thường có thể tiềm ẩn rủi ro chính hãng hoặc vận chuyển.",
+    "warn2": "Hàng quốc tế có thể chịu thuế và chậm giao — kiểm tra giá cuối cùng.",
+    "warn3": "Người bán mới với dưới 100 đánh giá có thể kém tin cậy.",
+    "warn4": "Hàng chưa nhận sau 24 tháng có thể không được hoàn tiền.",
+    "empty": "Không có sản phẩm trùng cửa hàng đã chọn."
+  },
+  "sort": {
+    "tony": "Theo Tony Score",
+    "price": "Giá thấp nhất",
+    "ship": "Giao nhanh nhất",
+    "review": "Nhiều đánh giá",
+    "authentic": "Chính hãng nhất"
+  },
+  "store": { "all": "Tất cả" },
+  "ship": {
+    "today": "Hôm nay",
+    "tomorrow": "Ngày mai",
+    "days": "trong {d} ngày"
+  },
+  "tags": {
+    "best": "TỐT NHẤT",
+    "cheap": "RẺ NHẤT",
+    "fast": "NHANH NHẤT",
+    "genuine": "CHÍNH HÃNG",
+    "value": "ĐÁNG GIÁ",
+    "alt": "THAY THẾ",
+    "not": "TRÁNH"
+  },
+  "card": {
+    "official": "CHÍNH HÃNG",
+    "similarity": "tương tự",
+    "reviews": "đánh giá",
+    "score": "Tony Score",
+    "incShip": "gồm phí ship",
+    "authentic": "Chính hãng",
+    "viewReport": "Xem báo cáo AI",
+    "buyNow": "Đến cửa hàng",
+    "report": "Báo cáo AI",
+    "buy": "Mua"
+  },
+  "detail": {
+    "title": "Chi tiết sản phẩm",
+    "buyAt": "Mua tại {store}",
+    "addCompare": "Thêm vào so sánh",
+    "removeCompare": "Bỏ khỏi so sánh",
+    "shippingEta": "Vận chuyển",
+    "reviews": "Đánh giá",
+    "authentic": "Chính hãng",
+    "productPrice": "Hàng",
+    "shipFee": "Phí ship",
+    "shipFree": "miễn phí",
+    "reportTitle": "Báo cáo mua hàng AI của Tony",
+    "kSim": "Độ tương tự",
+    "kPrice": "Lợi thế giá",
+    "kReview": "Tin cậy đánh giá",
+    "kAuth": "Chính hãng",
+    "verdictGood": "lựa chọn rất hợp lý",
+    "verdictOk": "lựa chọn ổn",
+    "verdictWeak": "cần cân nhắc"
+  },
+  "chat": {
+    "fabLong": "Hỏi Tony thêm",
+    "fabShort": "Tony",
+    "title": "Tony · Trợ lý mua sắm AI",
+    "online": "Trực tuyến",
+    "placeholder": "Hỏi Tony bất cứ điều gì…",
+    "send": "Gửi",
+    "greet": "Chào bạn, mình là Tony. Nếu kết quả chưa vừa ý hoặc bạn muốn thu hẹp, cứ hỏi — theo giá, màu, quốc gia, hay vận chuyển.",
+    "quick": {
+      "cheaper": "Rẻ hơn nữa",
+      "genuine": "Chỉ chính hãng",
+      "fast": "Giao nhanh nhất",
+      "review": "Nhiều đánh giá nhất"
+    },
+    "intent": {
+      "cheap": "Đã sắp theo giá thấp nhất, từ {min} gồm phí ship.",
+      "fast": "Đã sắp theo giao nhanh nhất, sớm nhất là {eta}.",
+      "authentic": "Ưu tiên các sản phẩm chính hãng nhất.",
+      "review": "Đã sắp theo nhiều đánh giá nhất. Sản phẩm cao nhất có {n} đánh giá.",
+      "vn": "Đã lọc sản phẩm mua được tại Việt Nam — chủ yếu Shopee, Lazada.",
+      "fallback": "Bạn nói cụ thể hơn nhé. Vd: \"dưới 2 triệu màu đen\", \"giao nhanh ở Hàn\", \"nhiều đánh giá nhất\"."
+    }
+  },
+  "drawer": {
+    "historyEmpty": "Chưa có lịch sử tìm kiếm.",
+    "shortlistEmpty": "Danh sách so sánh trống.",
+    "shortlistHint": "Bấm icon bookmark trên thẻ để thêm.",
+    "remove": "Xoá",
+    "clearAll": "Xoá tất cả",
+    "close": "Đóng"
+  },
+  "voice": {
+    "startListening": "Tìm bằng giọng nói",
+    "stopListening": "Dừng nhập giọng nói",
+    "listening": "Đang nghe…",
+    "speak": "Đọc to",
+    "stopSpeaking": "Dừng phát",
+    "error": {
+      "unsupported": "Trình duyệt này không hỗ trợ nhập giọng nói. Hãy dùng Chrome, Safari hoặc Edge.",
+      "permission": "Cần quyền microphone. Hãy cấp quyền từ thanh địa chỉ.",
+      "noSpeech": "Không nghe thấy gì. Vui lòng thử lại.",
+      "network": "Nhận diện giọng nói bị dừng do sự cố mạng.",
+      "unknown": "Có lỗi trong quá trình nhập giọng nói. Vui lòng thử lại."
+    }
+  },
+  "boundary": {
+    "notFoundTitle": "Không tìm thấy trang",
+    "notFoundDesc": "Vui lòng kiểm tra URL. Bạn có muốn quay về trang chính của Tony?",
+    "goHome": "Về trang chính",
+    "errorTitle": "Có vấn đề nhỏ rồi",
+    "errorDesc": "Tony lạc đường một chút. Hãy thử lại hoặc quay về trang chính.",
+    "retry": "Thử lại",
+    "loading": "Tony đang tổng hợp kết quả…"
+  }
+}

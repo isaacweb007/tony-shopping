@@ -1,0 +1,219 @@
+{
+  "meta": {
+    "title": "Tony Shopping — AI Meta Shopping Agent",
+    "description": "One photo. Tony compares stores worldwide on price, shipping, reviews and authenticity — and recommends the smartest pick."
+  },
+  "header": {
+    "tagline": "AI Meta Shopping Agent",
+    "history": "History",
+    "shortlist": "Compare",
+    "login": "Sign in",
+    "theme": "Theme",
+    "menu": "Menu",
+    "language": "Language"
+  },
+  "hero": {
+    "eyebrow": "Compare Amazon · Coupang · Shopee · Lazada · Naver · TikTok Shop at once",
+    "title1": "You don't need to know the name.",
+    "title2": "One photo. Tony finds it for you.",
+    "subtitle": "Drop a social link, a product photo, or a single sentence. Tony compares stores worldwide on price, shipping, reviews and authenticity — and recommends the smartest pick."
+  },
+  "ask": {
+    "placeholder": "Paste a social link or upload a product photo. e.g., the bag from this Instagram post, under $80 in Korea",
+    "uploadPhoto": "Photo",
+    "pasteLink": "Link",
+    "typeText": "Text",
+    "submit": "Ask Tony",
+    "linkPrompt": "Paste a social or shop link"
+  },
+  "prompts": {
+    "p1": "Find this bag from an Instagram post",
+    "p2": "Find sneakers like these, under $80",
+    "p3": "Find this mood lamp available in Vietnam",
+    "p4": "Find a place cheaper than Coupang",
+    "p5": "Recommend something good as a gift"
+  },
+  "features": {
+    "f1": {
+      "title": "Visual search",
+      "desc": "Upload an image and AI recognizes the product, then finds lookalikes for you."
+    },
+    "f2": {
+      "title": "Social link analysis",
+      "desc": "That product you spotted on Instagram, TikTok or YouTube Shorts — just paste the link."
+    },
+    "f3": {
+      "title": "Global price compare",
+      "desc": "Side-by-side from Amazon, Coupang, Shopee, Lazada, Naver and more."
+    },
+    "f4": {
+      "title": "Tony Score",
+      "desc": "A 100-point AI buying score combining price, reviews, trust and shipping."
+    }
+  },
+  "howto": {
+    "eyebrow": "How it works",
+    "title": "Searching is Tony's job. Choosing gets smarter.",
+    "step1": {
+      "label": "01 · INPUT",
+      "title": "You input",
+      "desc": "A social link, a product photo, a store URL, or one sentence."
+    },
+    "step2": {
+      "label": "02 · ANALYZE",
+      "title": "Tony analyzes",
+      "desc": "Brand, color, design, category and price range — then candidate matches."
+    },
+    "step3": {
+      "label": "03 · ADVISE",
+      "title": "You decide",
+      "desc": "Recommendations split by Best, Cheapest, Fastest, Genuine and Best Value."
+    }
+  },
+  "footer": {
+    "tagline": "A meta shopping platform where AI searches, compares and recommends. Stop hopping between stores. Let Tony handle it.",
+    "service": "Service",
+    "service1": "AI product search",
+    "service2": "Price compare",
+    "service3": "Buying advice",
+    "service4": "Tony Score",
+    "support": "Support",
+    "support1": "Help center",
+    "support2": "Partnerships",
+    "support3": "Terms",
+    "support4": "Privacy",
+    "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
+  },
+  "search": {
+    "title": "Search · Tony Shopping",
+    "back": "New search",
+    "yourRequest": "Your request",
+    "noQuery": "No query yet. Start from the home page.",
+    "report": "Tony AI Report",
+    "reportTpl": "Found {total} matches — {high} highly similar and {sim} similar. Fastest in Korea is {fastestStore} ({fastestEta}); the lowest final price is from {cheapestStore} at {cheapestPrice}. Considering review trust, I recommend {bestStore} — {bestName}.",
+    "avgScore": "Avg Tony Score {n}",
+    "avgAuth": "Avg authenticity {n}%",
+    "minPriceFastEta": "From {price} · as fast as {eta}",
+    "top3": "Top 3 picks",
+    "top3Sub": "Tony's smartest recommendations",
+    "byScore": "By Tony Score",
+    "all": "All matches",
+    "allSub": "Narrow it down with filters",
+    "alt": "Alternatives",
+    "altSub": "Similar but more reasonable choices",
+    "warnTitle": "Before you buy",
+    "warn1": "Suspiciously low prices may indicate authenticity or shipping risks.",
+    "warn2": "Overseas items may incur customs and delivery delays — verify final price.",
+    "warn3": "New sellers with fewer than 100 reviews may be less reliable.",
+    "warn4": "Items unclaimed for over 24 months may not be refundable.",
+    "empty": "No items match the selected store."
+  },
+  "sort": {
+    "tony": "Tony Score",
+    "price": "Lowest price",
+    "ship": "Fastest shipping",
+    "review": "Most reviews",
+    "authentic": "Most authentic"
+  },
+  "store": { "all": "All" },
+  "ship": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "days": "in {d} days"
+  },
+  "tags": {
+    "best": "BEST PICK",
+    "cheap": "CHEAPEST",
+    "fast": "FASTEST",
+    "genuine": "AUTHENTIC",
+    "value": "VALUE",
+    "alt": "ALTERNATIVE",
+    "not": "AVOID"
+  },
+  "card": {
+    "official": "OFFICIAL",
+    "similarity": "similar",
+    "reviews": "reviews",
+    "score": "Tony Score",
+    "incShip": "incl. shipping",
+    "authentic": "Authentic",
+    "viewReport": "View AI report",
+    "buyNow": "Go to store",
+    "report": "AI report",
+    "buy": "Buy"
+  },
+  "detail": {
+    "title": "Product details",
+    "buyAt": "Buy on {store}",
+    "addCompare": "Add to compare",
+    "removeCompare": "Remove from compare",
+    "shippingEta": "Shipping",
+    "reviews": "Reviews",
+    "authentic": "Authenticity",
+    "productPrice": "Item",
+    "shipFee": "Shipping",
+    "shipFree": "free",
+    "reportTitle": "Tony's AI buying report",
+    "kSim": "Similarity",
+    "kPrice": "Price edge",
+    "kReview": "Review trust",
+    "kAuth": "Authenticity",
+    "verdictGood": "a very reasonable choice",
+    "verdictOk": "a solid choice",
+    "verdictWeak": "worth reconsidering"
+  },
+  "chat": {
+    "fabLong": "Ask Tony more",
+    "fabShort": "Tony",
+    "title": "Tony · AI shopping assistant",
+    "online": "Online",
+    "placeholder": "Ask Tony anything…",
+    "send": "Send",
+    "greet": "Hi, I'm Tony. If the result isn't quite right or you want to narrow it down, just ask — by price, color, country, or shipping.",
+    "quick": {
+      "cheaper": "Find cheaper",
+      "genuine": "Only authentic",
+      "fast": "Fastest shipping",
+      "review": "Most reviews"
+    },
+    "intent": {
+      "cheap": "Sorted by lowest final price. Starting from {min} incl. shipping.",
+      "fast": "Sorted by fastest shipping. The fastest is {eta}.",
+      "authentic": "Showing items with the highest authenticity score first.",
+      "review": "Sorted by most reviews. The top item has {n} reviews.",
+      "vn": "Filtered to items available in Vietnam — Shopee and Lazada dominate.",
+      "fallback": "Could you be more specific? e.g., \"under $80 in black\", \"fast shipping in Korea\", \"most reviews\"."
+    }
+  },
+  "drawer": {
+    "historyEmpty": "No search history yet.",
+    "shortlistEmpty": "Your compare list is empty.",
+    "shortlistHint": "Tap the bookmark icon on a card to add.",
+    "remove": "Remove",
+    "clearAll": "Clear all",
+    "close": "Close"
+  },
+  "voice": {
+    "startListening": "Voice search",
+    "stopListening": "Stop voice input",
+    "listening": "Listening…",
+    "speak": "Read aloud",
+    "stopSpeaking": "Stop playback",
+    "error": {
+      "unsupported": "This browser doesn't support voice input. Try Chrome, Safari or Edge.",
+      "permission": "Microphone permission is required. Allow access from your browser's address bar.",
+      "noSpeech": "I couldn't hear anything. Please try again.",
+      "network": "Voice recognition stopped due to a network issue.",
+      "unknown": "Something went wrong with voice input. Please try again."
+    }
+  },
+  "boundary": {
+    "notFoundTitle": "Page not found",
+    "notFoundDesc": "Please check the URL. Want to head back to Tony's home?",
+    "goHome": "Go home",
+    "errorTitle": "Something went sideways",
+    "errorDesc": "Tony lost the trail for a moment. Try again or go back home.",
+    "retry": "Try again",
+    "loading": "Tony is putting the results together…"
+  }
+}

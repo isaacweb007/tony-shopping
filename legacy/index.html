@@ -1,0 +1,1864 @@
+<!doctype html>
+<html lang="ko" class="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+  <title>Tony Shopping — AI Meta Shopping Agent</title>
+  <meta name="description" content="당신의 AI 쇼핑 매니저. 사진 한 장이면 전 세계 쇼핑몰을 토니가 비교해드립니다." />
+
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%230a0a0a'/><path d='M20 22h24M32 22v22' stroke='white' stroke-width='6' stroke-linecap='round'/></svg>" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // dark mode preload (avoid flash)
+    (function(){
+      try {
+        var t = localStorage.getItem('tony.theme');
+        if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {}
+    })();
+
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+            display: ['Inter', 'Pretendard', 'system-ui', 'sans-serif'],
+          },
+          letterSpacing: {
+            tightest: '-0.04em',
+            tighter2: '-0.035em',
+          },
+          colors: {
+            ink: {
+              50:  '#fafafa',
+              100: '#f4f4f5',
+              200: '#e4e4e7',
+              300: '#d4d4d8',
+              400: '#a1a1aa',
+              500: '#71717a',
+              600: '#52525b',
+              700: '#3f3f46',
+              800: '#27272a',
+              900: '#18181b',
+              950: '#09090b',
+            },
+            accent: {
+              50:  '#f5f3ff',
+              100: '#ede9fe',
+              200: '#ddd6fe',
+              300: '#c4b5fd',
+              400: '#a78bfa',
+              500: '#8b5cf6',
+              600: '#7c3aed',
+              700: '#6d28d9',
+              800: '#5b21b6',
+              900: '#4c1d95',
+            }
+          },
+          boxShadow: {
+            'card':  '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px -4px rgba(0,0,0,0.06)',
+            'card-hover': '0 6px 28px -6px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.04)',
+            'pop':   '0 16px 50px -16px rgba(124,58,237,0.45)',
+            'glow':  '0 0 0 1px rgba(124,58,237,0.18), 0 18px 50px -20px rgba(124,58,237,0.30)',
+          },
+          keyframes: {
+            'fade-up':  { '0%': { opacity: 0, transform: 'translateY(8px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+            'fade-in':  { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
+            'pulse-dot':{ '0%,80%,100%': { transform: 'scale(0.6)', opacity: 0.4 }, '40%': { transform: 'scale(1)', opacity: 1 } },
+            'shimmer':  { '100%': { transform: 'translateX(100%)' } },
+            'float':    { '0%,100%': { transform: 'translateY(0px)' }, '50%': { transform: 'translateY(-6px)' } },
+          },
+          animation: {
+            'fade-up':   'fade-up 0.45s cubic-bezier(0.16,1,0.3,1) both',
+            'fade-in':   'fade-in 0.4s ease-out both',
+            'pulse-dot': 'pulse-dot 1.2s infinite ease-in-out',
+            'float':     'float 6s ease-in-out infinite',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root { color-scheme: light; }
+    html.dark { color-scheme: dark; }
+
+    html { -webkit-text-size-adjust: 100%; }
+    html, body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body {
+      font-family: 'Pretendard', 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      font-feature-settings: "ss01", "cv11";
+    }
+
+    /* hide scrollbar */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* gradient mesh hero bg */
+    .mesh-bg {
+      background:
+        radial-gradient(60% 50% at 15% 0%,  rgba(124, 58, 237, 0.18), transparent 60%),
+        radial-gradient(40% 40% at 85% 10%, rgba(59,130,246, 0.14), transparent 60%),
+        radial-gradient(50% 50% at 50% 90%, rgba(6,182,212, 0.12),  transparent 60%);
+    }
+    .dark .mesh-bg {
+      background:
+        radial-gradient(60% 50% at 15% 0%,  rgba(124, 58, 237, 0.28), transparent 60%),
+        radial-gradient(40% 40% at 85% 10%, rgba(59,130,246, 0.18), transparent 60%),
+        radial-gradient(50% 50% at 50% 90%, rgba(6,182,212, 0.14),  transparent 60%);
+    }
+
+    /* dot grid */
+    .dotgrid {
+      background-image: radial-gradient(rgba(124,58,237,0.10) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+    .dark .dotgrid {
+      background-image: radial-gradient(rgba(167,139,250,0.10) 1px, transparent 1px);
+    }
+
+    /* gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, #7c3aed 0%, #2563eb 55%, #0891b2 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .dark .gradient-text {
+      background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 55%, #22d3ee 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* logo mark */
+    .logo-mark {
+      background: radial-gradient(circle at 30% 30%, #a78bfa 0%, #7c3aed 55%, #4c1d95 100%);
+    }
+
+    /* input focus ring */
+    .focus-ring:focus-within {
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15), 0 8px 30px -10px rgba(124,58,237,0.25);
+      border-color: rgb(124 58 237);
+    }
+    .dark .focus-ring:focus-within {
+      box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.18), 0 8px 30px -10px rgba(124,58,237,0.40);
+      border-color: rgb(167 139 250);
+    }
+
+    /* shimmer */
+    .shimmer { position: relative; overflow: hidden; }
+    .shimmer::after {
+      content: ''; position: absolute; inset: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+      animation: shimmer 1.4s infinite;
+    }
+
+    /* segmented chip */
+    .seg-chip {
+      padding: 0.5rem 0.85rem;
+      border-radius: 9999px;
+      background: white;
+      border: 1px solid rgb(228 228 231);
+      color: rgb(63 63 70);
+      font-weight: 600;
+      font-size: 13px;
+      transition: all .15s ease;
+    }
+    .seg-chip:hover { background: rgb(244 244 245); }
+    .seg-chip.active {
+      background: rgb(9 9 11);
+      color: white;
+      border-color: rgb(9 9 11);
+    }
+    .dark .seg-chip {
+      background: rgb(24 24 27);
+      border-color: rgb(39 39 42);
+      color: rgb(212 212 216);
+    }
+    .dark .seg-chip:hover { background: rgb(39 39 42); }
+    .dark .seg-chip.active {
+      background: white;
+      color: rgb(9 9 11);
+      border-color: white;
+    }
+
+    /* store chip */
+    .store-chip {
+      padding: 0.34rem 0.75rem;
+      border-radius: 9999px;
+      background: white;
+      border: 1px solid rgb(228 228 231);
+      color: rgb(82 82 91);
+      font-weight: 500;
+      font-size: 12px;
+      transition: all .15s ease;
+    }
+    .store-chip:hover { background: rgb(244 244 245); }
+    .store-chip.active {
+      background: rgb(237 233 254);
+      color: rgb(91 33 182);
+      border-color: rgb(196 181 253);
+    }
+    .dark .store-chip {
+      background: rgb(24 24 27);
+      border-color: rgb(39 39 42);
+      color: rgb(161 161 170);
+    }
+    .dark .store-chip:hover { background: rgb(39 39 42); }
+    .dark .store-chip.active {
+      background: rgba(124,58,237,0.18);
+      color: rgb(196 181 253);
+      border-color: rgba(167,139,250,0.4);
+    }
+
+    /* tony score bar */
+    .tony-bar {
+      height: 3px;
+      border-radius: 999px;
+      background: rgb(228 228 231);
+      overflow: hidden;
+    }
+    .dark .tony-bar { background: rgb(39 39 42); }
+    .tony-bar > span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, #7c3aed 0%, #2563eb 90%);
+      transition: width .6s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    /* card hover lift */
+    .lift { transition: transform .25s cubic-bezier(0.16,1,0.3,1), box-shadow .25s ease, border-color .2s ease; }
+    .lift:hover { transform: translateY(-2px); }
+
+    /* clamp utilities */
+    .line-clamp-2 {
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+
+    /* glass */
+    .glass {
+      backdrop-filter: saturate(180%) blur(14px);
+      -webkit-backdrop-filter: saturate(180%) blur(14px);
+      background: rgba(255,255,255,0.72);
+    }
+    .dark .glass {
+      background: rgba(10,10,10,0.65);
+    }
+
+    /* button base */
+    .btn { display: inline-flex; align-items: center; gap: .5rem; transition: all .15s ease; }
+    .btn-primary { background: rgb(9 9 11); color: white; }
+    .btn-primary:hover { background: rgb(24 24 27); }
+    .dark .btn-primary { background: white; color: rgb(9 9 11); }
+    .dark .btn-primary:hover { background: rgb(228 228 231); }
+
+    .btn-ghost { background: transparent; color: rgb(63 63 70); }
+    .btn-ghost:hover { background: rgb(244 244 245); }
+    .dark .btn-ghost { color: rgb(228 228 231); }
+    .dark .btn-ghost:hover { background: rgb(39 39 42); }
+
+    .btn-outline {
+      background: white; border: 1px solid rgb(228 228 231); color: rgb(39 39 42);
+    }
+    .btn-outline:hover { background: rgb(250 250 250); }
+    .dark .btn-outline { background: rgb(24 24 27); border-color: rgb(39 39 42); color: rgb(228 228 231); }
+    .dark .btn-outline:hover { background: rgb(39 39 42); }
+
+    /* nice scrollbar in chat */
+    .nice-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .nice-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,.12); border-radius: 999px; }
+    .dark .nice-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); }
+
+    /* selection */
+    ::selection { background: rgba(124,58,237,.22); }
+
+    /* image hover */
+    .img-zoom { transition: transform .8s cubic-bezier(0.16,1,0.3,1); }
+    .lift:hover .img-zoom { transform: scale(1.04); }
+
+    /* safe area padding for mobile bottom bar */
+    .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem); }
+  </style>
+</head>
+
+<body class="bg-white dark:bg-ink-950 text-ink-900 dark:text-ink-50 min-h-screen flex flex-col antialiased transition-colors duration-200">
+
+  <!-- ============== HEADER ============== -->
+  <header class="sticky top-0 z-40 glass border-b border-ink-200/70 dark:border-ink-800/70">
+    <div class="max-w-7xl mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between gap-3">
+      <a href="#" onclick="goHome();return false;" class="flex items-center gap-2.5 shrink-0 group">
+        <span class="logo-mark w-8 h-8 rounded-[10px] shadow-pop flex items-center justify-center text-white font-extrabold text-[15px] tracking-tightest group-hover:scale-[1.04] transition">T</span>
+        <span class="font-extrabold text-[17px] tracking-tighter2">Tony<span class="text-accent-600 dark:text-accent-400">Shopping</span></span>
+        <span class="hidden lg:inline-flex items-center gap-1 text-[11px] font-semibold text-accent-700 dark:text-accent-300 bg-accent-50 dark:bg-accent-900/30 border border-accent-100 dark:border-accent-800/50 rounded-full px-2 py-0.5 tracking-tight" data-i18n="header.tagline">AI 메타쇼핑 에이전트</span>
+      </a>
+
+      <!-- desktop -->
+      <div class="hidden md:flex items-center gap-1 text-sm">
+        <button onclick="openHistory()" class="btn btn-ghost px-3 h-9 rounded-lg" title="">
+          <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>
+          <span data-i18n="header.history">최근 검색</span>
+        </button>
+        <button onclick="openShortlist()" class="relative btn btn-ghost px-3 h-9 rounded-lg">
+          <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span data-i18n="header.shortlist">비교함</span>
+          <span id="shortlistBadge" class="hidden ml-0.5 text-[10px] font-bold bg-accent-600 text-white rounded-full px-1.5 py-0.5 leading-none">0</span>
+        </button>
+
+        <!-- language -->
+        <div class="relative">
+          <button onclick="toggleLangMenu(event)" class="btn btn-ghost px-3 h-9 rounded-lg">
+            <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14.5 14.5 0 0 1 0 18"/><path d="M12 3a14.5 14.5 0 0 0 0 18"/></svg>
+            <span id="langLabel">한국어</span>
+            <svg class="w-3.5 h-3.5 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div id="langMenu" class="hidden absolute right-0 mt-1.5 w-40 rounded-2xl border border-ink-200 dark:border-ink-800 bg-white dark:bg-ink-900 shadow-card p-1 text-sm overflow-hidden">
+            <button class="lang-item w-full text-left px-3 py-2.5 rounded-xl hover:bg-ink-50 dark:hover:bg-ink-800 flex items-center justify-between" onclick="setLang('ko')">
+              <span>한국어</span><span class="text-[11px] text-ink-400 dark:text-ink-500">KO</span>
+            </button>
+            <button class="lang-item w-full text-left px-3 py-2.5 rounded-xl hover:bg-ink-50 dark:hover:bg-ink-800 flex items-center justify-between" onclick="setLang('en')">
+              <span>English</span><span class="text-[11px] text-ink-400 dark:text-ink-500">EN</span>
+            </button>
+            <button class="lang-item w-full text-left px-3 py-2.5 rounded-xl hover:bg-ink-50 dark:hover:bg-ink-800 flex items-center justify-between" onclick="setLang('vi')">
+              <span>Tiếng Việt</span><span class="text-[11px] text-ink-400 dark:text-ink-500">VI</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- theme toggle -->
+        <button onclick="toggleTheme()" class="btn btn-ghost w-9 h-9 rounded-lg justify-center" title="Theme">
+          <!-- sun (light mode shows moon to switch to dark; dark mode shows sun) -->
+          <svg class="hidden dark:block w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m4.93 19.07 1.41-1.41"/><path d="m17.66 6.34 1.41-1.41"/></svg>
+          <svg class="block dark:hidden w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+
+        <button class="btn btn-primary ml-1 px-4 h-9 rounded-lg text-sm font-semibold" data-i18n="header.login">로그인</button>
+      </div>
+
+      <!-- mobile -->
+      <div class="flex md:hidden items-center gap-0.5">
+        <button onclick="toggleTheme()" class="btn btn-ghost w-9 h-9 rounded-lg justify-center">
+          <svg class="hidden dark:block w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="block dark:hidden w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button onclick="openShortlist()" class="relative btn btn-ghost w-9 h-9 rounded-lg justify-center">
+          <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span id="shortlistBadgeMobile" class="hidden absolute -top-0.5 -right-0.5 text-[9px] font-bold bg-accent-600 text-white rounded-full px-1.5 py-0.5 leading-none">0</span>
+        </button>
+        <button onclick="toggleMobileMenu()" class="btn btn-ghost w-9 h-9 rounded-lg justify-center">
+          <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="14" y2="17"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- mobile menu -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-ink-200/70 dark:border-ink-800/70 px-4 py-3 space-y-1 bg-white dark:bg-ink-950">
+      <button onclick="openHistory(); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-ink-50 dark:hover:bg-ink-900 flex items-center gap-2">
+        <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>
+        <span data-i18n="header.history">최근 검색</span>
+      </button>
+      <div class="px-3 py-2 text-[11px] uppercase tracking-widest text-ink-400 dark:text-ink-500" data-i18n="lang.section">언어 / Language</div>
+      <button onclick="setLang('ko'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-ink-50 dark:hover:bg-ink-900">한국어</button>
+      <button onclick="setLang('en'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-ink-50 dark:hover:bg-ink-900">English</button>
+      <button onclick="setLang('vi'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-ink-50 dark:hover:bg-ink-900">Tiếng Việt</button>
+      <button class="w-full mt-1 px-3 py-2.5 rounded-xl btn-primary font-semibold" data-i18n="header.login">로그인</button>
+    </div>
+  </header>
+
+
+  <main class="flex-1">
+
+    <!-- ============== HOME / HERO ============== -->
+    <section id="homeView" class="relative">
+      <div class="absolute inset-0 mesh-bg pointer-events-none"></div>
+      <div class="absolute inset-0 dotgrid opacity-50 pointer-events-none"></div>
+
+      <div class="relative max-w-5xl mx-auto px-4 md:px-6 pt-10 md:pt-24 pb-10 md:pb-20">
+        <!-- eyebrow -->
+        <div class="flex justify-center animate-fade-up" style="animation-delay:.05s">
+          <div class="inline-flex items-center gap-2 text-[11px] md:text-xs font-semibold text-ink-700 dark:text-ink-200 bg-white/80 dark:bg-ink-900/60 border border-ink-200 dark:border-ink-800 rounded-full px-3 py-1.5 backdrop-blur">
+            <span class="relative flex h-1.5 w-1.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-500 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-accent-600"></span>
+            </span>
+            <span data-i18n="hero.eyebrow">Amazon · Coupang · Shopee · Lazada · 네이버 · TikTok Shop 동시 비교</span>
+          </div>
+        </div>
+
+        <h1 class="mt-6 md:mt-9 text-center font-extrabold tracking-tighter2 leading-[1.04] text-[clamp(2rem,6.5vw,4.25rem)] animate-fade-up" style="animation-delay:.12s">
+          <span data-i18n="hero.title.line1">상품명을 몰라도 괜찮아요.</span><br />
+          <span class="gradient-text" data-i18n="hero.title.line2">사진 한 장이면, 토니가 찾아드립니다.</span>
+        </h1>
+
+        <p class="mt-5 md:mt-7 text-center text-ink-500 dark:text-ink-400 text-[15px] md:text-[17px] max-w-2xl mx-auto leading-relaxed animate-fade-up" style="animation-delay:.18s" data-i18n="hero.subtitle">
+          SNS 링크, 상품 사진, 자연어 한 줄이면 됩니다. 토니가 여러 쇼핑몰을 비교해 가격·배송·리뷰·정품 가능성까지 분석하고 가장 합리적인 선택을 추천합니다.
+        </p>
+
+        <!-- AI input box -->
+        <div class="mt-9 md:mt-10 animate-fade-up" style="animation-delay:.24s">
+          <div id="askBox" class="focus-ring relative bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-3xl shadow-card p-3 md:p-4 transition">
+            <div id="attachPreview" class="hidden flex-wrap gap-2 mb-2 px-1"></div>
+
+            <textarea
+              id="askInput"
+              rows="2"
+              data-i18n-placeholder="input.placeholder"
+              placeholder="SNS 링크를 붙여넣거나 상품 사진을 업로드하세요. 예) 이 인스타 사진 속 가방, 한국에서 10만원 이하로"
+              class="w-full resize-none outline-none px-3 py-2.5 text-[15px] md:text-[16px] placeholder:text-ink-400 dark:placeholder:text-ink-500 bg-transparent"
+              oninput="autoGrow(this)"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();askTony()}"
+            ></textarea>
+
+            <div class="flex items-center justify-between gap-2 px-1 pt-1">
+              <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                <label class="cursor-pointer btn-outline btn px-3 h-9 rounded-full text-sm font-semibold whitespace-nowrap">
+                  <svg class="w-[16px] h-[16px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg>
+                  <span data-i18n="input.upload">사진</span>
+                  <input type="file" accept="image/*" class="hidden" onchange="attachImage(event)" />
+                </label>
+                <button onclick="attachLinkPrompt()" class="btn-outline btn px-3 h-9 rounded-full text-sm font-semibold whitespace-nowrap">
+                  <svg class="w-[16px] h-[16px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07L11.34 4.6"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.66-1.66"/></svg>
+                  <span data-i18n="input.link">링크</span>
+                </button>
+                <button onclick="focusInput()" class="hidden sm:inline-flex btn-outline btn px-3 h-9 rounded-full text-sm font-semibold whitespace-nowrap">
+                  <svg class="w-[16px] h-[16px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+                  <span data-i18n="input.text">자연어</span>
+                </button>
+              </div>
+              <button onclick="askTony()" class="btn-primary btn px-4 md:px-5 h-10 rounded-full text-sm font-bold whitespace-nowrap shadow-card-hover">
+                <span data-i18n="input.submit">토니에게 물어보기</span>
+                <svg class="w-[16px] h-[16px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- example prompt chips -->
+          <div class="mt-5 flex flex-wrap gap-2 justify-center">
+            <button onclick="usePrompt(this)" class="prompt-chip">
+              <svg class="w-[15px] h-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg>
+              <span data-i18n="prompts.p1">이 인스타 사진 속 가방 찾아줘</span>
+            </button>
+            <button onclick="usePrompt(this)" class="prompt-chip">
+              <svg class="w-[15px] h-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c0-5 4-8 9-8 2 0 4 .8 5 2"/><path d="M9 12v6c0 1 1 2 2 2h7c2 0 3-1 3-3v-3"/><path d="M9 12H3l2 8h4"/></svg>
+              <span data-i18n="prompts.p2">이 신발과 비슷한 제품을 10만원 이하로</span>
+            </button>
+            <button onclick="usePrompt(this)" class="prompt-chip">
+              <svg class="w-[15px] h-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2V18h6v-1.3c0-.8.4-1.5 1-2A7 7 0 0 0 12 2z"/></svg>
+              <span data-i18n="prompts.p3">베트남에서 살 수 있는 무드 조명 찾아줘</span>
+            </button>
+            <button onclick="usePrompt(this)" class="prompt-chip">
+              <svg class="w-[15px] h-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 1 0 0 7h5a3.5 3.5 0 1 1 0 7H6"/></svg>
+              <span data-i18n="prompts.p4">쿠팡보다 더 싼 곳 찾아줘</span>
+            </button>
+            <button onclick="usePrompt(this)" class="prompt-chip">
+              <svg class="w-[15px] h-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7z"/></svg>
+              <span data-i18n="prompts.p5">선물용으로 괜찮은 거 추천해줘</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- feature cards -->
+        <div class="mt-16 md:mt-24 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+          <div class="lift rounded-2xl border border-ink-200 dark:border-ink-800 bg-white/70 dark:bg-ink-900/70 backdrop-blur p-5 hover:shadow-card">
+            <div class="w-10 h-10 rounded-xl bg-accent-50 dark:bg-accent-900/40 text-accent-600 dark:text-accent-300 flex items-center justify-center mb-3">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg>
+            </div>
+            <div class="font-bold text-[15px] tracking-tight" data-i18n="features.f1.title">사진으로 검색</div>
+            <p class="text-[13px] text-ink-500 dark:text-ink-400 mt-1 leading-relaxed" data-i18n="features.f1.desc">이미지 한 장만 올리면 AI가 상품을 인식하고 유사 상품을 자동으로 찾아드립니다.</p>
+          </div>
+          <div class="lift rounded-2xl border border-ink-200 dark:border-ink-800 bg-white/70 dark:bg-ink-900/70 backdrop-blur p-5 hover:shadow-card">
+            <div class="w-10 h-10 rounded-xl bg-accent-50 dark:bg-accent-900/40 text-accent-600 dark:text-accent-300 flex items-center justify-center mb-3">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07L11.34 4.6"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.66-1.66"/></svg>
+            </div>
+            <div class="font-bold text-[15px] tracking-tight" data-i18n="features.f2.title">SNS 링크 분석</div>
+            <p class="text-[13px] text-ink-500 dark:text-ink-400 mt-1 leading-relaxed" data-i18n="features.f2.desc">인스타, 틱톡, 유튜브 쇼츠에서 본 그 상품. 링크만 붙여넣으세요.</p>
+          </div>
+          <div class="lift rounded-2xl border border-ink-200 dark:border-ink-800 bg-white/70 dark:bg-ink-900/70 backdrop-blur p-5 hover:shadow-card">
+            <div class="w-10 h-10 rounded-xl bg-accent-50 dark:bg-accent-900/40 text-accent-600 dark:text-accent-300 flex items-center justify-center mb-3">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+            </div>
+            <div class="font-bold text-[15px] tracking-tight" data-i18n="features.f3.title">전 세계 쇼핑몰 비교</div>
+            <p class="text-[13px] text-ink-500 dark:text-ink-400 mt-1 leading-relaxed" data-i18n="features.f3.desc">Amazon, Coupang, Shopee, Lazada, 네이버까지 동시에 비교합니다.</p>
+          </div>
+          <div class="lift rounded-2xl border border-ink-200 dark:border-ink-800 bg-white/70 dark:bg-ink-900/70 backdrop-blur p-5 hover:shadow-card">
+            <div class="w-10 h-10 rounded-xl bg-accent-50 dark:bg-accent-900/40 text-accent-600 dark:text-accent-300 flex items-center justify-center mb-3">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div class="font-bold text-[15px] tracking-tight" data-i18n="features.f4.title">Tony Score</div>
+            <p class="text-[13px] text-ink-500 dark:text-ink-400 mt-1 leading-relaxed" data-i18n="features.f4.desc">가격·리뷰·신뢰도·배송을 종합한 100점 만점 AI 구매 판단 점수.</p>
+          </div>
+        </div>
+
+        <!-- how it works -->
+        <div class="mt-20 md:mt-28">
+          <div class="text-center">
+            <div class="text-[11px] font-bold tracking-[0.18em] text-accent-600 dark:text-accent-400 uppercase" data-i18n="howto.eyebrow">How it works</div>
+            <h2 class="mt-2 text-2xl md:text-[40px] font-extrabold tracking-tighter2" data-i18n="howto.title">검색은 토니가, 선택은 더 똑똑하게.</h2>
+          </div>
+          <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+            <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-white dark:bg-ink-900 p-6">
+              <div class="text-accent-600 dark:text-accent-400 text-[12px] font-bold tracking-widest" data-i18n="howto.step1.label">01 · INPUT</div>
+              <div class="mt-1 text-[17px] font-bold tracking-tight" data-i18n="howto.step1.title">유저가 입력</div>
+              <p class="text-[13px] text-ink-500 dark:text-ink-400 mt-1.5 leading-relaxed" data-i18n="howto.step1.desc">SNS 링크, 상품 사진, 쇼핑몰 URL, 또는 자연어 한 줄.</p>
+            </div>
+            <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-white dark:bg-ink-900 p-6">
+              <div class="text-accent-600 dark:text-accent-400 text-[12px] font-bold tracking-widest" data-i18n="howto.step2.label">02 · ANALYZE</div>
+              <div class="mt-1 text-[17px] font-bold tracking-tight" data-i18n="howto.step2.title">토니가 분석</div>
+              <p class="text-[13px] text-ink-500 dark:text-ink-400 mt-1.5 leading-relaxed" data-i18n="howto.step2.desc">브랜드·색상·디자인·카테고리·가격대를 추정하고 유사 상품 후보를 추출.</p>
+            </div>
+            <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-white dark:bg-ink-900 p-6">
+              <div class="text-accent-600 dark:text-accent-400 text-[12px] font-bold tracking-widest" data-i18n="howto.step3.label">03 · ADVISE</div>
+              <div class="mt-1 text-[17px] font-bold tracking-tight" data-i18n="howto.step3.title">구매 조언</div>
+              <p class="text-[13px] text-ink-500 dark:text-ink-400 mt-1.5 leading-relaxed" data-i18n="howto.step3.desc">BEST · 최저가 · 빠른배송 · 정품안심 · 가성비로 분류해 추천.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ============== RESULT ============== -->
+    <section id="resultView" class="hidden">
+      <div class="max-w-7xl mx-auto px-4 md:px-6 pt-6 pb-40 md:pb-20">
+        <button onclick="goHome()" class="btn btn-ghost text-sm rounded-lg pl-2 pr-3 h-9">
+          <svg class="w-[16px] h-[16px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          <span data-i18n="result.new_search">새 검색</span>
+        </button>
+
+        <!-- user request -->
+        <div class="mt-4 flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl bg-ink-900 dark:bg-white text-white dark:text-ink-900 flex items-center justify-center font-bold shrink-0 text-sm">U</div>
+          <div class="flex-1 min-w-0">
+            <div class="text-[11px] text-ink-400 dark:text-ink-500 uppercase tracking-widest" data-i18n="result.your_request">당신의 요청</div>
+            <div id="resultUserQuery" class="mt-0.5 text-[15px] md:text-[18px] font-semibold text-ink-900 dark:text-ink-50 break-words tracking-tight"></div>
+            <div id="resultAttachRow" class="mt-2 flex flex-wrap gap-2"></div>
+          </div>
+        </div>
+
+        <!-- AI report -->
+        <div id="tonyReport" class="mt-6 relative rounded-3xl border border-accent-200/70 dark:border-accent-800/40 bg-gradient-to-br from-accent-50/70 via-white to-white dark:from-accent-950/40 dark:via-ink-900 dark:to-ink-900 p-5 md:p-7 shadow-card">
+          <div class="absolute -top-3 left-5 flex items-center gap-1.5 bg-ink-900 dark:bg-white text-white dark:text-ink-900 text-[11px] font-bold px-2.5 py-1 rounded-full">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span data-i18n="result.report_label">토니 AI 리포트</span>
+          </div>
+          <div id="reportContent"></div>
+        </div>
+
+        <!-- top 3 -->
+        <div class="mt-9">
+          <div class="flex items-end justify-between">
+            <div>
+              <h3 class="text-[20px] md:text-[26px] font-extrabold tracking-tighter2" data-i18n="result.top3">추천 상품 TOP 3</h3>
+              <p class="text-[13px] text-ink-500 dark:text-ink-400 mt-0.5" data-i18n="result.top3_sub">토니가 선별한 가장 합리적인 선택</p>
+            </div>
+            <div class="hidden md:flex items-center gap-1.5 text-[11px] text-ink-500 dark:text-ink-400">
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-accent-600"></span>
+              <span data-i18n="result.by_score">Tony Score 기준</span>
+            </div>
+          </div>
+          <div id="topCards" class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4"></div>
+        </div>
+
+        <!-- full compare -->
+        <div class="mt-12">
+          <div class="flex items-end justify-between flex-wrap gap-3">
+            <div>
+              <h3 class="text-[20px] md:text-[26px] font-extrabold tracking-tighter2" data-i18n="result.full">전체 상품 비교</h3>
+              <p class="text-[13px] text-ink-500 dark:text-ink-400 mt-0.5" data-i18n="result.full_sub">필터로 빠르게 좁혀보세요</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button data-sort="tony" onclick="setSort(this)" class="seg-chip active" data-i18n="sort.tony">토니 스코어순</button>
+              <button data-sort="priceAsc" onclick="setSort(this)" class="seg-chip" data-i18n="sort.price">가격 낮은순</button>
+              <button data-sort="ship" onclick="setSort(this)" class="seg-chip" data-i18n="sort.ship">배송 빠른순</button>
+              <button data-sort="review" onclick="setSort(this)" class="seg-chip" data-i18n="sort.review">리뷰 많은순</button>
+              <button data-sort="authentic" onclick="setSort(this)" class="seg-chip" data-i18n="sort.authentic">정품 가능성</button>
+            </div>
+          </div>
+
+          <div class="mt-3 flex flex-wrap gap-1.5">
+            <button data-store="all" onclick="setStoreFilter(this)" class="store-chip active" data-i18n="store.all">전체</button>
+            <button data-store="Coupang" onclick="setStoreFilter(this)" class="store-chip">Coupang</button>
+            <button data-store="Amazon" onclick="setStoreFilter(this)" class="store-chip">Amazon</button>
+            <button data-store="Shopee" onclick="setStoreFilter(this)" class="store-chip">Shopee</button>
+            <button data-store="Lazada" onclick="setStoreFilter(this)" class="store-chip">Lazada</button>
+            <button data-store="네이버쇼핑" onclick="setStoreFilter(this)" class="store-chip">네이버쇼핑</button>
+            <button data-store="AliExpress" onclick="setStoreFilter(this)" class="store-chip">AliExpress</button>
+          </div>
+
+          <div id="allCards" class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4"></div>
+        </div>
+
+        <!-- alt -->
+        <div class="mt-14">
+          <h3 class="text-[20px] md:text-[26px] font-extrabold tracking-tighter2" data-i18n="result.alt">대체상품 추천</h3>
+          <p class="text-[13px] text-ink-500 dark:text-ink-400 mt-0.5" data-i18n="result.alt_sub">원본과 유사하지만 더 합리적인 선택지</p>
+          <div id="altCards" class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4"></div>
+        </div>
+
+        <!-- warning -->
+        <div class="mt-14 rounded-2xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/70 dark:bg-amber-950/30 p-5">
+          <div class="flex items-center gap-2 text-amber-800 dark:text-amber-300 font-bold tracking-tight">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+            <span data-i18n="result.warn_title">구매 전 주의사항</span>
+          </div>
+          <ul id="warnList" class="mt-2.5 text-[13.5px] text-amber-900/90 dark:text-amber-200/80 space-y-1.5"></ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- ============== FOOTER ============== -->
+  <footer class="border-t border-ink-200/70 dark:border-ink-800/70 bg-white/70 dark:bg-ink-950">
+    <div class="max-w-7xl mx-auto px-4 md:px-6 py-10 md:py-14 grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
+      <div class="col-span-2">
+        <div class="flex items-center gap-2.5">
+          <span class="logo-mark w-8 h-8 rounded-[10px] flex items-center justify-center text-white font-extrabold">T</span>
+          <span class="font-extrabold text-base tracking-tighter2">Tony<span class="text-accent-600 dark:text-accent-400">Shopping</span></span>
+        </div>
+        <p class="mt-3 text-ink-500 dark:text-ink-400 max-w-md leading-relaxed" data-i18n="footer.tagline">AI가 찾고, 비교하고, 추천하는 메타쇼핑 플랫폼. 쇼핑몰을 돌아다니지 마세요. 토니에게 맡기세요.</p>
+      </div>
+      <div>
+        <div class="font-bold text-ink-800 dark:text-ink-100 tracking-tight" data-i18n="footer.service">서비스</div>
+        <ul class="mt-2.5 space-y-1.5 text-ink-500 dark:text-ink-400">
+          <li data-i18n="footer.service.1">AI 상품 검색</li>
+          <li data-i18n="footer.service.2">가격 비교</li>
+          <li data-i18n="footer.service.3">구매 상담</li>
+          <li data-i18n="footer.service.4">Tony Score</li>
+        </ul>
+      </div>
+      <div>
+        <div class="font-bold text-ink-800 dark:text-ink-100 tracking-tight" data-i18n="footer.support">고객 지원</div>
+        <ul class="mt-2.5 space-y-1.5 text-ink-500 dark:text-ink-400">
+          <li data-i18n="footer.support.1">도움말 센터</li>
+          <li data-i18n="footer.support.2">제휴 문의</li>
+          <li data-i18n="footer.support.3">이용약관</li>
+          <li data-i18n="footer.support.4">개인정보처리방침</li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-ink-200/70 dark:border-ink-800/70 py-4 text-[11px] text-ink-400 dark:text-ink-500 text-center tracking-wide">© 2026 Tony Shopping · AI Meta Shopping Agent</div>
+  </footer>
+
+
+  <!-- ============== FLOATING CHAT FAB & PANEL ============== -->
+  <button id="chatFab" onclick="toggleChat()" class="fixed z-50 bottom-4 right-4 md:bottom-6 md:right-6 inline-flex items-center gap-2 bg-ink-900 dark:bg-white text-white dark:text-ink-900 font-semibold px-4 md:px-5 h-12 md:h-13 rounded-full shadow-card-hover hover:shadow-pop transition">
+    <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+    <span class="hidden sm:inline text-[13px]" data-i18n="chat.ask_more">토니에게 더 물어보기</span>
+    <span class="sm:hidden text-[13px]" data-i18n="chat.short">토니</span>
+  </button>
+
+  <div id="chatPanel" class="hidden fixed z-50 inset-x-0 bottom-0 md:bottom-6 md:right-6 md:left-auto md:inset-x-auto md:w-[420px] md:max-w-[95vw] md:rounded-3xl bg-white dark:bg-ink-900 border-t md:border border-ink-200 dark:border-ink-800 shadow-pop flex flex-col" style="height: 80vh; max-height: 720px;">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-ink-200 dark:border-ink-800">
+      <div class="flex items-center gap-2.5">
+        <span class="logo-mark w-8 h-8 rounded-[10px] flex items-center justify-center text-white font-extrabold text-sm">T</span>
+        <div>
+          <div class="font-bold leading-tight text-[14px] tracking-tight" data-i18n="chat.title">Tony · AI 쇼핑 비서</div>
+          <div class="text-[11px] text-ink-500 dark:text-ink-400 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span data-i18n="chat.online">온라인</span>
+          </div>
+        </div>
+      </div>
+      <button onclick="toggleChat()" class="btn btn-ghost w-8 h-8 rounded-lg justify-center">
+        <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="chatBody" class="flex-1 overflow-y-auto nice-scroll p-4 space-y-3 bg-ink-50/60 dark:bg-ink-950/40"></div>
+    <div class="px-3 pt-2 flex flex-wrap gap-1.5 border-t border-ink-200 dark:border-ink-800">
+      <button onclick="quickAsk(t('chat.quick.cheaper'))" class="text-[11.5px] px-2.5 py-1.5 rounded-full bg-ink-50 dark:bg-ink-800 hover:bg-ink-100 dark:hover:bg-ink-700 border border-ink-200 dark:border-ink-700" data-i18n="chat.quick.cheaper">더 싼 거 찾아줘</button>
+      <button onclick="quickAsk(t('chat.quick.genuine'))" class="text-[11.5px] px-2.5 py-1.5 rounded-full bg-ink-50 dark:bg-ink-800 hover:bg-ink-100 dark:hover:bg-ink-700 border border-ink-200 dark:border-ink-700" data-i18n="chat.quick.genuine">정품 가능성 높은 것만</button>
+      <button onclick="quickAsk(t('chat.quick.fast'))" class="text-[11.5px] px-2.5 py-1.5 rounded-full bg-ink-50 dark:bg-ink-800 hover:bg-ink-100 dark:hover:bg-ink-700 border border-ink-200 dark:border-ink-700" data-i18n="chat.quick.fast">배송 빠른순</button>
+      <button onclick="quickAsk(t('chat.quick.black'))" class="text-[11.5px] px-2.5 py-1.5 rounded-full bg-ink-50 dark:bg-ink-800 hover:bg-ink-100 dark:hover:bg-ink-700 border border-ink-200 dark:border-ink-700" data-i18n="chat.quick.black">검은색으로</button>
+    </div>
+    <form onsubmit="sendChat();return false;" class="p-3 pt-2 flex items-center gap-2 border-t border-ink-200 dark:border-ink-800 pb-safe">
+      <input id="chatInput" type="text" data-i18n-placeholder="chat.placeholder" placeholder="토니에게 다시 물어보세요…" class="flex-1 outline-none border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 rounded-xl px-3 h-10 text-sm focus:border-accent-500 focus:ring-2 focus:ring-accent-500/15" />
+      <button class="btn-primary px-4 h-10 rounded-xl text-sm font-bold">
+        <svg class="w-[16px] h-[16px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+      </button>
+    </form>
+  </div>
+
+
+  <!-- ============== PRODUCT DETAIL MODAL ============== -->
+  <div id="detailModal" class="hidden fixed inset-0 z-50 bg-black/40 dark:bg-black/60 backdrop-blur-sm p-3 md:p-6 overflow-y-auto" onclick="if(event.target===this)closeDetail()">
+    <div class="bg-white dark:bg-ink-900 rounded-3xl max-w-3xl mx-auto my-4 md:my-8 shadow-pop overflow-hidden border border-ink-200 dark:border-ink-800">
+      <div id="detailContent"></div>
+    </div>
+  </div>
+
+
+  <!-- ============== HISTORY DRAWER ============== -->
+  <div id="historyDrawer" class="hidden fixed inset-0 z-50 bg-black/40 dark:bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeHistory()">
+    <div class="absolute right-0 top-0 h-full w-full sm:w-[420px] bg-white dark:bg-ink-900 shadow-pop p-5 overflow-y-auto border-l border-ink-200 dark:border-ink-800">
+      <div class="flex items-center justify-between">
+        <div class="font-bold text-[17px] tracking-tight" data-i18n="header.history">최근 검색</div>
+        <button onclick="closeHistory()" class="btn btn-ghost w-8 h-8 rounded-lg justify-center">
+          <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div id="historyList" class="mt-4 space-y-2"></div>
+    </div>
+  </div>
+
+
+  <!-- ============== SHORTLIST DRAWER ============== -->
+  <div id="shortlistDrawer" class="hidden fixed inset-0 z-50 bg-black/40 dark:bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeShortlist()">
+    <div class="absolute right-0 top-0 h-full w-full sm:w-[440px] bg-white dark:bg-ink-900 shadow-pop p-5 overflow-y-auto border-l border-ink-200 dark:border-ink-800">
+      <div class="flex items-center justify-between">
+        <div class="font-bold text-[17px] tracking-tight" data-i18n="header.shortlist">비교함</div>
+        <button onclick="closeShortlist()" class="btn btn-ghost w-8 h-8 rounded-lg justify-center">
+          <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div id="shortlistList" class="mt-4 space-y-3"></div>
+    </div>
+  </div>
+
+
+  <!-- prompt chip styles -->
+  <style>
+    .prompt-chip {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: 0.55rem 0.95rem;
+      border-radius: 9999px;
+      background: white;
+      border: 1px solid rgb(228 228 231);
+      color: rgb(63 63 70);
+      font-size: 13px;
+      font-weight: 500;
+      transition: all .15s ease;
+    }
+    .prompt-chip:hover { background: rgb(244 244 245); border-color: rgb(212 212 216); transform: translateY(-1px); }
+    .dark .prompt-chip { background: rgb(24 24 27); border-color: rgb(39 39 42); color: rgb(212 212 216); }
+    .dark .prompt-chip:hover { background: rgb(39 39 42); border-color: rgb(63 63 70); }
+  </style>
+
+
+  <!-- ===================== APP LOGIC ===================== -->
+  <script>
+    // ============ I18N ============
+    const I18N = {
+      ko: {
+        'header.tagline': 'AI 메타쇼핑 에이전트',
+        'header.history': '최근 검색',
+        'header.shortlist': '비교함',
+        'header.login': '로그인',
+        'lang.section': '언어 / Language',
+        'hero.eyebrow': 'Amazon · Coupang · Shopee · Lazada · 네이버 · TikTok Shop 동시 비교',
+        'hero.title.line1': '상품명을 몰라도 괜찮아요.',
+        'hero.title.line2': '사진 한 장이면, 토니가 찾아드립니다.',
+        'hero.subtitle': 'SNS 링크, 상품 사진, 자연어 한 줄이면 됩니다. 토니가 여러 쇼핑몰을 비교해 가격·배송·리뷰·정품 가능성까지 분석하고 가장 합리적인 선택을 추천합니다.',
+        'input.placeholder': 'SNS 링크를 붙여넣거나 상품 사진을 업로드하세요. 예) 이 인스타 사진 속 가방, 한국에서 10만원 이하로',
+        'input.upload': '사진',
+        'input.link': '링크',
+        'input.text': '자연어',
+        'input.submit': '토니에게 물어보기',
+        'prompts.p1': '이 인스타 사진 속 가방 찾아줘',
+        'prompts.p2': '이 신발과 비슷한 제품을 10만원 이하로',
+        'prompts.p3': '베트남에서 살 수 있는 무드 조명 찾아줘',
+        'prompts.p4': '쿠팡보다 더 싼 곳 찾아줘',
+        'prompts.p5': '선물용으로 괜찮은 거 추천해줘',
+        'features.f1.title': '사진으로 검색',
+        'features.f1.desc': '이미지 한 장만 올리면 AI가 상품을 인식하고 유사 상품을 자동으로 찾아드립니다.',
+        'features.f2.title': 'SNS 링크 분석',
+        'features.f2.desc': '인스타, 틱톡, 유튜브 쇼츠에서 본 그 상품. 링크만 붙여넣으세요.',
+        'features.f3.title': '전 세계 쇼핑몰 비교',
+        'features.f3.desc': 'Amazon, Coupang, Shopee, Lazada, 네이버까지 동시에 비교합니다.',
+        'features.f4.title': 'Tony Score',
+        'features.f4.desc': '가격·리뷰·신뢰도·배송을 종합한 100점 만점 AI 구매 판단 점수.',
+        'howto.eyebrow': 'How it works',
+        'howto.title': '검색은 토니가, 선택은 더 똑똑하게.',
+        'howto.step1.label': '01 · INPUT',
+        'howto.step1.title': '유저가 입력',
+        'howto.step1.desc': 'SNS 링크, 상품 사진, 쇼핑몰 URL, 또는 자연어 한 줄.',
+        'howto.step2.label': '02 · ANALYZE',
+        'howto.step2.title': '토니가 분석',
+        'howto.step2.desc': '브랜드·색상·디자인·카테고리·가격대를 추정하고 유사 상품 후보를 추출.',
+        'howto.step3.label': '03 · ADVISE',
+        'howto.step3.title': '구매 조언',
+        'howto.step3.desc': 'BEST · 최저가 · 빠른배송 · 정품안심 · 가성비로 분류해 추천.',
+        'result.new_search': '새 검색',
+        'result.your_request': '당신의 요청',
+        'result.report_label': '토니 AI 리포트',
+        'result.top3': '추천 상품 TOP 3',
+        'result.top3_sub': '토니가 선별한 가장 합리적인 선택',
+        'result.by_score': 'Tony Score 기준',
+        'result.full': '전체 상품 비교',
+        'result.full_sub': '필터로 빠르게 좁혀보세요',
+        'result.alt': '대체상품 추천',
+        'result.alt_sub': '원본과 유사하지만 더 합리적인 선택지',
+        'result.warn_title': '구매 전 주의사항',
+        'sort.tony': '토니 스코어순',
+        'sort.price': '가격 낮은순',
+        'sort.ship': '배송 빠른순',
+        'sort.review': '리뷰 많은순',
+        'sort.authentic': '정품 가능성',
+        'store.all': '전체',
+        'footer.tagline': 'AI가 찾고, 비교하고, 추천하는 메타쇼핑 플랫폼. 쇼핑몰을 돌아다니지 마세요. 토니에게 맡기세요.',
+        'footer.service': '서비스',
+        'footer.service.1': 'AI 상품 검색',
+        'footer.service.2': '가격 비교',
+        'footer.service.3': '구매 상담',
+        'footer.service.4': 'Tony Score',
+        'footer.support': '고객 지원',
+        'footer.support.1': '도움말 센터',
+        'footer.support.2': '제휴 문의',
+        'footer.support.3': '이용약관',
+        'footer.support.4': '개인정보처리방침',
+        'chat.ask_more': '토니에게 더 물어보기',
+        'chat.short': '토니',
+        'chat.title': 'Tony · AI 쇼핑 비서',
+        'chat.online': '온라인',
+        'chat.placeholder': '토니에게 다시 물어보세요…',
+        'chat.quick.cheaper': '더 싼 거 찾아줘',
+        'chat.quick.genuine': '정품 가능성 높은 것만',
+        'chat.quick.fast': '배송 빠른순',
+        'chat.quick.black': '검은색으로',
+        'tags.best': 'BEST 추천',
+        'tags.cheap': '최저가',
+        'tags.fast': '빠른배송',
+        'tags.genuine': '정품안심',
+        'tags.value': '가성비',
+        'tags.alt': '대체상품',
+        'tags.not': '비추천',
+        'unit.won': '원',
+        'ship.today': '오늘 도착',
+        'ship.tomorrow': '내일 도착',
+        'ship.days': '{d}일 이내',
+        'detail.add_compare': '비교함에 담기',
+        'detail.buy_at': '{store}에서 구매하기',
+        'detail.ai_analysis': 'AI 분석',
+        'detail.buy': '구매',
+        'detail.score': 'Tony Score',
+        'detail.report_title': '토니의 AI 구매 리포트',
+        'detail.k.similarity': '상품 유사도',
+        'detail.k.price': '가격 경쟁력',
+        'detail.k.review': '리뷰 신뢰도',
+        'detail.k.authentic': '정품 가능성',
+        'detail.shipping_eta': '예상 배송',
+        'detail.reviews': '리뷰',
+        'detail.authentic': '정품 가능성',
+        'detail.product_price': '상품가',
+        'detail.ship_fee': '배송비',
+        'detail.ship_free': '무료',
+        'history.empty': '아직 검색 기록이 없습니다.',
+        'shortlist.empty': '아직 비교함이 비어 있습니다.',
+        'shortlist.hint': '상품 카드의 북마크 아이콘으로 담아보세요.',
+        'shortlist.remove': '제거',
+        'card.review': '리뷰',
+        'card.similar': '유사도',
+        'card.official': '공식',
+        'card.ship_with_fee': '배송비 포함',
+        'card.report.btn': 'AI 분석 보기',
+        'card.buy.btn': '구매하러 가기',
+        'warn.1': '가격이 비정상적으로 낮은 상품은 정품 가능성 또는 배송에 주의가 필요할 수 있습니다.',
+        'warn.2': '해외직구 상품은 관세·배송 지연 가능성이 있으니 최종 결제가를 확인하세요.',
+        'warn.3': '리뷰가 100개 미만인 신규 판매자는 신뢰도가 낮을 수 있습니다.',
+        'warn.4': '24개월 이상 미수령 시 환불·교환이 어려울 수 있으니 빠른 결정을 권장합니다.',
+      },
+      en: {
+        'header.tagline': 'AI Meta Shopping Agent',
+        'header.history': 'History',
+        'header.shortlist': 'Compare',
+        'header.login': 'Sign in',
+        'lang.section': 'Language',
+        'hero.eyebrow': 'Compare Amazon · Coupang · Shopee · Lazada · Naver · TikTok Shop at once',
+        'hero.title.line1': 'You don\'t need to know the name.',
+        'hero.title.line2': 'One photo. Tony finds it for you.',
+        'hero.subtitle': 'Drop a social link, a product photo, or a single sentence. Tony compares stores worldwide on price, shipping, reviews and authenticity — and recommends the smartest pick.',
+        'input.placeholder': 'Paste a social link or upload a product photo. e.g., the bag from this Instagram post, under $80 in Korea',
+        'input.upload': 'Photo',
+        'input.link': 'Link',
+        'input.text': 'Text',
+        'input.submit': 'Ask Tony',
+        'prompts.p1': 'Find this bag from an Instagram post',
+        'prompts.p2': 'Find sneakers like these, under $80',
+        'prompts.p3': 'Find this mood lamp available in Vietnam',
+        'prompts.p4': 'Find a place cheaper than Coupang',
+        'prompts.p5': 'Recommend something good as a gift',
+        'features.f1.title': 'Visual search',
+        'features.f1.desc': 'Upload an image and AI recognizes the product, then finds lookalikes for you.',
+        'features.f2.title': 'Social link analysis',
+        'features.f2.desc': 'That product you spotted on Instagram, TikTok or YouTube Shorts — just paste the link.',
+        'features.f3.title': 'Global price compare',
+        'features.f3.desc': 'Side-by-side from Amazon, Coupang, Shopee, Lazada, Naver and more.',
+        'features.f4.title': 'Tony Score',
+        'features.f4.desc': 'A 100-point AI buying score combining price, reviews, trust and shipping.',
+        'howto.eyebrow': 'How it works',
+        'howto.title': 'Searching is Tony\'s job. Choosing gets smarter.',
+        'howto.step1.label': '01 · INPUT',
+        'howto.step1.title': 'You input',
+        'howto.step1.desc': 'A social link, a product photo, a store URL, or one sentence.',
+        'howto.step2.label': '02 · ANALYZE',
+        'howto.step2.title': 'Tony analyzes',
+        'howto.step2.desc': 'Brand, color, design, category and price range — then candidate matches.',
+        'howto.step3.label': '03 · ADVISE',
+        'howto.step3.title': 'You decide',
+        'howto.step3.desc': 'Recommendations split by Best, Cheapest, Fastest, Genuine and Best Value.',
+        'result.new_search': 'New search',
+        'result.your_request': 'Your request',
+        'result.report_label': 'Tony AI Report',
+        'result.top3': 'Top 3 picks',
+        'result.top3_sub': 'Tony\'s smartest recommendations',
+        'result.by_score': 'By Tony Score',
+        'result.full': 'All matches',
+        'result.full_sub': 'Narrow it down with filters',
+        'result.alt': 'Alternatives',
+        'result.alt_sub': 'Similar but more reasonable choices',
+        'result.warn_title': 'Before you buy',
+        'sort.tony': 'Tony Score',
+        'sort.price': 'Lowest price',
+        'sort.ship': 'Fastest shipping',
+        'sort.review': 'Most reviews',
+        'sort.authentic': 'Most authentic',
+        'store.all': 'All',
+        'footer.tagline': 'A meta shopping platform where AI searches, compares and recommends. Stop hopping between stores. Let Tony handle it.',
+        'footer.service': 'Service',
+        'footer.service.1': 'AI product search',
+        'footer.service.2': 'Price compare',
+        'footer.service.3': 'Buying advice',
+        'footer.service.4': 'Tony Score',
+        'footer.support': 'Support',
+        'footer.support.1': 'Help center',
+        'footer.support.2': 'Partnerships',
+        'footer.support.3': 'Terms',
+        'footer.support.4': 'Privacy',
+        'chat.ask_more': 'Ask Tony more',
+        'chat.short': 'Tony',
+        'chat.title': 'Tony · AI shopping assistant',
+        'chat.online': 'Online',
+        'chat.placeholder': 'Ask Tony anything…',
+        'chat.quick.cheaper': 'Find cheaper',
+        'chat.quick.genuine': 'Only authentic',
+        'chat.quick.fast': 'Fastest shipping',
+        'chat.quick.black': 'In black',
+        'tags.best': 'BEST PICK',
+        'tags.cheap': 'CHEAPEST',
+        'tags.fast': 'FASTEST',
+        'tags.genuine': 'AUTHENTIC',
+        'tags.value': 'VALUE',
+        'tags.alt': 'ALTERNATIVE',
+        'tags.not': 'AVOID',
+        'unit.won': ' KRW',
+        'ship.today': 'Today',
+        'ship.tomorrow': 'Tomorrow',
+        'ship.days': 'in {d} days',
+        'detail.add_compare': 'Add to compare',
+        'detail.buy_at': 'Buy on {store}',
+        'detail.ai_analysis': 'AI report',
+        'detail.buy': 'Buy',
+        'detail.score': 'Tony Score',
+        'detail.report_title': 'Tony\'s AI buying report',
+        'detail.k.similarity': 'Similarity',
+        'detail.k.price': 'Price edge',
+        'detail.k.review': 'Review trust',
+        'detail.k.authentic': 'Authenticity',
+        'detail.shipping_eta': 'Shipping',
+        'detail.reviews': 'Reviews',
+        'detail.authentic': 'Authenticity',
+        'detail.product_price': 'Item',
+        'detail.ship_fee': 'Shipping',
+        'detail.ship_free': 'free',
+        'history.empty': 'No search history yet.',
+        'shortlist.empty': 'Your compare list is empty.',
+        'shortlist.hint': 'Tap the bookmark icon on a card to add.',
+        'shortlist.remove': 'Remove',
+        'card.review': 'reviews',
+        'card.similar': 'similar',
+        'card.official': 'OFFICIAL',
+        'card.ship_with_fee': 'incl. shipping',
+        'card.report.btn': 'View AI report',
+        'card.buy.btn': 'Go to store',
+        'warn.1': 'Suspiciously low prices may indicate authenticity or shipping risks.',
+        'warn.2': 'Overseas items may incur customs and delivery delays — verify final price.',
+        'warn.3': 'New sellers with fewer than 100 reviews may be less reliable.',
+        'warn.4': 'Items unclaimed for over 24 months may not be refundable.',
+      },
+      vi: {
+        'header.tagline': 'Trợ lý Mua sắm AI Meta',
+        'header.history': 'Lịch sử',
+        'header.shortlist': 'So sánh',
+        'header.login': 'Đăng nhập',
+        'lang.section': 'Ngôn ngữ',
+        'hero.eyebrow': 'So sánh Amazon · Coupang · Shopee · Lazada · Naver · TikTok Shop cùng lúc',
+        'hero.title.line1': 'Không cần biết tên sản phẩm.',
+        'hero.title.line2': 'Một tấm ảnh — Tony tìm giúp bạn.',
+        'hero.subtitle': 'Dán link mạng xã hội, ảnh sản phẩm, hoặc chỉ một câu. Tony so sánh các cửa hàng toàn cầu về giá, vận chuyển, đánh giá và độ chính hãng — rồi đề xuất lựa chọn hợp lý nhất.',
+        'input.placeholder': 'Dán link mạng xã hội hoặc tải ảnh sản phẩm. Vd: chiếc túi trong bài Instagram này, dưới 2 triệu',
+        'input.upload': 'Ảnh',
+        'input.link': 'Link',
+        'input.text': 'Văn bản',
+        'input.submit': 'Hỏi Tony',
+        'prompts.p1': 'Tìm chiếc túi trong bài Instagram này',
+        'prompts.p2': 'Tìm giày tương tự, dưới 2 triệu',
+        'prompts.p3': 'Tìm đèn mood mua được ở Việt Nam',
+        'prompts.p4': 'Tìm nơi rẻ hơn Coupang',
+        'prompts.p5': 'Gợi ý quà tặng phù hợp',
+        'features.f1.title': 'Tìm bằng ảnh',
+        'features.f1.desc': 'Tải lên một ảnh, AI sẽ nhận diện sản phẩm và tìm các mẫu tương tự.',
+        'features.f2.title': 'Phân tích link MXH',
+        'features.f2.desc': 'Sản phẩm bạn thấy trên Instagram, TikTok hay YouTube Shorts — chỉ cần dán link.',
+        'features.f3.title': 'So giá toàn cầu',
+        'features.f3.desc': 'So sánh đồng thời Amazon, Coupang, Shopee, Lazada, Naver và nhiều hơn.',
+        'features.f4.title': 'Tony Score',
+        'features.f4.desc': 'Điểm AI 100 tổng hợp giá, đánh giá, độ tin cậy và vận chuyển.',
+        'howto.eyebrow': 'Cách hoạt động',
+        'howto.title': 'Tìm kiếm để Tony lo, lựa chọn thì thông minh hơn.',
+        'howto.step1.label': '01 · NHẬP',
+        'howto.step1.title': 'Bạn nhập',
+        'howto.step1.desc': 'Link MXH, ảnh sản phẩm, URL cửa hàng hoặc một câu mô tả.',
+        'howto.step2.label': '02 · PHÂN TÍCH',
+        'howto.step2.title': 'Tony phân tích',
+        'howto.step2.desc': 'Thương hiệu, màu sắc, thiết kế, danh mục và khoảng giá — rồi đưa ra ứng viên.',
+        'howto.step3.label': '03 · GỢI Ý',
+        'howto.step3.title': 'Bạn quyết định',
+        'howto.step3.desc': 'Đề xuất chia thành Best, Rẻ nhất, Nhanh nhất, Chính hãng, Đáng giá nhất.',
+        'result.new_search': 'Tìm mới',
+        'result.your_request': 'Yêu cầu của bạn',
+        'result.report_label': 'Báo cáo Tony AI',
+        'result.top3': 'Top 3 đề xuất',
+        'result.top3_sub': 'Lựa chọn hợp lý nhất theo Tony',
+        'result.by_score': 'Theo Tony Score',
+        'result.full': 'Tất cả kết quả',
+        'result.full_sub': 'Thu hẹp bằng bộ lọc',
+        'result.alt': 'Sản phẩm thay thế',
+        'result.alt_sub': 'Tương tự nhưng hợp lý hơn',
+        'result.warn_title': 'Trước khi mua',
+        'sort.tony': 'Theo Tony Score',
+        'sort.price': 'Giá thấp nhất',
+        'sort.ship': 'Giao nhanh nhất',
+        'sort.review': 'Nhiều đánh giá',
+        'sort.authentic': 'Chính hãng nhất',
+        'store.all': 'Tất cả',
+        'footer.tagline': 'Nền tảng meta shopping nơi AI tìm, so sánh và gợi ý. Đừng chạy giữa các cửa hàng — để Tony lo.',
+        'footer.service': 'Dịch vụ',
+        'footer.service.1': 'Tìm sản phẩm AI',
+        'footer.service.2': 'So giá',
+        'footer.service.3': 'Tư vấn mua hàng',
+        'footer.service.4': 'Tony Score',
+        'footer.support': 'Hỗ trợ',
+        'footer.support.1': 'Trung tâm hỗ trợ',
+        'footer.support.2': 'Đối tác',
+        'footer.support.3': 'Điều khoản',
+        'footer.support.4': 'Quyền riêng tư',
+        'chat.ask_more': 'Hỏi Tony thêm',
+        'chat.short': 'Tony',
+        'chat.title': 'Tony · Trợ lý mua sắm AI',
+        'chat.online': 'Trực tuyến',
+        'chat.placeholder': 'Hỏi Tony bất cứ điều gì…',
+        'chat.quick.cheaper': 'Rẻ hơn nữa',
+        'chat.quick.genuine': 'Chỉ chính hãng',
+        'chat.quick.fast': 'Giao nhanh nhất',
+        'chat.quick.black': 'Màu đen',
+        'tags.best': 'TỐT NHẤT',
+        'tags.cheap': 'RẺ NHẤT',
+        'tags.fast': 'NHANH NHẤT',
+        'tags.genuine': 'CHÍNH HÃNG',
+        'tags.value': 'ĐÁNG GIÁ',
+        'tags.alt': 'THAY THẾ',
+        'tags.not': 'TRÁNH',
+        'unit.won': ' KRW',
+        'ship.today': 'Hôm nay',
+        'ship.tomorrow': 'Ngày mai',
+        'ship.days': 'trong {d} ngày',
+        'detail.add_compare': 'Thêm vào so sánh',
+        'detail.buy_at': 'Mua tại {store}',
+        'detail.ai_analysis': 'Báo cáo AI',
+        'detail.buy': 'Mua',
+        'detail.score': 'Tony Score',
+        'detail.report_title': 'Báo cáo mua hàng AI của Tony',
+        'detail.k.similarity': 'Độ tương tự',
+        'detail.k.price': 'Lợi thế giá',
+        'detail.k.review': 'Tin cậy đánh giá',
+        'detail.k.authentic': 'Chính hãng',
+        'detail.shipping_eta': 'Vận chuyển',
+        'detail.reviews': 'Đánh giá',
+        'detail.authentic': 'Chính hãng',
+        'detail.product_price': 'Hàng',
+        'detail.ship_fee': 'Phí ship',
+        'detail.ship_free': 'miễn phí',
+        'history.empty': 'Chưa có lịch sử tìm kiếm.',
+        'shortlist.empty': 'Danh sách so sánh trống.',
+        'shortlist.hint': 'Bấm icon bookmark trên thẻ để thêm.',
+        'shortlist.remove': 'Xoá',
+        'card.review': 'đánh giá',
+        'card.similar': 'tương tự',
+        'card.official': 'CHÍNH HÃNG',
+        'card.ship_with_fee': 'gồm phí ship',
+        'card.report.btn': 'Xem báo cáo AI',
+        'card.buy.btn': 'Đến cửa hàng',
+        'warn.1': 'Giá thấp bất thường có thể tiềm ẩn rủi ro chính hãng hoặc vận chuyển.',
+        'warn.2': 'Hàng quốc tế có thể chịu thuế và chậm giao — kiểm tra giá cuối cùng.',
+        'warn.3': 'Người bán mới với dưới 100 đánh giá có thể kém tin cậy.',
+        'warn.4': 'Hàng chưa nhận sau 24 tháng có thể không được hoàn tiền.',
+      }
+    };
+
+    const state = {
+      lang: 'ko',
+      theme: 'light',
+      attachments: [],
+      lastQuery: '',
+      products: [],
+      sort: 'tony',
+      store: 'all',
+      shortlist: [],
+      history: [],
+    };
+
+    function t(key, vars){
+      const dict = I18N[state.lang] || I18N.ko;
+      let s = dict[key] || I18N.ko[key] || key;
+      if (vars) Object.keys(vars).forEach(k => { s = s.replaceAll(`{${k}}`, vars[k]); });
+      return s;
+    }
+
+    function applyI18n(root=document){
+      root.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        const v = t(key);
+        if (v) el.textContent = v;
+      });
+      root.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        const v = t(key);
+        if (v) el.setAttribute('placeholder', v);
+      });
+    }
+
+    function setLang(l){
+      state.lang = l;
+      localStorage.setItem('tony.lang', l);
+      document.documentElement.lang = l === 'ko' ? 'ko' : (l === 'vi' ? 'vi' : 'en');
+      const label = {ko:'한국어', en:'English', vi:'Tiếng Việt'}[l];
+      const lbl = document.getElementById('langLabel');
+      if (lbl) lbl.textContent = label;
+      document.getElementById('langMenu')?.classList.add('hidden');
+      applyI18n();
+      // re-render result if visible
+      if (!document.getElementById('resultView').classList.contains('hidden')) {
+        renderResult();
+      }
+    }
+
+    // ============ THEME ============
+    function applyTheme(theme){
+      const html = document.documentElement;
+      if (theme === 'dark') html.classList.add('dark'); else html.classList.remove('dark');
+      state.theme = theme;
+      localStorage.setItem('tony.theme', theme);
+    }
+    function toggleTheme(){
+      applyTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
+    }
+
+    // ============ STORES & MOCK DATA ============
+    const STORES = ['Coupang','Amazon','Shopee','Lazada','네이버쇼핑','AliExpress','Gmarket','11번가','TikTok Shop'];
+    const ADJ = ['Minimal ','Classic ','Essential ','Premium ','Comfort ','Original ','Soft ','Vivid '];
+    const TAGS = ['best','cheap','fast','genuine','value','alt','not'];
+
+    function imgPlaceholder(seed, w=480, h=480){
+      const palettes = [
+        ['#ede9fe', '#7c3aed'], ['#dbeafe', '#2563eb'], ['#cffafe', '#0891b2'],
+        ['#fce7f3', '#db2777'], ['#fef3c7', '#d97706'], ['#dcfce7', '#16a34a'],
+        ['#e0e7ff', '#4f46e5'], ['#fee2e2', '#dc2626'],
+      ];
+      const [bg, fg] = palettes[seed % palettes.length];
+      const rot = (seed * 37) % 360;
+      const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${w} ${h}'>
+        <defs><linearGradient id='g${seed}' x1='0' x2='1' y1='0' y2='1'>
+          <stop offset='0' stop-color='${bg}'/><stop offset='1' stop-color='${fg}' stop-opacity='0.4'/>
+        </linearGradient></defs>
+        <rect width='${w}' height='${h}' fill='url(#g${seed})'/>
+        <g transform='translate(${w/2} ${h/2}) rotate(${rot})'>
+          <circle r='${w*0.30}' fill='${fg}' opacity='0.16'/>
+          <circle r='${w*0.20}' cx='${w*0.10}' cy='-${w*0.05}' fill='${fg}' opacity='0.30'/>
+          <rect x='-${w*0.18}' y='-${w*0.18}' width='${w*0.36}' height='${w*0.36}' rx='${w*0.08}' fill='${fg}' opacity='0.40'/>
+        </g>
+      </svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    function generateProducts(query){
+      const base = (query || 'Product').slice(0, 18);
+      const arr = [];
+      for (let i = 0; i < 14; i++) {
+        const store = STORES[i % STORES.length];
+        const adj = ADJ[i % ADJ.length];
+        const price = 18000 + ((i*7919) % 95000);
+        const ship = [0,1,2,3,4,5,7,10,14][i % 9];
+        const review = 80 + (i*173) % 5200;
+        const rating = (3.8 + ((i*13)%14)/10).toFixed(1);
+        const authenticityPct = 60 + (i*17)%40;
+        const tony = 60 + (i*11)%40;
+        const shippingFee = i%3===0 ? 0 : 2500 + (i*333)%4000;
+        arr.push({
+          id: 'p' + i,
+          name: adj + base + (i%2===0 ? ' Edition' : ' Pro'),
+          store,
+          price, finalPrice: price + shippingFee, shippingFee,
+          shipDays: ship,
+          rating: parseFloat(rating),
+          reviews: review,
+          authenticityPct,
+          tony,
+          tagKey: TAGS[i % TAGS.length],
+          official: i%4===1,
+          discount: i%5===0 ? Math.floor(10 + (i*13)%30) : 0,
+          img: imgPlaceholder(i+1),
+          similarity: Math.max(72, 99 - i*2),
+        });
+      }
+      arr[0].tagKey = 'best';    arr[0].tony = 92;
+      arr[1].tagKey = 'cheap';   arr[1].tony = 86; arr[1].price = 24800; arr[1].finalPrice = 27300;
+      arr[2].tagKey = 'fast';    arr[2].tony = 88; arr[2].shipDays = 1; arr[2].store='Coupang';
+      return arr;
+    }
+
+    // ============ UTILS ============
+    const fmt = new Intl.NumberFormat('ko-KR');
+    function won(n){ return fmt.format(n) + t('unit.won'); }
+    function shipText(d){
+      if (d===0) return t('ship.today');
+      if (d===1) return t('ship.tomorrow');
+      return t('ship.days', {d});
+    }
+    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function autoGrow(el){ el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 200) + 'px'; }
+    function focusInput(){ document.getElementById('askInput').focus(); }
+
+    // ============ ATTACHMENTS ============
+    function attachImage(e){
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        state.attachments.push({ type: 'image', value: ev.target.result, label: f.name });
+        renderAttachPreview();
+      };
+      reader.readAsDataURL(f);
+      e.target.value = '';
+    }
+    function attachLinkPrompt(){
+      const link = prompt('https://...', '');
+      if (link && link.trim()){
+        state.attachments.push({ type: 'link', value: link.trim(), label: link.trim() });
+        renderAttachPreview();
+      }
+    }
+    function removeAttach(i){
+      state.attachments.splice(i,1);
+      renderAttachPreview();
+    }
+    function renderAttachPreview(){
+      const wrap = document.getElementById('attachPreview');
+      if (!state.attachments.length){ wrap.classList.add('hidden'); wrap.innerHTML=''; return; }
+      wrap.classList.remove('hidden'); wrap.classList.add('flex');
+      wrap.innerHTML = state.attachments.map((a,i) => {
+        if (a.type === 'image') {
+          return `<div class="relative group">
+            <img src="${a.value}" class="w-14 h-14 rounded-xl object-cover border border-ink-200 dark:border-ink-700" alt="" />
+            <button onclick="removeAttach(${i})" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-ink-900 dark:bg-white text-white dark:text-ink-900 rounded-full text-[10px] font-bold flex items-center justify-center">
+              <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>`;
+        }
+        return `<div class="relative inline-flex items-center gap-1.5 max-w-xs bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl px-2.5 py-1.5 text-[13px]">
+          <svg class="w-3.5 h-3.5 text-ink-500 dark:text-ink-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07L11.34 4.6"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.66-1.66"/></svg>
+          <span class="truncate">${escapeHtml(a.label)}</span>
+          <button onclick="removeAttach(${i})" class="text-ink-400 dark:text-ink-500 hover:text-ink-900 dark:hover:text-ink-50 ml-1">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>`;
+      }).join('');
+    }
+
+    // ============ ROUTING ============
+    function goHome(){
+      document.getElementById('homeView').classList.remove('hidden');
+      document.getElementById('resultView').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function goResult(){
+      document.getElementById('homeView').classList.add('hidden');
+      document.getElementById('resultView').classList.remove('hidden');
+      window.scrollTo({ top: 0 });
+    }
+
+    function usePrompt(btn){
+      const txt = btn.querySelector('[data-i18n]')?.textContent || btn.textContent;
+      const el = document.getElementById('askInput');
+      el.value = txt;
+      autoGrow(el);
+      el.focus();
+    }
+
+    // ============ ASK TONY ============
+    function askTony(){
+      const text = document.getElementById('askInput').value.trim();
+      const q = text || (state.attachments.length ? '(attached items)' : '');
+      if (!q){ document.getElementById('askInput').focus(); return; }
+      state.lastQuery = q;
+      state.history.unshift({ q, at: Date.now(), atts: [...state.attachments] });
+      state.products = generateProducts(q);
+      state.sort = 'tony';
+      state.store = 'all';
+      renderResult();
+      goResult();
+    }
+
+    // ============ RENDER RESULT ============
+    function renderResult(){
+      document.getElementById('resultUserQuery').textContent = state.lastQuery;
+
+      const row = document.getElementById('resultAttachRow');
+      row.innerHTML = state.attachments.map(a => {
+        if (a.type === 'image') return `<img src="${a.value}" class="w-16 h-16 rounded-xl object-cover border border-ink-200 dark:border-ink-700"/>`;
+        return `<div class="inline-flex items-center gap-1.5 bg-ink-50 dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-xl px-2.5 py-1.5 text-[12px] max-w-xs truncate">
+          <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07L11.34 4.6"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.66-1.66"/></svg>
+          <span class="truncate">${escapeHtml(a.label)}</span>
+        </div>`;
+      }).join('');
+
+      const total = state.products.length;
+      const sameLike = state.products.filter(p => p.similarity >= 92).length;
+      const similar = total - sameLike;
+      const cheapest = [...state.products].sort((a,b)=>a.finalPrice-b.finalPrice)[0];
+      const fastest  = [...state.products].sort((a,b)=>a.shipDays-b.shipDays)[0];
+      const best     = [...state.products].sort((a,b)=>b.tony-a.tony)[0];
+      const avgTony = Math.round(state.products.reduce((a,p)=>a+p.tony,0)/total);
+      const avgAuth = Math.round(state.products.reduce((a,p)=>a+p.authenticityPct,0)/total);
+
+      const reportText = state.lang === 'en'
+        ? `Found <b>${total}</b> matches — <b>${sameLike}</b> highly similar and <b>${similar}</b> similar. Fastest in Korea is <b>${fastest.store}</b> (${shipText(fastest.shipDays)}); the lowest final price is from <b>${cheapest.store}</b> at <b>${won(cheapest.finalPrice)}</b>. Considering review trust, I recommend <b class="text-accent-700 dark:text-accent-300">${best.store} — ${escapeHtml(best.name)}</b>.`
+      : state.lang === 'vi'
+        ? `Tìm thấy <b>${total}</b> kết quả — <b>${sameLike}</b> rất giống và <b>${similar}</b> tương tự. Nhanh nhất tại Hàn là <b>${fastest.store}</b> (${shipText(fastest.shipDays)}); rẻ nhất là <b>${cheapest.store}</b> với <b>${won(cheapest.finalPrice)}</b>. Xét độ tin cậy đánh giá, tôi đề xuất <b class="text-accent-700 dark:text-accent-300">${best.store} — ${escapeHtml(best.name)}</b>.`
+      : `총 <b>${total}개</b> 상품을 찾았습니다. 동일 상품 가능성이 높은 상품 <b>${sameLike}개</b>, 유사 상품 <b>${similar}개</b>입니다. 한국 배송 기준으로는 <b>${fastest.store}</b> 상품이 가장 빠르고 (${shipText(fastest.shipDays)}), 가격 기준으로는 <b>${cheapest.store}</b> 상품이 가장 저렴합니다 (${won(cheapest.finalPrice)}). 리뷰 신뢰도까지 고려하면 <b class="text-accent-700 dark:text-accent-300">${best.store}의 ${escapeHtml(best.name)}</b>을 추천합니다.`;
+
+      document.getElementById('reportContent').innerHTML = `
+        <div class="text-[14.5px] md:text-[15.5px] leading-relaxed text-ink-800 dark:text-ink-100">
+          <p>${reportText}</p>
+          <div class="mt-4 flex flex-wrap items-center gap-1.5 text-[11px]">
+            <span class="inline-flex items-center gap-1 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-full px-2.5 py-1 font-semibold">
+              <svg class="w-3 h-3 text-accent-600 dark:text-accent-400" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              ${t('detail.score')} ${avgTony}
+            </span>
+            <span class="inline-flex items-center gap-1 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-full px-2.5 py-1 font-semibold">
+              <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              ${t('detail.k.authentic')} ${avgAuth}%
+            </span>
+            <span class="inline-flex items-center gap-1 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-full px-2.5 py-1 font-semibold">
+              ${won(cheapest.finalPrice)} · ${shipText(fastest.shipDays)}
+            </span>
+          </div>
+        </div>
+      `;
+
+      const top3 = pickTop3(state.products);
+      document.getElementById('topCards').innerHTML = top3.map((p,i)=>topCardHtml(p, ['best','cheap','fast'][i])).join('');
+
+      renderList();
+
+      const alts = [...state.products].sort((a,b)=>a.finalPrice-b.finalPrice).slice(2,6);
+      document.getElementById('altCards').innerHTML = alts.map(p=>altCardHtml(p)).join('');
+
+      document.getElementById('warnList').innerHTML = ['warn.1','warn.2','warn.3','warn.4'].map(k=>`
+        <li class="flex items-start gap-2">
+          <svg class="w-3.5 h-3.5 mt-1 shrink-0 text-amber-600 dark:text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>${t(k)}</span>
+        </li>`).join('');
+
+      resetChatForResult();
+      updateShortlistUI();
+    }
+
+    function pickTop3(arr){
+      const best  = [...arr].sort((a,b)=>b.tony-a.tony)[0];
+      const cheap = [...arr].filter(p=>p.id!==best.id).sort((a,b)=>a.finalPrice-b.finalPrice)[0];
+      const fast  = [...arr].filter(p=>p.id!==best.id && p.id!==cheap.id).sort((a,b)=>a.shipDays-b.shipDays)[0];
+      return [best, cheap, fast];
+    }
+
+    function badgeForTag(tagKey){
+      const map = {
+        best:    'bg-ink-900 dark:bg-white text-white dark:text-ink-900',
+        cheap:   'bg-emerald-600 text-white',
+        fast:    'bg-amber-500 text-white',
+        genuine: 'bg-sky-600 text-white',
+        value:   'bg-pink-600 text-white',
+        alt:     'bg-ink-700 dark:bg-ink-200 text-white dark:text-ink-900',
+        not:     'bg-red-100 text-red-700 border border-red-200',
+      };
+      return map[tagKey] || 'bg-ink-900 text-white';
+    }
+    function tagLabel(key){ return t('tags.'+key); }
+
+    function topCardHtml(p, tagKey){
+      const isInShortlist = state.shortlist.includes(p.id);
+      return `
+      <div class="lift group rounded-3xl border border-ink-200 dark:border-ink-800 bg-white dark:bg-ink-900 p-4 md:p-5 shadow-card hover:shadow-card-hover flex flex-col">
+        <div class="flex items-center justify-between">
+          <span class="inline-flex items-center gap-1 text-[10.5px] font-bold tracking-wider px-2 py-1 rounded-md ${badgeForTag(tagKey)}">
+            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            ${tagLabel(tagKey)}
+          </span>
+          <button onclick="toggleShortlist('${p.id}')" class="text-ink-300 dark:text-ink-600 hover:text-accent-600 dark:hover:text-accent-400 transition">
+            <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="${isInShortlist ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+        </div>
+        <div class="mt-3 aspect-[4/3] rounded-2xl overflow-hidden bg-ink-50 dark:bg-ink-800">
+          <img src="${p.img}" class="w-full h-full object-cover img-zoom" alt=""/>
+        </div>
+        <div class="mt-3">
+          <div class="flex items-center gap-1.5 text-[11px] text-ink-500 dark:text-ink-400">
+            <span class="font-semibold text-ink-800 dark:text-ink-100">${p.store}</span>
+            ${p.official ? `<span class="text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/40 border border-sky-100 dark:border-sky-900/60 rounded-md px-1.5 py-0.5 text-[9px] font-bold tracking-wider">${t('card.official')}</span>` : ''}
+            <span class="text-ink-300 dark:text-ink-600">·</span>
+            <span>${t('card.similar')} ${p.similarity}%</span>
+          </div>
+          <div class="mt-1.5 font-bold text-[15px] leading-snug line-clamp-2 tracking-tight">${escapeHtml(p.name)}</div>
+        </div>
+        <div class="mt-3 flex items-end justify-between">
+          <div>
+            ${p.discount ? `<div class="text-[11px] text-ink-400 dark:text-ink-500 line-through">${won(p.price+Math.round(p.price*p.discount/100))}</div>` : ''}
+            <div class="text-[24px] font-extrabold tracking-tighter2">${won(p.finalPrice)}</div>
+            <div class="text-[11px] text-ink-500 dark:text-ink-400">${t('card.ship_with_fee')} · ${shipText(p.shipDays)}</div>
+          </div>
+          <div class="text-right">
+            <div class="text-[10px] text-ink-400 dark:text-ink-500 uppercase tracking-widest">${t('detail.score')}</div>
+            <div class="text-[22px] font-extrabold text-accent-600 dark:text-accent-400 leading-none">${p.tony}<span class="text-sm text-ink-300 dark:text-ink-600">/100</span></div>
+          </div>
+        </div>
+        <div class="mt-2.5 tony-bar"><span style="width:${p.tony}%"></span></div>
+        <div class="mt-3 flex items-center justify-between text-[11.5px] text-ink-500 dark:text-ink-400">
+          <div class="flex items-center gap-1">
+            <svg class="w-3.5 h-3.5 text-amber-500" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            ${p.rating} · ${fmt.format(p.reviews)} ${t('card.review')}
+          </div>
+          <div>${t('detail.authentic')} ${p.authenticityPct}%</div>
+        </div>
+        <div class="mt-4 grid grid-cols-2 gap-2">
+          <button onclick="openDetail('${p.id}')" class="btn-outline h-10 rounded-xl text-[13px] font-semibold justify-center">${t('card.report.btn')}</button>
+          <button onclick="buy('${p.id}')" class="btn-primary h-10 rounded-xl text-[13px] font-bold justify-center">${t('card.buy.btn')}</button>
+        </div>
+      </div>`;
+    }
+
+    function compactCardHtml(p){
+      const isInShortlist = state.shortlist.includes(p.id);
+      return `
+      <div class="lift group rounded-2xl border border-ink-200 dark:border-ink-800 bg-white dark:bg-ink-900 overflow-hidden hover:shadow-card flex flex-col">
+        <div class="relative aspect-[4/3] bg-ink-50 dark:bg-ink-800 overflow-hidden">
+          <img src="${p.img}" class="w-full h-full object-cover img-zoom" alt=""/>
+          <div class="absolute top-2 left-2 inline-flex items-center gap-1 text-[9.5px] font-bold tracking-wider px-1.5 py-0.5 rounded-md ${badgeForTag(p.tagKey)}">${tagLabel(p.tagKey)}</div>
+          <button onclick="toggleShortlist('${p.id}')" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 dark:bg-ink-900/80 backdrop-blur border border-ink-200/70 dark:border-ink-700/70 flex items-center justify-center text-ink-400 dark:text-ink-500 hover:text-accent-600 dark:hover:text-accent-400">
+            <svg class="w-[15px] h-[15px]" viewBox="0 0 24 24" fill="${isInShortlist ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          ${p.discount ? `<div class="absolute bottom-2 left-2 text-[10px] font-bold bg-red-600 text-white rounded-md px-1.5 py-0.5">-${p.discount}%</div>` : ''}
+        </div>
+        <div class="p-3 flex-1 flex flex-col">
+          <div class="flex items-center gap-1 text-[11px] text-ink-500 dark:text-ink-400">
+            <span class="font-semibold text-ink-800 dark:text-ink-100 truncate">${p.store}</span>
+            ${p.official ? `<span class="text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/40 border border-sky-100 dark:border-sky-900/60 rounded px-1 py-0.5 text-[9px] font-bold tracking-wider">${t('card.official')}</span>` : ''}
+            <span class="ml-auto">${p.similarity}%</span>
+          </div>
+          <div class="mt-1 text-[13.5px] font-semibold line-clamp-2 leading-tight tracking-tight">${escapeHtml(p.name)}</div>
+          <div class="mt-2 flex items-end justify-between">
+            <div>
+              <div class="text-[16px] font-extrabold tracking-tighter2">${won(p.finalPrice)}</div>
+              <div class="text-[10px] text-ink-500 dark:text-ink-400">${shipText(p.shipDays)}</div>
+            </div>
+            <div class="text-right">
+              <div class="text-[9.5px] text-ink-400 dark:text-ink-500 uppercase tracking-widest">Tony</div>
+              <div class="text-[14px] font-extrabold text-accent-600 dark:text-accent-400 leading-none">${p.tony}</div>
+            </div>
+          </div>
+          <div class="mt-2 tony-bar"><span style="width:${p.tony}%"></span></div>
+          <div class="mt-2 flex items-center justify-between text-[11px] text-ink-500 dark:text-ink-400">
+            <span class="flex items-center gap-1">
+              <svg class="w-3 h-3 text-amber-500" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              ${p.rating} · ${fmt.format(p.reviews)}
+            </span>
+            <span>${t('detail.authentic')} ${p.authenticityPct}%</span>
+          </div>
+          <div class="mt-3 flex gap-2">
+            <button onclick="openDetail('${p.id}')" class="btn-outline flex-1 h-9 rounded-lg text-[12px] font-semibold justify-center">${t('detail.ai_analysis')}</button>
+            <button onclick="buy('${p.id}')" class="btn-primary flex-1 h-9 rounded-lg text-[12px] font-bold justify-center">${t('detail.buy')}</button>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function altCardHtml(p){
+      return `
+      <button onclick="openDetail('${p.id}')" class="lift text-left rounded-2xl border border-ink-200 dark:border-ink-800 bg-white dark:bg-ink-900 overflow-hidden hover:shadow-card">
+        <div class="aspect-square bg-ink-50 dark:bg-ink-800 overflow-hidden"><img src="${p.img}" class="w-full h-full object-cover img-zoom"/></div>
+        <div class="p-3">
+          <div class="text-[10px] text-ink-500 dark:text-ink-400 font-semibold tracking-wide">${p.store}</div>
+          <div class="text-[13px] font-semibold line-clamp-2 mt-0.5 tracking-tight">${escapeHtml(p.name)}</div>
+          <div class="mt-1 text-[14px] font-extrabold tracking-tighter2">${won(p.finalPrice)}</div>
+        </div>
+      </button>`;
+    }
+
+    function renderList(){
+      const list = [...state.products];
+      const filtered = state.store === 'all' ? list : list.filter(p => p.store === state.store);
+      const sorters = {
+        tony: (a,b)=>b.tony-a.tony,
+        priceAsc: (a,b)=>a.finalPrice-b.finalPrice,
+        ship: (a,b)=>a.shipDays-b.shipDays,
+        review: (a,b)=>b.reviews-a.reviews,
+        authentic: (a,b)=>b.authenticityPct-a.authenticityPct,
+      };
+      filtered.sort(sorters[state.sort] || sorters.tony);
+      const wrap = document.getElementById('allCards');
+      wrap.innerHTML = filtered.length
+        ? filtered.map(p=>compactCardHtml(p)).join('')
+        : `<div class="col-span-full text-center text-ink-500 dark:text-ink-400 py-12 border border-dashed border-ink-200 dark:border-ink-700 rounded-2xl">No items.</div>`;
+    }
+
+    function setSort(btn){
+      document.querySelectorAll('[data-sort]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.sort = btn.dataset.sort;
+      renderList();
+    }
+    function setStoreFilter(btn){
+      document.querySelectorAll('[data-store]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.store = btn.dataset.store;
+      renderList();
+    }
+
+    // ============ DETAIL ============
+    function openDetail(id){
+      const p = state.products.find(x => x.id === id);
+      if (!p) return;
+      document.getElementById('detailContent').innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
+          <div class="aspect-square md:aspect-auto bg-ink-50 dark:bg-ink-800 relative">
+            <img src="${p.img}" class="w-full h-full object-cover"/>
+            <button onclick="closeDetail()" class="md:hidden absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 dark:bg-ink-900/80 backdrop-blur flex items-center justify-center">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="p-5 md:p-6 flex flex-col">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2 text-[11px] text-ink-500 dark:text-ink-400">
+                <span class="font-bold text-ink-800 dark:text-ink-100">${p.store}</span>
+                ${p.official ? `<span class="text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/40 border border-sky-100 dark:border-sky-900/60 rounded px-1.5 py-0.5 text-[9px] font-bold tracking-wider">${t('card.official')}</span>` : ''}
+                <span class="text-ink-300 dark:text-ink-600">·</span>
+                <span>${t('card.similar')} ${p.similarity}%</span>
+              </div>
+              <button onclick="closeDetail()" class="hidden md:flex btn btn-ghost w-9 h-9 rounded-lg justify-center">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            <h3 class="mt-2 text-[20px] md:text-[22px] font-extrabold leading-snug tracking-tighter2">${escapeHtml(p.name)}</h3>
+            <div class="mt-3 flex items-end gap-3">
+              <div class="text-[28px] md:text-[32px] font-extrabold tracking-tighter2">${won(p.finalPrice)}</div>
+              ${p.discount ? `<div class="text-sm text-red-600 dark:text-red-400 font-bold">-${p.discount}%</div>` : ''}
+            </div>
+            <div class="text-[11px] text-ink-500 dark:text-ink-400">${t('detail.product_price')} ${won(p.price)} · ${t('detail.ship_fee')} ${p.shippingFee ? won(p.shippingFee) : t('detail.ship_free')}</div>
+
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="rounded-xl bg-ink-50 dark:bg-ink-800 p-2.5">
+                <div class="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest">${t('detail.shipping_eta')}</div>
+                <div class="text-[13px] font-bold mt-0.5">${shipText(p.shipDays)}</div>
+              </div>
+              <div class="rounded-xl bg-ink-50 dark:bg-ink-800 p-2.5">
+                <div class="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest">${t('detail.reviews')}</div>
+                <div class="text-[13px] font-bold mt-0.5 flex items-center justify-center gap-1">
+                  <svg class="w-3 h-3 text-amber-500" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  ${p.rating} · ${fmt.format(p.reviews)}
+                </div>
+              </div>
+              <div class="rounded-xl bg-ink-50 dark:bg-ink-800 p-2.5">
+                <div class="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest">${t('detail.authentic')}</div>
+                <div class="text-[13px] font-bold mt-0.5">${p.authenticityPct}%</div>
+              </div>
+            </div>
+
+            <div class="mt-5 rounded-2xl border border-accent-200 dark:border-accent-800/60 bg-accent-50/50 dark:bg-accent-950/30 p-4">
+              <div class="flex items-center gap-1.5 text-accent-700 dark:text-accent-300 font-bold text-[13px] tracking-tight">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                ${t('detail.report_title')}
+              </div>
+              <div class="mt-2 text-[13.5px] text-ink-800 dark:text-ink-100 leading-relaxed">
+                ${tonyVerdict(p)}
+              </div>
+              <div class="mt-3 grid grid-cols-2 gap-2 text-[11.5px]">
+                <div class="flex items-center justify-between bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-lg px-2.5 py-1.5"><span>${t('detail.k.similarity')}</span><b>${p.similarity}%</b></div>
+                <div class="flex items-center justify-between bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-lg px-2.5 py-1.5"><span>${t('detail.k.price')}</span><b>${100 - Math.min(99, Math.floor(p.finalPrice/2000))}%</b></div>
+                <div class="flex items-center justify-between bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-lg px-2.5 py-1.5"><span>${t('detail.k.review')}</span><b>${Math.min(99, 50+Math.floor(p.reviews/80))}%</b></div>
+                <div class="flex items-center justify-between bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-lg px-2.5 py-1.5"><span>${t('detail.k.authentic')}</span><b>${p.authenticityPct}%</b></div>
+              </div>
+            </div>
+
+            <div class="mt-auto pt-5 grid grid-cols-2 gap-2">
+              <button onclick="toggleShortlist('${p.id}'); openDetail('${p.id}')" class="btn-outline h-11 rounded-xl text-[13.5px] font-semibold justify-center">${t('detail.add_compare')}</button>
+              <button onclick="buy('${p.id}')" class="btn-primary h-11 rounded-xl text-[13.5px] font-bold justify-center">${t('detail.buy_at', {store: p.store})}</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById('detailModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeDetail(){
+      document.getElementById('detailModal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+    function tonyVerdict(p){
+      const grade = p.tony >= 85 ? (state.lang==='en'?'a very reasonable choice':(state.lang==='vi'?'lựa chọn rất hợp lý':'매우 합리적인 선택'))
+                  : p.tony >= 75 ? (state.lang==='en'?'a solid choice':(state.lang==='vi'?'lựa chọn ổn':'무난한 선택'))
+                  :                (state.lang==='en'?'worth reconsidering':(state.lang==='vi'?'cần cân nhắc':'보완이 필요한 선택'));
+      if (state.lang === 'en') return `This item has <b>${p.similarity}%</b> design similarity to the source. ${p.store} lists it as ${p.official ? 'an official authorized seller' : 'a general seller'}. Expected delivery ${shipText(p.shipDays)}. Considering review trust and authenticity, with a <b>Tony Score of ${p.tony}</b> this is ${grade}.`;
+      if (state.lang === 'vi') return `Sản phẩm có độ tương tự thiết kế <b>${p.similarity}%</b>. ${p.store} ${p.official ? 'là nhà bán chính hãng' : 'là nhà bán phổ thông'}. Giao dự kiến ${shipText(p.shipDays)}. Xét tin cậy đánh giá và chính hãng, với <b>Tony Score ${p.tony}</b> đây là ${grade}.`;
+      return `이 상품은 원본 이미지와 디자인 유사도가 <b>${p.similarity}%</b>로 높고, ${p.store}에서 ${p.official ? '공식 인증 판매처' : '일반 판매처'}로 등록되어 있습니다. 배송은 <b>${shipText(p.shipDays)}</b> 예상되며, 리뷰 신뢰도와 정품 가능성을 고려할 때 <b>Tony Score ${p.tony}점</b>의 ${grade}입니다.`;
+    }
+    function buy(id){
+      const p = state.products.find(x => x.id === id);
+      if (!p) return;
+      alert(`${p.store}\n${p.name}\n${won(p.finalPrice)}\n\n(데모 환경 / Demo only)`);
+    }
+
+    // ============ SHORTLIST ============
+    function toggleShortlist(id){
+      const i = state.shortlist.indexOf(id);
+      if (i >= 0) state.shortlist.splice(i, 1); else state.shortlist.push(id);
+      updateShortlistUI();
+      // re-render to update bookmark fill state
+      if (!document.getElementById('resultView').classList.contains('hidden')){
+        const top3 = pickTop3(state.products);
+        document.getElementById('topCards').innerHTML = top3.map((p,i)=>topCardHtml(p, ['best','cheap','fast'][i])).join('');
+        renderList();
+      }
+    }
+    function updateShortlistUI(){
+      const n = state.shortlist.length;
+      [document.getElementById('shortlistBadge'), document.getElementById('shortlistBadgeMobile')].forEach(b => {
+        if (!b) return;
+        if (n) { b.classList.remove('hidden'); b.textContent = n; } else b.classList.add('hidden');
+      });
+    }
+    function openShortlist(){
+      const items = state.shortlist.map(id => state.products.find(p => p.id === id)).filter(Boolean);
+      const wrap = document.getElementById('shortlistList');
+      wrap.innerHTML = items.length ? items.map(p => `
+        <div class="flex gap-3 items-center border border-ink-200 dark:border-ink-700 rounded-2xl p-2.5">
+          <img src="${p.img}" class="w-16 h-16 rounded-xl object-cover bg-ink-50 dark:bg-ink-800"/>
+          <div class="flex-1 min-w-0">
+            <div class="text-[11px] text-ink-500 dark:text-ink-400 font-semibold">${p.store}</div>
+            <div class="text-[13px] font-semibold truncate tracking-tight">${escapeHtml(p.name)}</div>
+            <div class="text-[14px] font-extrabold tracking-tighter2">${won(p.finalPrice)} <span class="text-[10px] text-ink-400 dark:text-ink-500 font-medium">${t('detail.score')} ${p.tony}</span></div>
+          </div>
+          <button onclick="toggleShortlist('${p.id}'); openShortlist();" class="text-[12px] text-ink-500 dark:text-ink-400 hover:text-red-600 dark:hover:text-red-400">${t('shortlist.remove')}</button>
+        </div>`).join('') : `
+        <div class="text-[13px] text-ink-500 dark:text-ink-400 text-center py-12 border border-dashed border-ink-200 dark:border-ink-700 rounded-2xl">
+          <svg class="w-8 h-8 mx-auto mb-2 opacity-40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          ${t('shortlist.empty')}<br/><span class="text-[11.5px]">${t('shortlist.hint')}</span>
+        </div>`;
+      document.getElementById('shortlistDrawer').classList.remove('hidden');
+    }
+    function closeShortlist(){ document.getElementById('shortlistDrawer').classList.add('hidden'); }
+
+    // ============ HISTORY ============
+    function openHistory(){
+      const wrap = document.getElementById('historyList');
+      wrap.innerHTML = state.history.length ? state.history.map((h,i) => `
+        <button onclick="replayHistory(${i})" class="w-full text-left p-3 border border-ink-200 dark:border-ink-700 rounded-2xl hover:bg-ink-50 dark:hover:bg-ink-800 transition">
+          <div class="text-[11px] text-ink-400 dark:text-ink-500">${new Date(h.at).toLocaleString(state.lang==='ko'?'ko-KR':(state.lang==='vi'?'vi-VN':'en-US'))}</div>
+          <div class="text-[13.5px] font-semibold line-clamp-2 tracking-tight">${escapeHtml(h.q)}</div>
+        </button>`).join('') : `<div class="text-[13px] text-ink-500 dark:text-ink-400 text-center py-12 border border-dashed border-ink-200 dark:border-ink-700 rounded-2xl">${t('history.empty')}</div>`;
+      document.getElementById('historyDrawer').classList.remove('hidden');
+    }
+    function closeHistory(){ document.getElementById('historyDrawer').classList.add('hidden'); }
+    function replayHistory(i){
+      const h = state.history[i]; if (!h) return;
+      state.lastQuery = h.q;
+      state.attachments = h.atts || [];
+      state.products = generateProducts(h.q);
+      renderResult();
+      renderAttachPreview();
+      closeHistory();
+      goResult();
+    }
+
+    // ============ LANG menu ============
+    function toggleLangMenu(e){ e.stopPropagation(); document.getElementById('langMenu').classList.toggle('hidden'); }
+    document.addEventListener('click', () => document.getElementById('langMenu')?.classList.add('hidden'));
+    function toggleMobileMenu(){ document.getElementById('mobileMenu').classList.toggle('hidden'); }
+
+    // ============ CHAT ============
+    let chatOpen = false;
+    function toggleChat(){
+      chatOpen = !chatOpen;
+      const p = document.getElementById('chatPanel');
+      const f = document.getElementById('chatFab');
+      if (chatOpen){
+        if (!document.getElementById('chatBody').dataset.seeded) seedChat();
+        p.classList.remove('hidden');
+        f.classList.add('hidden');
+      } else {
+        p.classList.add('hidden');
+        f.classList.remove('hidden');
+      }
+    }
+    function resetChatForResult(){
+      document.getElementById('chatBody').innerHTML = '';
+      delete document.getElementById('chatBody').dataset.seeded;
+    }
+    function seedChat(){
+      document.getElementById('chatBody').dataset.seeded = '1';
+      const greet = state.lang === 'en'
+        ? 'Hi, I\'m Tony. If the result isn\'t quite right or you want to narrow it down, just ask — by price, color, country, or shipping.'
+        : state.lang === 'vi'
+        ? 'Chào bạn, mình là Tony. Nếu kết quả chưa vừa ý hoặc bạn muốn thu hẹp, cứ hỏi — theo giá, màu, quốc gia, hay vận chuyển.'
+        : '안녕하세요, 토니예요. 결과가 마음에 들지 않거나 더 좁히고 싶으면 자유롭게 물어보세요. 가격·색상·국가·배송 기준으로 다시 추천해드릴 수 있어요.';
+      tonyMsg(greet);
+    }
+    function userMsg(text){
+      const body = document.getElementById('chatBody');
+      const el = document.createElement('div');
+      el.className = 'flex justify-end animate-fade-up';
+      el.innerHTML = `<div class="max-w-[80%] bg-ink-900 dark:bg-white text-white dark:text-ink-900 text-[13.5px] leading-relaxed rounded-2xl rounded-tr-md px-3.5 py-2.5">${escapeHtml(text)}</div>`;
+      body.appendChild(el); body.scrollTop = body.scrollHeight;
+    }
+    function tonyMsg(html){
+      const body = document.getElementById('chatBody');
+      const el = document.createElement('div');
+      el.className = 'flex gap-2 animate-fade-up';
+      el.innerHTML = `
+        <span class="logo-mark w-7 h-7 rounded-[8px] shrink-0 mt-0.5 flex items-center justify-center text-white text-xs font-extrabold">T</span>
+        <div class="max-w-[85%] bg-white dark:bg-ink-800 border border-ink-200 dark:border-ink-700 text-[13.5px] leading-relaxed rounded-2xl rounded-tl-md px-3.5 py-2.5">${html}</div>`;
+      body.appendChild(el); body.scrollTop = body.scrollHeight;
+    }
+    function tonyTyping(){
+      const body = document.getElementById('chatBody');
+      const el = document.createElement('div');
+      el.id = 'typingBubble';
+      el.className = 'flex gap-2';
+      el.innerHTML = `
+        <span class="logo-mark w-7 h-7 rounded-[8px] shrink-0 mt-0.5 flex items-center justify-center text-white text-xs font-extrabold">T</span>
+        <div class="bg-white dark:bg-ink-800 border border-ink-200 dark:border-ink-700 rounded-2xl rounded-tl-md px-3.5 py-2.5 flex gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-ink-300 dark:bg-ink-500 animate-pulse-dot" style="animation-delay:-.32s"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-ink-300 dark:bg-ink-500 animate-pulse-dot" style="animation-delay:-.16s"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-ink-300 dark:bg-ink-500 animate-pulse-dot"></span>
+        </div>`;
+      body.appendChild(el); body.scrollTop = body.scrollHeight;
+    }
+    function removeTyping(){ document.getElementById('typingBubble')?.remove(); }
+
+    function quickAsk(text){ document.getElementById('chatInput').value = text; sendChat(); }
+    function sendChat(){
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      userMsg(text); input.value = '';
+      tonyTyping();
+      setTimeout(() => {
+        removeTyping();
+        const r = tonyReply(text);
+        tonyMsg(r.text);
+        if (r.apply) r.apply();
+      }, 600);
+    }
+    function tonyReply(text){
+      const t0 = text.toLowerCase();
+      // cheap
+      if (/(싼|저렴|최저가|가격|cheap|rẻ|giá)/.test(t0)){
+        const min = won([...state.products].sort((a,b)=>a.finalPrice-b.finalPrice)[0].finalPrice);
+        return {
+          text: state.lang==='en' ? `Sorted by lowest final price. Starting from <b>${min}</b> incl. shipping.` :
+                state.lang==='vi' ? `Đã sắp theo giá thấp nhất, từ <b>${min}</b> gồm phí ship.` :
+                                    `가격 낮은 순으로 정렬했어요. 배송비 포함 <b>${min}</b>부터 시작합니다.`,
+          apply: ()=>{ state.sort='priceAsc'; reflectSortChip('priceAsc'); renderList(); }
+        };
+      }
+      // fast
+      if (/(빠른|배송|fast|ship|giao|nhanh)/.test(t0)){
+        const d = shipText([...state.products].sort((a,b)=>a.shipDays-b.shipDays)[0].shipDays);
+        return {
+          text: state.lang==='en' ? `Sorted by fastest shipping. The fastest is <b>${d}</b>.` :
+                state.lang==='vi' ? `Đã sắp theo giao nhanh nhất, sớm nhất là <b>${d}</b>.` :
+                                    `배송 빠른 순으로 정렬했어요. 가장 빠른 옵션은 <b>${d}</b>입니다.`,
+          apply: ()=>{ state.sort='ship'; reflectSortChip('ship'); renderList(); }
+        };
+      }
+      // authentic
+      if (/(정품|공식|authentic|genuine|chính|hãng)/.test(t0)){
+        return {
+          text: state.lang==='en' ? `Showing items with the highest authenticity score first.` :
+                state.lang==='vi' ? `Đã ưu tiên các sản phẩm chính hãng nhất.` :
+                                    `정품 가능성 높은 순으로 다시 정렬했어요. 공식몰 위주로 보여드릴게요.`,
+          apply: ()=>{ state.sort='authentic'; reflectSortChip('authentic'); renderList(); }
+        };
+      }
+      // black
+      if (/(검정|검은|블랙|black|đen)/.test(t0)){
+        return {
+          text: state.lang==='en' ? 'Re-running analysis in black. Updated similarity scores.' :
+                state.lang==='vi' ? 'Phân tích lại theo màu đen. Đã cập nhật điểm tương tự.' :
+                                    '컬러를 검정 계열로 다시 분석했어요. 유사 상품 3개를 새로 추천합니다.',
+          apply: ()=>{
+            state.products = state.products.map((p,i) => ({...p, similarity: Math.min(99, p.similarity + (i%2?2:1)), img: imgPlaceholder(p.id.replace('p','')*1+10)}));
+            renderResult();
+          }
+        };
+      }
+      // vietnam
+      if (/(베트남|vn|việt|vietnam)/.test(t0)){
+        return {
+          text: state.lang==='en' ? 'Filtered to items available in Vietnam — Shopee and Lazada dominate.' :
+                state.lang==='vi' ? 'Đã lọc các sản phẩm mua được tại Việt Nam — chủ yếu Shopee, Lazada.' :
+                                    '베트남에서 구매 가능한 상품으로 좁혔어요. Shopee·Lazada 위주 결과입니다.',
+          apply: ()=>{ state.store='Shopee'; reflectStoreChip('Shopee'); renderList(); }
+        };
+      }
+      // review
+      if (/(리뷰|review|đánh giá)/.test(t0)){
+        const r = fmt.format([...state.products].sort((a,b)=>b.reviews-a.reviews)[0].reviews);
+        return {
+          text: state.lang==='en' ? `Sorted by most reviews. The top item has <b>${r}</b> reviews.` :
+                state.lang==='vi' ? `Đã sắp theo nhiều đánh giá nhất. Sản phẩm cao nhất có <b>${r}</b> đánh giá.` :
+                                    `리뷰 많은 순으로 정렬했어요. 가장 많은 상품은 <b>${r}개</b>의 리뷰가 있어요.`,
+          apply: ()=>{ state.sort='review'; reflectSortChip('review'); renderList(); }
+        };
+      }
+      // fallback
+      return {
+        text: state.lang==='en' ? 'Could you be more specific? e.g., <i>under $80 in black</i>, <i>fast shipping in Korea</i>, <i>most reviews</i>.' :
+              state.lang==='vi' ? 'Bạn nói cụ thể hơn nhé. Vd: <i>dưới 2 triệu màu đen</i>, <i>giao nhanh ở Hàn</i>, <i>nhiều đánh giá nhất</i>.' :
+                                  '좀 더 구체적으로 알려주세요. 예: <i>"검정색으로 10만원 이하"</i>, <i>"한국에서 빠르게"</i>, <i>"리뷰 많은 거"</i> 같은 식이면 좋아요.'
+      };
+    }
+    function reflectSortChip(key){ document.querySelectorAll('[data-sort]').forEach(b => b.classList.toggle('active', b.dataset.sort === key)); }
+    function reflectStoreChip(key){ document.querySelectorAll('[data-store]').forEach(b => b.classList.toggle('active', b.dataset.store === key)); }
+
+    // ============ INIT ============
+    document.addEventListener('keydown', e => { if (e.key === 'Escape'){ closeDetail(); closeHistory(); closeShortlist(); }});
+    // restore language preference
+    (function(){
+      const saved = localStorage.getItem('tony.lang');
+      if (saved && I18N[saved]) setLang(saved); else applyI18n();
+    })();
+  </script>
+</body>
+</html>
