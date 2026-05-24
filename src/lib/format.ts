@@ -1,5 +1,6 @@
 import type { Money } from '@/types/product';
 import type { AppLocale } from '@/i18n/routing';
+import { convertMoneySync, localeCurrency } from './currency';
 
 const LOCALE_MAP: Record<AppLocale, string> = {
   ko: 'ko-KR',
@@ -14,6 +15,16 @@ export function formatMoney(money: Money, locale: AppLocale): string {
     currency: money.currency,
     maximumFractionDigits: money.currency === 'KRW' || money.currency === 'JPY' || money.currency === 'VND' ? 0 : 2,
   }).format(money.amount);
+}
+
+/**
+ * Convert money to the locale's preferred currency (best-effort, sync, falls
+ * back to the original currency on cache miss), then format.
+ */
+export function formatMoneyLocale(money: Money, locale: AppLocale): string {
+  const target = localeCurrency(locale);
+  const converted = convertMoneySync(money, target);
+  return formatMoney(converted, locale);
 }
 
 /** Format an integer count with locale-aware separators. */

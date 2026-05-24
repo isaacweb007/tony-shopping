@@ -126,6 +126,11 @@
     "support4": "개인정보처리방침",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "watch": {
+    "dropTitle": "가격이 떨어졌어요",
+    "dropDesc": "{name}의 가격이 하락했습니다.",
+    "riseTitle": "가격이 올랐어요"
+  },
   "distribution": {
     "label": "가격 분포",
     "subtitle": "{min} ~ {max}",

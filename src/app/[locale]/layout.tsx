@@ -12,6 +12,7 @@ import { ShortlistDrawer } from '@/components/site/shortlist-drawer';
 import { ChatPanel } from '@/components/chat/chat-panel';
 import { JsonLd } from '@/components/site/json-ld';
 import { ToastViewport } from '@/components/ui/toast-viewport';
+import { FxPreloader } from '@/components/providers/fx-preloader';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { routing } from '@/i18n/routing';
@@ -118,6 +119,7 @@ export default async function LocaleLayout({
               <ShortlistDrawer />
               <ChatPanel />
               <ToastViewport />
+              <FxPreloader />
               <Analytics />
               <SpeedInsights />
             </QueryProvider>

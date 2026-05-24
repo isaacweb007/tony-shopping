@@ -126,6 +126,11 @@
     "support4": "Privacy",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "watch": {
+    "dropTitle": "Price dropped",
+    "dropDesc": "{name} just got cheaper.",
+    "riseTitle": "Price went up"
+  },
   "distribution": {
     "label": "Price distribution",
     "subtitle": "{min} – {max}",

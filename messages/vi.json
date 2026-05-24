@@ -126,6 +126,11 @@
     "support4": "Quyền riêng tư",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "watch": {
+    "dropTitle": "Giá đã giảm",
+    "dropDesc": "{name} vừa rẻ hơn.",
+    "riseTitle": "Giá đã tăng"
+  },
   "distribution": {
     "label": "Phân bổ giá",
     "subtitle": "{min} – {max}",
