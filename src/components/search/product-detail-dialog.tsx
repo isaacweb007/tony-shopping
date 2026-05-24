@@ -16,6 +16,7 @@ import { ReviewAnalysis } from './review-analysis';
 import { useShortlistStore } from '@/stores/shortlist-store';
 import { recordProductClick } from '@/stores/click-store';
 import { affiliateUrl } from '@/lib/affiliate';
+import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
 import { Link } from '@/i18n/routing';
 import type { AppLocale } from '@/i18n/routing';
@@ -124,7 +125,16 @@ export function ProductDetailDialog({ product, onOpenChange }: Props) {
             <ReviewAnalysis product={product} />
 
             <div className="mt-auto grid grid-cols-[1fr_1fr_auto] gap-2 pt-5">
-              <Button variant="outline" className="h-11 rounded-xl" onClick={() => toggle(product.id)}>
+              <Button
+                variant="outline"
+                className="h-11 rounded-xl"
+                onClick={() => {
+                  const willAdd = !inShortlist;
+                  toggle(product.id);
+                  if (willAdd) void pushShortlistItem(product);
+                  else void deleteShortlistItem(product.id);
+                }}
+              >
                 {inShortlist ? td('removeCompare') : td('addCompare')}
               </Button>
               <Button variant="primary" className="h-11 rounded-xl font-bold" asChild>

@@ -11,6 +11,7 @@ import { useShortlistStore } from '@/stores/shortlist-store';
 import { toast } from '@/stores/toast-store';
 import { recordProductClick } from '@/stores/click-store';
 import { affiliateUrl } from '@/lib/affiliate';
+import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
 import { useSearchParams } from 'next/navigation';
 import type { AppLocale } from '@/i18n/routing';
@@ -40,8 +41,10 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
         willAdd ? t('toast.shortlistAdded') : t('toast.shortlistRemoved'),
         product.name,
       );
+      if (willAdd) void pushShortlistItem(product);
+      else void deleteShortlistItem(product.id);
     },
-    [inShortlist, toggleRaw, t, product.name],
+    [inShortlist, toggleRaw, t, product],
   );
 
   const isFeature = variant === 'feature';

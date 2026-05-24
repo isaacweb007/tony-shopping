@@ -11,6 +11,7 @@ import { Link } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
 import { useUIStore } from '@/stores/ui-store';
 import { useShortlistStore } from '@/stores/shortlist-store';
+import { UserMenu } from './user-menu';
 
 export function Header() {
   const t = useTranslations('header');
@@ -53,9 +54,9 @@ export function Header() {
           </Button>
           <LanguageSwitch />
           <ThemeToggle label={t('theme')} />
-          <Button variant="primary" size="pill" className="ml-1">
-            {t('login')}
-          </Button>
+          <span className="ml-1">
+            <UserMenu />
+          </span>
         </nav>
 
         {/* mobile */}
@@ -108,9 +109,9 @@ export function Header() {
           {t('language')}
         </div>
         <LanguageSwitch variant="mobile" />
-        <Button variant="primary" className="mt-2 w-full rounded-xl">
-          {t('login')}
-        </Button>
+        <div className="mt-2">
+          <UserMenu />
+        </div>
       </div>
     </header>
   );

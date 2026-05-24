@@ -1,9 +1,29 @@
-import createMiddleware from 'next-intl/middleware';
+import type { NextRequest } from 'next/server';
+import createIntlMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
+import { refreshSession } from './lib/supabase/middleware';
 
-export default createMiddleware(routing);
+const intl = createIntlMiddleware(routing);
+
+/**
+ * Pipeline:
+ *   1) next-intl handles locale routing
+ *   2) Supabase refreshes the session cookie on the resulting response
+ *
+ * Both layers are safe no-ops when their inputs are missing.
+ */
+export default async function middleware(request: NextRequest) {
+  // next-intl returns a fully-fledged response (rewrite/redirect).
+  const intlResponse = intl(request);
+
+  // We need supabase's refreshed cookies on that response. Merge them.
+  const supabaseResponse = await refreshSession(request);
+  for (const cookie of supabaseResponse.cookies.getAll()) {
+    intlResponse.cookies.set(cookie);
+  }
+  return intlResponse;
+}
 
 export const config = {
-  // Match all paths except API, Next internals, and static files
   matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
 };

@@ -13,6 +13,7 @@ import { ChatPanel } from '@/components/chat/chat-panel';
 import { JsonLd } from '@/components/site/json-ld';
 import { ToastViewport } from '@/components/ui/toast-viewport';
 import { FxPreloader } from '@/components/providers/fx-preloader';
+import { AuthBridge } from '@/components/providers/auth-bridge';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { routing } from '@/i18n/routing';
@@ -120,6 +121,7 @@ export default async function LocaleLayout({
               <ChatPanel />
               <ToastViewport />
               <FxPreloader />
+              <AuthBridge />
               <Analytics />
               <SpeedInsights />
             </QueryProvider>

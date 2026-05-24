@@ -9,6 +9,7 @@ import { useShortlistStore } from '@/stores/shortlist-store';
 import { toast } from '@/stores/toast-store';
 import { recordProductClick } from '@/stores/click-store';
 import { affiliateUrl } from '@/lib/affiliate';
+import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
 import type { AppLocale } from '@/i18n/routing';
 
@@ -45,6 +46,8 @@ export function VerdictCard({ product }: Props) {
       willAdd ? tg('toast.shortlistAdded') : tg('toast.shortlistRemoved'),
       product.name,
     );
+    if (willAdd) void pushShortlistItem(product);
+    else void deleteShortlistItem(product.id);
   }
 
   // Build the evidence list — keep it small (3 lines max) so the user reads it.
