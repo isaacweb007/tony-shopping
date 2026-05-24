@@ -126,6 +126,14 @@
     "support4": "Privacy",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "distribution": {
+    "label": "Price distribution",
+    "subtitle": "{min} – {max}",
+    "median": "Median",
+    "avg": "Avg",
+    "pickHere": "Tony's pick at {price}",
+    "acrossStores": "across {n} stores"
+  },
   "verdict": {
     "label": "Tony's verdict",
     "tagline": "Stop debating. Tony picked one for you.",

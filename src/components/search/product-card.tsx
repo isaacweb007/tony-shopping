@@ -9,7 +9,10 @@ import { TagBadge } from './tag-badge';
 import { TonyBar } from './tony-bar';
 import { useShortlistStore } from '@/stores/shortlist-store';
 import { toast } from '@/stores/toast-store';
+import { recordProductClick } from '@/stores/click-store';
+import { affiliateUrl } from '@/lib/affiliate';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
+import { useSearchParams } from 'next/navigation';
 import type { AppLocale } from '@/i18n/routing';
 
 interface Props {
@@ -23,8 +26,11 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
   const tc = useTranslations('card');
   const locale = useLocale() as AppLocale;
   const t = useTranslations();
+  const params = useSearchParams();
+  const q = params?.get('q') ?? '';
   const inShortlist = useShortlistStore((s) => s.ids.includes(product.id));
   const toggleRaw = useShortlistStore((s) => s.toggle);
+  const buyHref = affiliateUrl({ store: product.store, url: product.buyUrl });
 
   const toggle = React.useCallback(
     (id: string) => {
@@ -185,7 +191,12 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
             }
             asChild
           >
-            <a href={product.buyUrl} target="_blank" rel="noreferrer noopener">
+            <a
+              href={buyHref}
+              target="_blank"
+              rel="noreferrer noopener sponsored"
+              onClick={() => recordProductClick(product, q, false)}
+            >
               {isFeature ? tc('buyNow') : tc('buy')}
             </a>
           </Button>

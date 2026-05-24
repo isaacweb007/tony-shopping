@@ -11,6 +11,8 @@ import { useSearchStore } from '@/stores/search-store';
 import { useSearch } from '@/hooks/use-search';
 import { ReportCard } from './report-card';
 import { VerdictCard } from './verdict-card';
+import { PriceDistribution } from './price-distribution';
+import { Clusters } from './clusters';
 import { ProductCard } from './product-card';
 import { FilterBar } from './filter-bar';
 import { ProductDetailDialog } from './product-detail-dialog';
@@ -131,7 +133,11 @@ export function SearchView() {
 
       <VerdictCard product={result.report.best} />
 
+      <Clusters query={q} products={result.products} />
+
       <ReportCard report={result.report} />
+
+      <PriceDistribution products={result.products} highlight={result.report.best} />
 
       <section className="mt-9">
         <div className="flex items-end justify-between">

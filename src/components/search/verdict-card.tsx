@@ -1,11 +1,14 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 import { Check, Sparkles, ArrowRight, Bookmark } from 'lucide-react';
 import type { Product } from '@/types/product';
 import { Button } from '@/components/ui/button';
 import { useShortlistStore } from '@/stores/shortlist-store';
 import { toast } from '@/stores/toast-store';
+import { recordProductClick } from '@/stores/click-store';
+import { affiliateUrl } from '@/lib/affiliate';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
 import type { AppLocale } from '@/i18n/routing';
 
@@ -29,8 +32,11 @@ export function VerdictCard({ product }: Props) {
   const tg = useTranslations();
   const locale = useLocale() as AppLocale;
 
+  const params = useSearchParams();
+  const q = params.get('q') ?? '';
   const inShortlist = useShortlistStore((s) => s.ids.includes(product.id));
   const toggleRaw = useShortlistStore((s) => s.toggle);
+  const buyHref = affiliateUrl({ store: product.store, url: product.buyUrl });
 
   function toggle() {
     const willAdd = !inShortlist;
@@ -129,7 +135,12 @@ export function VerdictCard({ product }: Props) {
           {/* CTAs */}
           <div className="mt-5 flex flex-wrap items-center gap-2">
             <Button variant="primary" className="h-11 rounded-xl px-5 font-bold" asChild>
-              <a href={product.buyUrl} target="_blank" rel="noreferrer noopener">
+              <a
+                href={buyHref}
+                target="_blank"
+                rel="noreferrer noopener sponsored"
+                onClick={() => recordProductClick(product, q, true)}
+              >
                 {tv('cta')}
                 <ArrowRight className="h-4 w-4" strokeWidth={2.2} />
               </a>

@@ -13,6 +13,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { ShareButton } from '@/components/ui/share-button';
 import { useShortlistStore } from '@/stores/shortlist-store';
+import { recordProductClick } from '@/stores/click-store';
+import { affiliateUrl } from '@/lib/affiliate';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
 import { Link } from '@/i18n/routing';
 import type { AppLocale } from '@/i18n/routing';
@@ -123,7 +125,12 @@ export function ProductDetailDialog({ product, onOpenChange }: Props) {
                 {inShortlist ? td('removeCompare') : td('addCompare')}
               </Button>
               <Button variant="primary" className="h-11 rounded-xl font-bold" asChild>
-                <a href={product.buyUrl} target="_blank" rel="noreferrer noopener">
+                <a
+                  href={affiliateUrl({ store: product.store, url: product.buyUrl })}
+                  target="_blank"
+                  rel="noreferrer noopener sponsored"
+                  onClick={() => recordProductClick(product, q, false)}
+                >
                   {td('buyAt', { store: product.store })}
                 </a>
               </Button>

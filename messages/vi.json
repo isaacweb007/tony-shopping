@@ -126,6 +126,14 @@
     "support4": "Quyền riêng tư",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "distribution": {
+    "label": "Phân bổ giá",
+    "subtitle": "{min} – {max}",
+    "median": "Trung vị",
+    "avg": "Trung bình",
+    "pickHere": "Tony chọn ở mức {price}",
+    "acrossStores": "qua {n} cửa hàng"
+  },
   "verdict": {
     "label": "Kết luận của Tony",
     "tagline": "Đừng phân vân nữa. Tony đã chọn giúp bạn.",

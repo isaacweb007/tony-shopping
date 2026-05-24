@@ -126,6 +126,14 @@
     "support4": "개인정보처리방침",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "distribution": {
+    "label": "가격 분포",
+    "subtitle": "{min} ~ {max}",
+    "median": "중앙값",
+    "avg": "평균",
+    "pickHere": "토니의 추천 가격 {price}",
+    "acrossStores": "{n}개 쇼핑몰"
+  },
   "verdict": {
     "label": "토니의 결론",
     "tagline": "고민하지 마세요. 토니가 정해드릴게요.",
