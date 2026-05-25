@@ -464,6 +464,12 @@
     "emptyAction": "필터 초기화",
     "loadMore": "{n}개 더 보기",
     "loadMoreHint": "{shown}개 / {total}개",
+    "statusBadge": {
+      "live": "{stores}에서 실시간",
+      "liveTitle": "{stores} 실 API 결과를 받고 있어요",
+      "mock": "데모 데이터 · 키 설정 필요",
+      "mockTitle": "지금은 mock 데이터를 보고 있어요. 광고/제휴 안내 페이지에서 키 등록 방법을 확인하세요."
+    },
     "noResultsTitle": "검색 결과가 없어요",
     "noResultsDesc": "다른 단어로 다시 시도해보거나 사진/링크를 첨부해보세요.",
     "noResultsCta": "새 검색"

@@ -464,6 +464,12 @@
     "emptyAction": "Reset filters",
     "loadMore": "Show {n} more",
     "loadMoreHint": "{shown} of {total}",
+    "statusBadge": {
+      "live": "Live · {stores}",
+      "liveTitle": "Pulling real results from {stores}",
+      "mock": "Demo data · set up keys",
+      "mockTitle": "You're seeing mock data right now. The disclosure page explains how to wire real API keys."
+    },
     "noResultsTitle": "No results yet",
     "noResultsDesc": "Try a different phrase, or attach a photo or link.",
     "noResultsCta": "New search"

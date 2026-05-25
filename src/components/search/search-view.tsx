@@ -15,6 +15,7 @@ import { PriceDistribution } from './price-distribution';
 import { Clusters } from './clusters';
 import { ProductCard } from './product-card';
 import { StickyFilterBar } from './sticky-filter-bar';
+import { ResultsBadge } from './results-badge';
 import { ProductDetailDialog } from './product-detail-dialog';
 import { WarningList } from './warning-list';
 import { SearchSkeleton } from './search-skeleton';
@@ -135,13 +136,16 @@ export function SearchView() {
           <ChevronLeft className="h-4 w-4" strokeWidth={1.8} />
           {t('back')}
         </Button>
-        <ShareButton
-          title={tShare('titleSearch')}
-          text={q}
-          url={typeof window === 'undefined' ? '' : window.location.href}
-          size="sm"
-          variant="outline"
-        />
+        <div className="flex items-center gap-2">
+          <ResultsBadge />
+            <ShareButton
+            title={tShare('titleSearch')}
+            text={q}
+            url={typeof window === 'undefined' ? '' : window.location.href}
+            size="sm"
+            variant="outline"
+          />
+        </div>
       </div>
 
       <div className="mt-4 flex items-start gap-3">

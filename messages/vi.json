@@ -464,6 +464,12 @@
     "emptyAction": "Xoá bộ lọc",
     "loadMore": "Hiển thị thêm {n}",
     "loadMoreHint": "{shown} / {total}",
+    "statusBadge": {
+      "live": "Trực tiếp · {stores}",
+      "liveTitle": "Đang lấy kết quả thật từ {stores}",
+      "mock": "Dữ liệu mẫu · cần khoá API",
+      "mockTitle": "Hiện đang xem dữ liệu mẫu. Trang công bố giải thích cách thêm khoá API thật."
+    },
     "noResultsTitle": "Chưa có kết quả",
     "noResultsDesc": "Thử cụm từ khác, hoặc đính kèm ảnh / link.",
     "noResultsCta": "Tìm mới"
