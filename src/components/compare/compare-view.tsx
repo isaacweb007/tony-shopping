@@ -19,7 +19,19 @@ import { cn } from '@/lib/utils';
 import type { AppLocale } from '@/i18n/routing';
 import type { ShortlistSnap } from '@/types/shortlist';
 
-export function CompareView() {
+interface Props {
+  /**
+   * When provided, CompareView ignores the local shortlist store and renders
+   * exactly these snaps. Used by /c/[slug] for publicly shared cohorts.
+   */
+  seedSnaps?: ShortlistSnap[];
+  /** Initial priority chip (defaults to 'balanced'). */
+  initialPriority?: ComparePriority;
+  /** When true, hide the per-row remove button (read-only public view). */
+  readOnly?: boolean;
+}
+
+export function CompareView({ seedSnaps, initialPriority, readOnly }: Props = {}) {
   const t = useTranslations('compare');
   const tg = useTranslations();
   const locale = useLocale() as AppLocale;
@@ -32,20 +44,21 @@ export function CompareView() {
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
 
-  const [priority, setPriorityState] = React.useState<ComparePriority>('balanced');
+  const [priority, setPriorityState] = React.useState<ComparePriority>(initialPriority ?? 'balanced');
   const [userOverrode, setUserOverrode] = React.useState(false);
   const auto = useAutoPriority();
 
   // One-shot: if auto-priority is confident on first hydration AND the user
   // hasn't already picked a chip, adopt the recommendation. Subsequent
-  // recomputations never override an explicit choice.
+  // recomputations never override an explicit choice. Skip entirely when a
+  // shared cohort came in with an explicit initialPriority.
   const appliedAutoRef = React.useRef(false);
   React.useEffect(() => {
-    if (userOverrode || appliedAutoRef.current) return;
+    if (initialPriority || userOverrode || appliedAutoRef.current) return;
     if (!auto || auto.confidence < 0.4) return;
     appliedAutoRef.current = true;
     setPriorityState(auto.priority);
-  }, [auto, userOverrode]);
+  }, [auto, userOverrode, initialPriority]);
 
   const setPriority = React.useCallback((next: ComparePriority) => {
     setUserOverrode(true);
@@ -53,6 +66,7 @@ export function CompareView() {
   }, []);
 
   const snaps: ShortlistSnap[] = React.useMemo(() => {
+    if (seedSnaps) return seedSnaps;
     if (!mounted) return [];
     if (idsParam) {
       const ids = idsParam.split(',').map((s) => s.trim()).filter(Boolean);
@@ -61,7 +75,7 @@ export function CompareView() {
         .filter((s): s is ShortlistSnap => Boolean(s));
     }
     return Object.values(items).sort((a, b) => b.addedAt - a.addedAt);
-  }, [mounted, items, idsParam]);
+  }, [seedSnaps, mounted, items, idsParam]);
 
   const compare = React.useMemo(() => buildCompare(snaps, priority), [snaps, priority]);
 
@@ -84,27 +98,55 @@ export function CompareView() {
 
   async function shareSet() {
     if (snaps.length === 0) return;
-    const ids = snaps.map((s) => s.id).join(',');
-    // Enrich the URL with preview params so social link previews can render a
-    // rich card (see /api/og/compare). When pasted back into the app the page
-    // still ignores these.
     const winnerId = compare.verdict.winnerId;
     const winner = winnerId ? snaps.find((s) => s.id === winnerId) ?? null : null;
-    const params = new URLSearchParams({ ids });
-    if (winner) {
-      params.set('w', winner.name);
-      params.set('store', String(winner.store));
-      params.set('n', String(snaps.length));
-      const score = compare.verdict.scores[winner.id];
-      if (typeof score === 'number') params.set('score', String(score));
-    } else {
-      params.set('n', String(snaps.length));
+
+    // Try the public short-link API first — it produces /c/{slug} URLs that
+    // anyone (signed-in or not) can open. Falls back to the existing
+    // /compare?ids=... URL when Supabase is unconfigured, the user isn't
+    // signed in, or the network call fails.
+    let url: string | null = null;
+    try {
+      const res = await fetch('/api/cohort/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          snaps,
+          winnerId,
+          priority,
+          locale,
+        }),
+      });
+      if (res.ok) {
+        const json = (await res.json()) as { slug?: string };
+        if (json.slug) {
+          const path = locale === 'ko' ? `/c/${json.slug}` : `/${locale}/c/${json.slug}`;
+          url = `${window.location.origin}${path}`;
+        }
+      }
+    } catch {
+      /* network/Supabase down — fall through to long URL */
     }
-    const path =
-      locale === 'ko'
-        ? `/compare?${params.toString()}`
-        : `/${locale}/compare?${params.toString()}`;
-    const url = `${window.location.origin}${path}`;
+
+    if (!url) {
+      const ids = snaps.map((s) => s.id).join(',');
+      const params = new URLSearchParams({ ids });
+      if (winner) {
+        params.set('w', winner.name);
+        params.set('store', String(winner.store));
+        params.set('n', String(snaps.length));
+        const score = compare.verdict.scores[winner.id];
+        if (typeof score === 'number') params.set('score', String(score));
+      } else {
+        params.set('n', String(snaps.length));
+      }
+      const path =
+        locale === 'ko'
+          ? `/compare?${params.toString()}`
+          : `/${locale}/compare?${params.toString()}`;
+      url = `${window.location.origin}${path}`;
+    }
+
     await shareOrCopy({
       title: t('shareTitle'),
       text: t('shareText', { n: snaps.length }),
@@ -114,7 +156,7 @@ export function CompareView() {
     });
   }
 
-  if (!mounted) {
+  if (!mounted && !seedSnaps) {
     return <div className="container max-w-6xl py-12" aria-hidden />;
   }
 
@@ -190,10 +232,14 @@ export function CompareView() {
         snaps={snaps}
         compare={compare}
         winnerId={winnerId}
-        onRemove={(id) => {
-          remove(id);
-          void deleteShortlistItem(id);
-        }}
+        onRemove={
+          readOnly
+            ? null
+            : (id) => {
+                remove(id);
+                void deleteShortlistItem(id);
+              }
+        }
       />
     </div>
   );
@@ -385,7 +431,8 @@ function CompareTable({
   snaps: ShortlistSnap[];
   compare: ReturnType<typeof buildCompare>;
   winnerId: string | null;
-  onRemove: (id: string) => void;
+  /** null = read-only cohort (no remove button). */
+  onRemove: ((id: string) => void) | null;
 }) {
   const t = useTranslations('compare');
   const tg = useTranslations();
@@ -447,13 +494,15 @@ function CompareTable({
                     alt=""
                     className="h-20 w-full rounded-lg bg-ink-50 object-cover dark:bg-ink-800"
                   />
-                  <button
-                    onClick={() => onRemove(s.id)}
-                    aria-label={t('removeAria', { name: s.name })}
-                    className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full border border-ink-200 bg-white text-ink-500 hover:text-red-600 dark:border-ink-700 dark:bg-ink-800 dark:text-ink-300 dark:hover:text-red-400"
-                  >
-                    <X className="h-3 w-3" strokeWidth={2.2} />
-                  </button>
+                  {onRemove && (
+                    <button
+                      onClick={() => onRemove(s.id)}
+                      aria-label={t('removeAria', { name: s.name })}
+                      className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full border border-ink-200 bg-white text-ink-500 hover:text-red-600 dark:border-ink-700 dark:bg-ink-800 dark:text-ink-300 dark:hover:text-red-400"
+                    >
+                      <X className="h-3 w-3" strokeWidth={2.2} />
+                    </button>
+                  )}
                 </div>
                 <div className="mt-2 text-[10px] font-semibold uppercase tracking-widest text-ink-500 dark:text-ink-400">
                   {s.store}

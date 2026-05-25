@@ -38,26 +38,49 @@ export function ShortlistDrawer() {
 
   async function shareSet() {
     if (list.length === 0) return;
-    const ids = list.map((s) => s.id).join(',');
-    const params = new URLSearchParams({ ids });
     // Run the same verdict the /compare page would compute so the social
     // preview is consistent whether the user shares from the drawer or the
     // page itself.
     const { buildCompare } = await import('@/lib/compare/verdict');
     const { verdict } = buildCompare(list);
     const winner = verdict.winnerId ? list.find((s) => s.id === verdict.winnerId) ?? null : null;
-    params.set('n', String(list.length));
-    if (winner) {
-      params.set('w', winner.name);
-      params.set('store', String(winner.store));
-      const score = verdict.scores[winner.id];
-      if (typeof score === 'number') params.set('score', String(score));
+
+    // Prefer the public short-link API; fall back to the long URL.
+    let url: string | null = null;
+    try {
+      const res = await fetch('/api/cohort/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ snaps: list, winnerId: verdict.winnerId, priority: 'balanced', locale }),
+      });
+      if (res.ok) {
+        const json = (await res.json()) as { slug?: string };
+        if (json.slug) {
+          const path = locale === 'ko' ? `/c/${json.slug}` : `/${locale}/c/${json.slug}`;
+          url = `${window.location.origin}${path}`;
+        }
+      }
+    } catch {
+      /* fall through */
     }
-    const path =
-      locale === 'ko'
-        ? `/compare?${params.toString()}`
-        : `/${locale}/compare?${params.toString()}`;
-    const url = `${window.location.origin}${path}`;
+
+    if (!url) {
+      const ids = list.map((s) => s.id).join(',');
+      const params = new URLSearchParams({ ids });
+      params.set('n', String(list.length));
+      if (winner) {
+        params.set('w', winner.name);
+        params.set('store', String(winner.store));
+        const score = verdict.scores[winner.id];
+        if (typeof score === 'number') params.set('score', String(score));
+      }
+      const path =
+        locale === 'ko'
+          ? `/compare?${params.toString()}`
+          : `/${locale}/compare?${params.toString()}`;
+      url = `${window.location.origin}${path}`;
+    }
+
     await shareOrCopy({
       title: tc('shareTitle'),
       text: tc('shareText', { n: list.length }),
