@@ -40,6 +40,13 @@ export async function generateMetadata({
   const winner = cohort.winnerId ? cohort.snaps.find((s) => s.id === cohort.winnerId) ?? null : null;
   const params2 = new URLSearchParams();
   params2.set('locale', locale);
+  params2.set('variant', 'shared');
+  // Age in seconds since the cohort was minted — feeds the "shared X ago" pill.
+  const createdAt = Date.parse(cohort.createdAt);
+  if (Number.isFinite(createdAt)) {
+    const ageSec = Math.max(0, Math.floor((Date.now() - createdAt) / 1000));
+    params2.set('age', String(ageSec));
+  }
   if (winner) {
     params2.set('w', winner.name.slice(0, 120));
     params2.set('store', String(winner.store).slice(0, 40));

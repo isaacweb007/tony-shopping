@@ -10,35 +10,64 @@ const isLocale = (v: string | null): v is Locale =>
 
 interface CopyBundle {
   eyebrow: string;
+  sharedEyebrow: string;
   pickedFromCohort: (n: number) => string;
   cohortScore: (s: number) => string;
   brandTagline: string;
   generic: string;
+  sharedAgo: (rel: string) => string;
 }
 
 const COPY: Record<Locale, CopyBundle> = {
   ko: {
     eyebrow: '토니 비교 분석',
+    sharedEyebrow: '공유된 비교',
     pickedFromCohort: (n) => `${n}개 후보 중에서 토니가 추천`,
     cohortScore: (s) => `비교 점수 ${s}/100`,
     brandTagline: 'AI 메타쇼핑 에이전트',
     generic: '비교함을 한눈에 — 토니가 결론을 내드려요.',
+    sharedAgo: (rel) => `${rel} 공유`,
   },
   en: {
     eyebrow: "Tony's compare",
+    sharedEyebrow: 'Shared compare',
     pickedFromCohort: (n) => `Tony's pick from ${n} candidates`,
     cohortScore: (s) => `Cohort score ${s}/100`,
     brandTagline: 'AI Meta Shopping Agent',
     generic: "Side-by-side, decisive — Tony picks one from your shortlist.",
+    sharedAgo: (rel) => `Shared ${rel}`,
   },
   vi: {
     eyebrow: 'Tony so sánh',
+    sharedEyebrow: 'So sánh đã chia sẻ',
     pickedFromCohort: (n) => `Tony chọn từ ${n} ứng viên`,
     cohortScore: (s) => `Điểm so sánh ${s}/100`,
     brandTagline: 'Trợ lý mua sắm meta AI',
     generic: 'So sánh trực diện — Tony chốt một lựa chọn từ shortlist.',
+    sharedAgo: (rel) => `Chia sẻ ${rel}`,
   },
 };
+
+/** Coarse "X ago" rendering (used in the shared-cohort variant). */
+function relTime(ageSeconds: number, locale: Locale): string {
+  if (!Number.isFinite(ageSeconds) || ageSeconds < 0) return '';
+  const min = Math.floor(ageSeconds / 60);
+  if (min < 60) {
+    if (locale === 'ko') return `${min}분 전`;
+    if (locale === 'vi') return `${min} phút trước`;
+    return `${min} min ago`;
+  }
+  const hr = Math.floor(min / 60);
+  if (hr < 24) {
+    if (locale === 'ko') return `${hr}시간 전`;
+    if (locale === 'vi') return `${hr} giờ trước`;
+    return `${hr} hr ago`;
+  }
+  const day = Math.floor(hr / 24);
+  if (locale === 'ko') return `${day}일 전`;
+  if (locale === 'vi') return `${day} ngày trước`;
+  return `${day} d ago`;
+}
 
 function truncate(s: string, max: number): string {
   if (s.length <= max) return s;
@@ -61,6 +90,17 @@ export async function GET(req: Request): Promise<Response> {
   const hasCohort = winnerName.length > 0 && store.length > 0 && n != null;
   const safeWinner = truncate(winnerName, 80);
   const safeStore = truncate(store, 24);
+
+  // Shared-cohort variant — emerald accent + "공유된 비교" pill + optional
+  // "X ago" timestamp. Used by /c/{slug} OG to mark "this is something
+  // someone shared, not your own compare".
+  const isShared = url.searchParams.get('variant') === 'shared';
+  const ageSec = Number(url.searchParams.get('age'));
+  const ageRel = Number.isFinite(ageSec) && ageSec >= 0 ? relTime(ageSec, locale) : '';
+  const eyebrowText = isShared ? copy.sharedEyebrow : copy.eyebrow;
+  const accentColorMain = isShared ? '#10b981' : '#7c3aed'; // emerald 500 vs accent
+  const accentColorDeep = isShared ? '#047857' : '#4c1d95'; // emerald 700 vs accent deep
+  const accentColorSoft = isShared ? '#a7f3d0' : '#c4b5fd'; // emerald 200 vs accent 300
 
   return new ImageResponse(
     (
@@ -158,7 +198,7 @@ export async function GET(req: Request): Promise<Response> {
             textTransform: 'uppercase',
           }}
         >
-          {copy.eyebrow}
+          {eyebrowText}
         </div>
 
         {hasCohort ? (
@@ -166,7 +206,7 @@ export async function GET(req: Request): Promise<Response> {
             <div
               style={{
                 fontSize: 22,
-                color: '#c4b5fd',
+                color: accentColorSoft,
                 fontWeight: 700,
                 letterSpacing: '-0.01em',
               }}
@@ -210,11 +250,25 @@ export async function GET(req: Request): Promise<Response> {
                   style={{
                     padding: '6px 14px',
                     borderRadius: 10,
-                    background: 'linear-gradient(135deg, #7c3aed, #4c1d95)',
+                    background: `linear-gradient(135deg, ${accentColorMain}, ${accentColorDeep})`,
                     fontWeight: 800,
                   }}
                 >
                   {copy.cohortScore(score)}
+                </span>
+              )}
+              {isShared && ageRel && (
+                <span
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: 10,
+                    background: '#18181b',
+                    border: '1px solid #27272a',
+                    color: '#a1a1aa',
+                    fontWeight: 600,
+                  }}
+                >
+                  {copy.sharedAgo(ageRel)}
                 </span>
               )}
             </div>
