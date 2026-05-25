@@ -609,7 +609,19 @@
   "extract": {
     "detected": "Đã phát hiện \"{query}\" trong ảnh",
     "extracting": "Đang phân tích ảnh…",
-    "linkAnalyzing": "Đang đọc liên kết…"
+    "linkAnalyzing": "Đang đọc liên kết…",
+    "preview": {
+      "aria": "Bản xem trước trích xuất của Tony",
+      "dismissAria": "Đóng xem trước",
+      "source": {
+        "vision": "Phân tích hình ảnh",
+        "oembed": "Dữ liệu nhúng",
+        "og": "Metadata trang",
+        "fallback": "Heuristic"
+      },
+      "accept": "Tìm với này",
+      "edit": "Chỉnh sửa"
+    }
   },
   "voice": {
     "startListening": "Tìm bằng giọng nói",

@@ -609,7 +609,19 @@
   "extract": {
     "detected": "Detected \"{query}\" in the image",
     "extracting": "Analysing the image…",
-    "linkAnalyzing": "Reading the link…"
+    "linkAnalyzing": "Reading the link…",
+    "preview": {
+      "aria": "Tony's extraction preview",
+      "dismissAria": "Dismiss preview",
+      "source": {
+        "vision": "Image analysis",
+        "oembed": "Embed data",
+        "og": "Page metadata",
+        "fallback": "Heuristic"
+      },
+      "accept": "Search this",
+      "edit": "Edit"
+    }
   },
   "voice": {
     "startListening": "Voice search",

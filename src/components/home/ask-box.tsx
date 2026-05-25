@@ -16,6 +16,7 @@ import { useSpeechRecognition } from '@/hooks/use-speech-recognition';
 import { MicButton } from '@/components/voice/mic-button';
 import { toast } from '@/stores/toast-store';
 import { PromptChips } from './prompt-chips';
+import { ExtractPreview, type ExtractResult } from './extract-preview';
 
 export function AskBox() {
   const t = useTranslations('ask');
@@ -102,6 +103,7 @@ export function AskBox() {
   }
 
   const [extracting, setExtracting] = React.useState(false);
+  const [extractResult, setExtractResult] = React.useState<ExtractResult | null>(null);
 
   async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -123,14 +125,19 @@ export function AskBox() {
         body: JSON.stringify({ imageDataUrl: dataUrl }),
       });
       if (res.ok) {
-        const data = (await res.json()) as {
-          suggestedQuery?: string;
-          tags?: string[];
-          source?: 'vision' | 'fallback' | 'og';
-        };
-        if (data.suggestedQuery && !text.trim()) {
-          setText(data.suggestedQuery);
-          requestAnimationFrame(() => textareaRef.current && autoGrow(textareaRef.current));
+        const data = (await res.json()) as ExtractResult & { source: ExtractResult['source'] };
+        if (data.suggestedQuery) {
+          setExtractResult({
+            suggestedQuery: data.suggestedQuery,
+            source: data.source ?? 'fallback',
+            hint: data.hint,
+            tags: data.tags,
+            image: data.image,
+          });
+          if (!text.trim()) {
+            setText(data.suggestedQuery);
+            requestAnimationFrame(() => textareaRef.current && autoGrow(textareaRef.current));
+          }
         }
         if (data.source === 'vision' && data.suggestedQuery) {
           toast.success(tg('extract.detected', { query: data.suggestedQuery }));
@@ -172,13 +179,19 @@ export function AskBox() {
         body: JSON.stringify({ link: trimmed }),
       });
       if (res.ok) {
-        const data = (await res.json()) as {
-          suggestedQuery?: string;
-          source?: 'vision' | 'fallback' | 'og' | 'oembed';
-        };
-        if (data.suggestedQuery && !text.trim()) {
-          setText(data.suggestedQuery);
-          requestAnimationFrame(() => textareaRef.current && autoGrow(textareaRef.current));
+        const data = (await res.json()) as ExtractResult & { source: ExtractResult['source'] };
+        if (data.suggestedQuery) {
+          setExtractResult({
+            suggestedQuery: data.suggestedQuery,
+            source: data.source ?? 'fallback',
+            hint: data.hint,
+            tags: data.tags,
+            image: data.image,
+          });
+          if (!text.trim()) {
+            setText(data.suggestedQuery);
+            requestAnimationFrame(() => textareaRef.current && autoGrow(textareaRef.current));
+          }
         }
         if ((data.source === 'oembed' || data.source === 'og') && data.suggestedQuery) {
           toast.success(tg('extract.detected', { query: data.suggestedQuery }));
@@ -345,6 +358,32 @@ export function AskBox() {
           </Button>
         </div>
       </div>
+
+      {extractResult && (
+        <ExtractPreview
+          result={extractResult}
+          onAccept={() => {
+            submit(extractResult.suggestedQuery);
+            setExtractResult(null);
+          }}
+          onEdit={() => {
+            setText(extractResult.suggestedQuery);
+            requestAnimationFrame(() => {
+              if (textareaRef.current) {
+                autoGrow(textareaRef.current);
+                textareaRef.current.focus();
+                textareaRef.current.setSelectionRange(
+                  textareaRef.current.value.length,
+                  textareaRef.current.value.length,
+                );
+              }
+            });
+            setExtractResult(null);
+          }}
+          onDismiss={() => setExtractResult(null)}
+          className="mt-3"
+        />
+      )}
 
       <PromptChips onPick={applyPrompt} />
     </div>

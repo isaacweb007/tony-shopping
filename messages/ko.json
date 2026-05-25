@@ -609,7 +609,19 @@
   "extract": {
     "detected": "이미지에서 \"{query}\"를 감지했어요",
     "extracting": "이미지를 분석 중…",
-    "linkAnalyzing": "링크를 분석 중…"
+    "linkAnalyzing": "링크를 분석 중…",
+    "preview": {
+      "aria": "토니의 추출 결과 미리보기",
+      "dismissAria": "미리보기 닫기",
+      "source": {
+        "vision": "이미지 분석",
+        "oembed": "임베드 정보",
+        "og": "페이지 메타",
+        "fallback": "휴리스틱"
+      },
+      "accept": "이걸로 검색",
+      "edit": "수정"
+    }
   },
   "voice": {
     "startListening": "음성으로 검색",
