@@ -154,6 +154,8 @@
   },
   "compare": {
     "title": "비교 분석 · Tony Shopping",
+    "ogTitleWithWinner": "토니 비교 결론: {winner}",
+    "ogDescriptionWithCohort": "{n}개 후보 중 토니가 추천한 한 가지. 클릭해서 항목별 비교를 보세요.",
     "eyebrow": "토니 비교 분석",
     "heading": "내 비교함, 한눈에",
     "subtitle": "{n}개 상품을 항목별로 비교하고 있어요",

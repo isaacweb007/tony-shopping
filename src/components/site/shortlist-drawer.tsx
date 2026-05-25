@@ -39,7 +39,24 @@ export function ShortlistDrawer() {
   async function shareSet() {
     if (list.length === 0) return;
     const ids = list.map((s) => s.id).join(',');
-    const path = locale === 'ko' ? `/compare?ids=${ids}` : `/${locale}/compare?ids=${ids}`;
+    const params = new URLSearchParams({ ids });
+    // Run the same verdict the /compare page would compute so the social
+    // preview is consistent whether the user shares from the drawer or the
+    // page itself.
+    const { buildCompare } = await import('@/lib/compare/verdict');
+    const { verdict } = buildCompare(list);
+    const winner = verdict.winnerId ? list.find((s) => s.id === verdict.winnerId) ?? null : null;
+    params.set('n', String(list.length));
+    if (winner) {
+      params.set('w', winner.name);
+      params.set('store', String(winner.store));
+      const score = verdict.scores[winner.id];
+      if (typeof score === 'number') params.set('score', String(score));
+    }
+    const path =
+      locale === 'ko'
+        ? `/compare?${params.toString()}`
+        : `/${locale}/compare?${params.toString()}`;
     const url = `${window.location.origin}${path}`;
     await shareOrCopy({
       title: tc('shareTitle'),

@@ -85,7 +85,25 @@ export function CompareView() {
   async function shareSet() {
     if (snaps.length === 0) return;
     const ids = snaps.map((s) => s.id).join(',');
-    const path = locale === 'ko' ? `/compare?ids=${ids}` : `/${locale}/compare?ids=${ids}`;
+    // Enrich the URL with preview params so social link previews can render a
+    // rich card (see /api/og/compare). When pasted back into the app the page
+    // still ignores these.
+    const winnerId = compare.verdict.winnerId;
+    const winner = winnerId ? snaps.find((s) => s.id === winnerId) ?? null : null;
+    const params = new URLSearchParams({ ids });
+    if (winner) {
+      params.set('w', winner.name);
+      params.set('store', String(winner.store));
+      params.set('n', String(snaps.length));
+      const score = compare.verdict.scores[winner.id];
+      if (typeof score === 'number') params.set('score', String(score));
+    } else {
+      params.set('n', String(snaps.length));
+    }
+    const path =
+      locale === 'ko'
+        ? `/compare?${params.toString()}`
+        : `/${locale}/compare?${params.toString()}`;
     const url = `${window.location.origin}${path}`;
     await shareOrCopy({
       title: t('shareTitle'),
