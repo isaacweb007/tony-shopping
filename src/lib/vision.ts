@@ -35,48 +35,9 @@ export interface VisionExtract {
   source: 'vision' | 'fallback';
 }
 
-/**
- * Filename-only heuristic — when Vision isn't configured, the next-best
- * signal we have is the original filename. Most camera/screenshot defaults
- * are useless (IMG_0123.jpg, Screenshot 2024-08-12 14.31.20.png), but
- * downloaded product images often retain merchant slugs that are quite
- * descriptive ("airpods-pro-2-usbc-overview.png"). We strip the noise and
- * keep the rest.
- *
- * Returns a cleaned candidate string ('' when nothing useful survives).
- */
-export function heuristicFromFilename(filename: string): string {
-  const stem = filename.replace(/\.[^.]+$/, '');
-  // Drop common camera/screenshot prefixes wholesale.
-  const NOISE_PATTERNS = [
-    /^IMG[\s_-]?\d+/i,
-    /^DSC[\s_-]?\d+/i,
-    /^PXL[\s_-]?\d+/i,
-    /^DCIM[\s_-]?\d+/i,
-    /^image[\s_-]?\d+/i,
-    /^photo[\s_-]?\d+/i,
-    // Screenshot in EN/KR — tolerate whitespace + accent characters between
-    // the label and the timestamp.
-    /^Screenshot[\s_-]+[\d\s\-_.오전후AMPamp]+/i,
-    /^스크린샷[\s_-]+[\d\s\-_.오전후AMPamp]+/i,
-    /^KakaoTalk[\s_-]?[\d_\-.]*/i,
-  ];
-  let cleaned = stem;
-  for (const p of NOISE_PATTERNS) {
-    cleaned = cleaned.replace(p, '');
-  }
-  cleaned = cleaned
-    .replace(/[_\-]+/g, ' ')          // separators → spaces
-    .replace(/([a-z])([A-Z])/g, '$1 $2') // camelCase → spaced
-    .replace(/\b\d{6,}\b/g, '')       // long digit runs (timestamps)
-    .replace(/\s+/g, ' ')
-    .trim();
-  // Strip leading/trailing digit-only tokens.
-  cleaned = cleaned.replace(/^\d+\s+|\s+\d+$/g, '').trim();
-  if (cleaned.length < 3) return '';
-  // Sentence case the result.
-  return cleaned.slice(0, 80);
-}
+// Re-export the pure heuristic so existing imports keep working.
+export { heuristicFromFilename } from './vision-heuristic';
+import { heuristicFromFilename } from './vision-heuristic';
 
 function dedupe(arr: string[]): string[] {
   const seen = new Set<string>();
