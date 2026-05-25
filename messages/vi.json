@@ -223,7 +223,39 @@
       "not": "TRÁNH"
     },
     "other": "Khác",
-    "menu": "Bảng điều khiển"
+    "menu": "Bảng điều khiển",
+    "insights": {
+      "heading": "Tony nhận thấy gì trong tuần",
+      "signal": {
+        "value": "giá tốt",
+        "fast": "giao nhanh",
+        "genuine": "chính hãng"
+      },
+      "thisWeekSearches": {
+        "title": "{n} lượt tìm trong tuần.",
+        "body": "Tony đang sắp xếp giúp bạn."
+      },
+      "topStore": {
+        "title": "{store} là điểm bạn hay đến.",
+        "body": "{pct}% click gần đây rơi vào đó."
+      },
+      "verdictAdoption": {
+        "title": "Tỉ lệ chọn theo Tony {pct}%.",
+        "body": "Lựa chọn của bạn khớp với gợi ý đầu tiên của Tony khá thường xuyên."
+      },
+      "autoPriorityHint": {
+        "title": "Bạn nghiêng về \"{signal}\".",
+        "body": "{n} lựa chọn gần đây theo hướng đó — trang so sánh sẽ mở sẵn ưu tiên này."
+      },
+      "considerSpeed": {
+        "title": "Đánh dấu → mua trung bình {days} ngày.",
+        "body": "Bạn quyết định kỹ. Tony sẽ theo dõi giá thay bạn."
+      },
+      "idleShortlist": {
+        "title": "{n} ứng viên đang nằm im trong shortlist.",
+        "body": "Đã một tuần. Xem lại hay dọn dẹp đi?"
+      }
+    }
   },
   "compare": {
     "title": "So sánh · Tony Shopping",

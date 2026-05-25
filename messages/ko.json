@@ -223,7 +223,39 @@
       "not": "비추천"
     },
     "other": "기타",
-    "menu": "내 대시보드"
+    "menu": "내 대시보드",
+    "insights": {
+      "heading": "이번 주 토니가 본 패턴",
+      "signal": {
+        "value": "가성비",
+        "fast": "빠른 배송",
+        "genuine": "정품 안심"
+      },
+      "thisWeekSearches": {
+        "title": "이번 주 검색 {n}회.",
+        "body": "토니가 같이 정리해두고 있어요."
+      },
+      "topStore": {
+        "title": "{store} 비중이 높네요.",
+        "body": "최근 클릭의 {pct}%가 거기였어요."
+      },
+      "verdictAdoption": {
+        "title": "토니 1순위 채택률 {pct}%.",
+        "body": "당신이 가는 길과 토니의 첫 추천이 잘 맞아요."
+      },
+      "autoPriorityHint": {
+        "title": "\"{signal}\" 성향이 보여요.",
+        "body": "최근 {n}번의 선택이 그 방향이었어요. 비교 페이지에서도 미리 골라드릴게요."
+      },
+      "considerSpeed": {
+        "title": "북마크 → 결제 평균 {days}일.",
+        "body": "신중한 편이에요. 토니가 가격 변동을 대신 지켜볼게요."
+      },
+      "idleShortlist": {
+        "title": "비교함에 잠자는 후보 {n}개.",
+        "body": "한 주가 지났어요. 다시 볼지, 비울지 정해보세요."
+      }
+    }
   },
   "compare": {
     "title": "비교 분석 · Tony Shopping",

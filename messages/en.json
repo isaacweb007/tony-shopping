@@ -223,7 +223,39 @@
       "not": "Avoid"
     },
     "other": "Other",
-    "menu": "My dashboard"
+    "menu": "My dashboard",
+    "insights": {
+      "heading": "What Tony noticed this week",
+      "signal": {
+        "value": "best value",
+        "fast": "fast shipping",
+        "genuine": "authenticity"
+      },
+      "thisWeekSearches": {
+        "title": "{n} searches this week.",
+        "body": "Tony's been keeping them sorted for you."
+      },
+      "topStore": {
+        "title": "{store} is your hotspot.",
+        "body": "{pct}% of recent clicks landed there."
+      },
+      "verdictAdoption": {
+        "title": "Tony-pick adoption {pct}%.",
+        "body": "Where you go and Tony's first call agree more often than not."
+      },
+      "autoPriorityHint": {
+        "title": "You lean toward \"{signal}\".",
+        "body": "Your last {n} picks pointed that way — the compare page will start there for you."
+      },
+      "considerSpeed": {
+        "title": "Bookmark → buy in {days}d on average.",
+        "body": "You take your time. Tony will keep watching the prices for you."
+      },
+      "idleShortlist": {
+        "title": "{n} candidates idle in your shortlist.",
+        "body": "It's been a week. Worth a revisit, or clear them out?"
+      }
+    }
   },
   "compare": {
     "title": "Compare · Tony Shopping",

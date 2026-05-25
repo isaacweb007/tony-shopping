@@ -5,6 +5,7 @@ import { Bookmark, MousePointer2, Search, Sparkles } from 'lucide-react';
 import { StatCard } from './stat-card';
 import { DonutChart } from './donut-chart';
 import { CategoryBars } from './category-bars';
+import { InsightsRow } from './insights-row';
 import { useDashboardStats } from '@/hooks/use-dashboard-stats';
 import { formatCount } from '@/lib/format';
 import type { AppLocale } from '@/i18n/routing';
@@ -51,6 +52,8 @@ export function DashboardView() {
           {stats.signedIn ? t('loggedInBadge') : t('anonymousBadge')}
         </span>
       </div>
+
+      <InsightsRow />
 
       <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
         <StatCard
