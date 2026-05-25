@@ -351,6 +351,7 @@
     "heading": "Your shortlist, side by side",
     "subtitle": "Comparing {n} candidates across every criterion",
     "openCompare": "Open compare view",
+    "floatingCta": "Compare them",
     "shareSet": "Share this set",
     "shareTitle": "Tony's compare set",
     "shareText": "I'm weighing {n} candidates. Help me pick.",
