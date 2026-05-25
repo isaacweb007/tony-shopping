@@ -126,6 +126,18 @@
     "support4": "Quyền riêng tư",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "keyboard": {
+    "title": "Phím tắt",
+    "subtitle": "Di chuyển nhanh hơn trong Tony.",
+    "actions": {
+      "arrows": "Di chuyển giữa các thẻ kết quả",
+      "vim": "Phong cách Vim (h/j/k/l)",
+      "open": "Mở sản phẩm đang chọn",
+      "focus": "Đưa con trỏ vào ô tìm kiếm",
+      "help": "Mở/đóng bảng phím tắt này",
+      "esc": "Đóng hộp thoại đang mở"
+    }
+  },
   "checkout": {
     "title": "Tony nhắc trước khi thanh toán",
     "subtitle": "Một cái nhìn nhanh trước khi mua \"{name}\".",

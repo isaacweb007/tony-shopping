@@ -126,6 +126,18 @@
     "support4": "Privacy",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "keyboard": {
+    "title": "Keyboard shortcuts",
+    "subtitle": "Move faster around Tony.",
+    "actions": {
+      "arrows": "Move between search-result cards",
+      "vim": "Vim-style movement (h/j/k/l)",
+      "open": "Open the focused product",
+      "focus": "Focus the search input",
+      "help": "Toggle this shortcut sheet",
+      "esc": "Close the open dialog"
+    }
+  },
   "checkout": {
     "title": "Tony's pre-checkout glance",
     "subtitle": "One look before you head out to buy \"{name}\".",

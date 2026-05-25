@@ -126,6 +126,18 @@
     "support4": "개인정보처리방침",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "keyboard": {
+    "title": "키보드 단축키",
+    "subtitle": "토니에서 더 빠르게 움직이는 방법.",
+    "actions": {
+      "arrows": "검색 결과 카드 이동",
+      "vim": "Vim 스타일 이동 (h/j/k/l)",
+      "open": "선택한 상품 상세 열기",
+      "focus": "검색창에 포커스",
+      "help": "이 단축키 도움말 열기·닫기",
+      "esc": "열린 다이얼로그 닫기"
+    }
+  },
   "checkout": {
     "title": "토니의 결제 전 체크",
     "subtitle": "\"{name}\" 구매 직전에 한 번 확인할게요.",

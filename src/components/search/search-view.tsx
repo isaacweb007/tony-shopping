@@ -18,6 +18,7 @@ import { FilterBar } from './filter-bar';
 import { ProductDetailDialog } from './product-detail-dialog';
 import { WarningList } from './warning-list';
 import { SearchSkeleton } from './search-skeleton';
+import { useGridKeyboardNav } from '@/hooks/use-grid-keyboard-nav';
 import type { Product } from '@/types/product';
 
 export function SearchView() {
@@ -48,6 +49,21 @@ export function SearchView() {
   }, [products, sort, store]);
 
   const [detail, setDetail] = React.useState<Product | null>(null);
+
+  // Grid keyboard nav. Cols mirror the Tailwind grid breakpoints below: 1 / 2 /
+  // 3 / 4. We pick 4 as the "fully-expanded" cols count — desktop traffic
+  // dominates; mobile users won't be using arrow keys anyway. Enter on the
+  // active cell opens the detail dialog for that product.
+  const grid = useGridKeyboardNav({
+    count: visible.length,
+    cols: 4,
+    cellSelector: '[data-search-cell]',
+    onEnter: (i) => {
+      const p = visible[i];
+      if (p) setDetail(p);
+    },
+    enabled: detail === null,
+  });
 
   if (!q) {
     return (
@@ -171,7 +187,10 @@ export function SearchView() {
         <div className="mt-3">
           <FilterBar />
         </div>
-        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+        <div
+          ref={grid.containerRef}
+          className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-4"
+        >
           {visible.length === 0 ? (
             <div className="col-span-full rounded-2xl border border-dashed border-ink-200 px-6 py-12 text-center text-ink-500 dark:border-ink-700 dark:text-ink-400">
               <p>{t('empty')}</p>
@@ -185,8 +204,15 @@ export function SearchView() {
               </Button>
             </div>
           ) : (
-            visible.map((p) => (
-              <ProductCard key={p.id} product={p} onOpenDetail={setDetail} />
+            visible.map((p, i) => (
+              <div
+                key={p.id}
+                data-search-cell=""
+                {...grid.getCellProps(i)}
+                className="rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
+              >
+                <ProductCard product={p} onOpenDetail={setDetail} />
+              </div>
             ))
           )}
         </div>
