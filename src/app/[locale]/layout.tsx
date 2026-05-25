@@ -12,6 +12,7 @@ import { ShortlistDrawer } from '@/components/site/shortlist-drawer';
 import { ChatPanel } from '@/components/chat/chat-panel';
 import { CheckoutGuideModal } from '@/components/checkout/checkout-guide-modal';
 import { KeyboardHelp } from '@/components/site/keyboard-help';
+import { SwRegister } from '@/components/providers/sw-register';
 import { JsonLd } from '@/components/site/json-ld';
 import { ToastViewport } from '@/components/ui/toast-viewport';
 import { FxPreloader } from '@/components/providers/fx-preloader';
@@ -85,8 +86,14 @@ export async function generateMetadata({
       follow: true,
       googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
     },
-    icons: { icon: '/icon.svg' },
+    icons: { icon: '/icon.svg', apple: '/icon.svg' },
     formatDetection: { telephone: false },
+    manifest: '/manifest.webmanifest',
+    appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: SITE_NAME },
+    other: {
+      'theme-color': '#0a0a0a',
+      'apple-mobile-web-app-capable': 'yes',
+    },
   };
 }
 
@@ -123,6 +130,7 @@ export default async function LocaleLayout({
               <ChatPanel />
               <CheckoutGuideModal />
               <KeyboardHelp />
+              <SwRegister />
               <ToastViewport />
               <FxPreloader />
               <AuthBridge />

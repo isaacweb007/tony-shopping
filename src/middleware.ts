@@ -25,5 +25,8 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
+  // `offline` is excluded so the service-worker shell page stays locale-less —
+  // the SW cached `/offline` literal at install time; if intl rewrote it the
+  // navigation fallback would land on a redirect response in the Cache API.
+  matcher: ['/((?!api|_next|_vercel|offline|sw\\.js|manifest\\.webmanifest|.*\\..*).*)'],
 };
