@@ -10,6 +10,7 @@ import { useUIStore } from '@/stores/ui-store';
 import { usePriceWatchStore } from '@/stores/price-watch-store';
 import { deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { formatMoneyLocale } from '@/lib/format';
+import { DualMoney } from '@/components/ui/dual-money';
 import { Link } from '@/i18n/routing';
 import { shareOrCopy } from '@/lib/share';
 import type { AppLocale } from '@/i18n/routing';
@@ -144,9 +145,7 @@ export function ShortlistDrawer() {
                         {p.name}
                       </div>
                       <div className="flex items-baseline gap-2">
-                        <span className="text-[14px] font-extrabold tracking-tighter2">
-                          {formatMoneyLocale(p.finalPrice, locale)}
-                        </span>
+                        <DualMoney money={p.finalPrice} size="sm" layout="inline" locale={locale} />
                         <PriceDelta value={delta(p.id)} />
                       </div>
                       {p.score && (

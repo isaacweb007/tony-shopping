@@ -19,6 +19,7 @@ import { affiliateUrl } from '@/lib/affiliate';
 import { useCheckoutGuide } from '@/hooks/use-checkout-guide';
 import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
+import { DualMoney } from '@/components/ui/dual-money';
 import { Link } from '@/i18n/routing';
 import type { AppLocale } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
@@ -80,9 +81,7 @@ export function ProductDetailDialog({ product, onOpenChange }: Props) {
               {product.name}
             </h3>
             <div className="mt-3 flex items-end gap-3">
-              <div className="text-[28px] font-extrabold tracking-tighter2 md:text-[32px]">
-                {formatMoney(product.finalPrice, locale)}
-              </div>
+              <DualMoney money={product.finalPrice} size="xl" layout="stacked" />
               {product.discountPct > 0 && (
                 <div className="text-sm font-bold text-red-600 dark:text-red-400">
                   -{product.discountPct}%

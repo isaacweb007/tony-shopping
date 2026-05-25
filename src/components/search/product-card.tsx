@@ -14,6 +14,7 @@ import { affiliateUrl } from '@/lib/affiliate';
 import { useCheckoutGuide } from '@/hooks/use-checkout-guide';
 import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
+import { DualMoney } from '@/components/ui/dual-money';
 import { useSearchParams } from 'next/navigation';
 import type { AppLocale } from '@/i18n/routing';
 
@@ -149,15 +150,7 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
                 )}
               </div>
             )}
-            <div
-              className={
-                isFeature
-                  ? 'text-[24px] font-extrabold tracking-tighter2'
-                  : 'text-[16px] font-extrabold tracking-tighter2'
-              }
-            >
-              {formatMoney(product.finalPrice, locale)}
-            </div>
+            <DualMoney money={product.finalPrice} size={isFeature ? 'xl' : 'md'} layout="stacked" />
             <div className="text-[11px] text-ink-500 dark:text-ink-400">
               {isFeature ? `${tc('incShip')} · ${shipLabel(product.shipDays, t)}` : shipLabel(product.shipDays, t)}
             </div>

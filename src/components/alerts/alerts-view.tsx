@@ -20,6 +20,7 @@ import { buildAlerts, countByStatus, type AlertRow, type AlertStatus } from '@/l
 import { pickBuyNow } from '@/lib/alerts/pick-buy-now';
 import { formatMoneyLocale } from '@/lib/format';
 import { intlLocale } from '@/lib/format';
+import { DualMoney } from '@/components/ui/dual-money';
 import { affiliateUrl } from '@/lib/affiliate';
 import { cn } from '@/lib/utils';
 import type { AppLocale } from '@/i18n/routing';
@@ -202,9 +203,7 @@ function BuyNowBanner({
         </span>
       </div>
       <div className="relative mt-2 flex flex-wrap items-baseline gap-3">
-        <span className="text-[22px] font-extrabold tracking-tighter2">
-          {formatMoneyLocale(snap.finalPrice, locale)}
-        </span>
+        <DualMoney money={snap.finalPrice} size="lg" layout="inline" locale={locale} />
         <span className="rounded bg-emerald-600 px-1.5 py-0.5 text-[11px] font-extrabold text-white">
           ▼ {pct}%
         </span>
@@ -282,9 +281,7 @@ function AlertCard({
           {snap.name}
         </div>
         <div className="mt-1.5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <span className="text-[18px] font-extrabold tracking-tighter2">
-            {formatMoneyLocale(snap.finalPrice, locale)}
-          </span>
+          <DualMoney money={snap.finalPrice} size="md" layout="inline" locale={locale} />
           {prevMoney && delta !== null && (
             <span className="text-[11px] text-ink-500 dark:text-ink-400">
               {t('wasPrice', { was: prevMoney })}

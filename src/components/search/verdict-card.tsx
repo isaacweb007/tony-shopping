@@ -13,6 +13,7 @@ import { affiliateUrl } from '@/lib/affiliate';
 import { useCheckoutGuide } from '@/hooks/use-checkout-guide';
 import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
+import { DualMoney } from '@/components/ui/dual-money';
 import type { AppLocale } from '@/i18n/routing';
 
 interface Props {
@@ -122,9 +123,7 @@ export function VerdictCard({ product }: Props) {
             <span className="text-[12px] font-semibold text-ink-600 dark:text-ink-300">
               {product.store}
             </span>
-            <span className="text-[24px] font-extrabold tracking-tighter2 md:text-[28px]">
-              {formatMoney(product.finalPrice, locale)}
-            </span>
+            <DualMoney money={product.finalPrice} size="xl" layout="inline" />
             <span className="text-[11px] text-ink-500 dark:text-ink-400">
               {shipLabel(product.shipDays, tg)}
             </span>

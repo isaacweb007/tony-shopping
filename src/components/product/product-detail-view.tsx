@@ -14,6 +14,7 @@ import { ReviewAnalysis } from '@/components/search/review-analysis';
 import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { useRouter } from '@/i18n/routing';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
+import { DualMoney } from '@/components/ui/dual-money';
 import type { AppLocale } from '@/i18n/routing';
 
 interface Props {
@@ -95,9 +96,7 @@ export function ProductDetailView({ product, q }: Props) {
             {product.name}
           </h1>
           <div className="mt-3 flex items-end gap-3">
-            <div className="text-[32px] font-extrabold tracking-tighter2 md:text-[40px]">
-              {formatMoney(product.finalPrice, locale)}
-            </div>
+            <DualMoney money={product.finalPrice} size="xl" layout="stacked" />
             {product.discountPct > 0 && (
               <div className="text-base font-bold text-red-600 dark:text-red-400">
                 -{product.discountPct}%

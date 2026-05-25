@@ -10,6 +10,7 @@ import { useShortlistStore } from '@/stores/shortlist-store';
 import { deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { buildCompare, type ComparePriority } from '@/lib/compare/verdict';
 import { formatMoneyLocale, formatCount, shipLabel } from '@/lib/format';
+import { DualMoney } from '@/components/ui/dual-money';
 import { shareOrCopy } from '@/lib/share';
 import { affiliateUrl } from '@/lib/affiliate';
 import { useCompareNarrative } from '@/hooks/use-compare-narrative';
@@ -441,7 +442,7 @@ function CompareTable({
   function valueFor(snap: ShortlistSnap, key: string): React.ReactNode {
     switch (key) {
       case 'price':
-        return formatMoneyLocale(snap.finalPrice, locale);
+        return <DualMoney money={snap.finalPrice} size="sm" layout="stacked" />;
       case 'score':
         return snap.score?.total != null ? (
           <span className="font-extrabold text-accent-600 dark:text-accent-400">
