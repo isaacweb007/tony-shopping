@@ -124,6 +124,7 @@
     "support2": "Đối tác",
     "support3": "Điều khoản",
     "support4": "Quyền riêng tư",
+    "support5": "Thông báo liên kết tiếp thị",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
   "keyboard": {
@@ -263,6 +264,42 @@
       "idleShortlist": {
         "title": "{n} ứng viên đang nằm im trong shortlist.",
         "body": "Đã một tuần. Xem lại hay dọn dẹp đi?"
+      }
+    }
+  },
+  "disclosure": {
+    "title": "Thông báo liên kết tiếp thị · Tony Shopping",
+    "eyebrow": "Minh bạch",
+    "heading": "Tony Shopping vận hành như thế nào",
+    "lastUpdated": "Cập nhật gần nhất: 25-05-2026",
+    "sections": {
+      "intro": {
+        "title": "Vì sao có trang này",
+        "body": "Tony Shopping là trợ lý mua sắm meta AI giúp bạn đưa ra quyết định mua hàng có cân nhắc. Theo hướng dẫn của FTC (Hoa Kỳ), Đạo luật Dịch vụ Kỹ thuật số (EU) và Ủy ban Thương mại Công bằng Hàn Quốc, trang này nêu rõ Tony kiếm tiền như thế nào, xử lý dữ liệu nào và dùng tiêu chí gì để gợi ý. Có thắc mắc? Liên hệ ở cuối trang."
+      },
+      "affiliate": {
+        "title": "Liên kết tiếp thị và hoa hồng",
+        "body": "Mọi nút \"Mua\" trên Tony Shopping là liên kết tiếp thị (affiliate). Khi bạn nhấn và hoàn tất giao dịch, nhà bán trả Tony một khoản hoa hồng nhỏ. Bạn không trả thêm gì, và giá không thay đổi. Các chương trình đang hoạt động: Amazon Associates, Coupang Partners, eBay Partner Network, AliExpress Affiliate, Shopee Affiliate, Lazada Affiliate, Naver Shopping. Việc một sản phẩm có hoa hồng hay không hoàn toàn không ảnh hưởng đến cách Tony xếp hạng — thuật toán chỉ tính trên giá, vận chuyển, đánh giá và độ tin cậy chính hãng."
+      },
+      "pricing": {
+        "title": "Nguồn dữ liệu giá",
+        "body": "Giá hiển thị được lấy theo thời gian thực từ API công khai của từng nhà bán hoặc qua dịch vụ tổng hợp (SerpAPI). Tỉ giá được cập nhật mỗi ngày một lần từ nhà cung cấp công khai; giá đã quy đổi chỉ mang tính tham khảo. Giá cuối cùng — bao gồm khuyến mãi, phí vận chuyển, thuế, hải quan và tỉ giá tại thời điểm thanh toán — là giá hiển thị trên trang thanh toán của nhà bán. Tony không chịu trách nhiệm về chênh lệch. Nếu bạn thấy giá sai, hãy báo qua kênh liên hệ — chúng tôi cập nhật bộ chuyển đổi rất nhanh."
+      },
+      "tonyScore": {
+        "title": "Cách tính Tony Score",
+        "body": "Tony Score thang 0–100, là tổng trọng số của bốn tín hiệu: (1) Tương đồng 25% — sản phẩm khớp truy vấn của bạn ra sao, (2) Lợi thế giá 35% — so với phần còn lại của nhóm, (3) Độ tin cậy đánh giá 15% — sao, số lượng, hình thái nghi ngờ bot, (4) Độ tin cậy chính hãng 25% — trạng thái nhà bán chính thức, lịch sử khiếu nại, uy tín người bán. Các chip \"ưu tiên\" trên trang so sánh nghiêng trọng số sang giá tốt, giao nhanh hoặc chính hãng. Mọi trọng số đều được công khai và không thay đổi theo chi phí quảng cáo."
+      },
+      "recommendations": {
+        "title": "Gợi ý và quảng cáo",
+        "body": "Gợi ý số một \"Chọn cái này\" (VerdictCard) chỉ được tạo bởi thuật toán nêu trên. Không có chi phí quảng cáo nào ảnh hưởng đến nó. Nếu sau này Tony giới thiệu các vị trí quảng cáo rõ ràng, chúng sẽ có nhãn \"AD\" trên thẻ và tách biệt rõ ràng với lựa chọn thuật toán. Các phần do LLM tạo (lời bình so sánh, tóm tắt đánh giá) được gọi qua Anthropic Claude hoặc OpenAI; dữ liệu gửi cho mô hình chỉ giới hạn ở thông tin đã hiển thị trên trang."
+      },
+      "privacy": {
+        "title": "Xử lý dữ liệu và quyền riêng tư",
+        "body": "Mặc định Tony lưu mọi hoạt động (lịch sử tìm, shortlist, log click, học ưu tiên) trong LocalStorage trình duyệt. Khi đăng xuất, không dữ liệu nào rời thiết bị. Khi bạn đăng nhập, shortlist và click sẽ được đồng bộ lên Supabase để dùng được qua nhiều thiết bị. Tony không bán hay chia sẻ dữ liệu cho bên thứ ba, không lộ dữ liệu cho mạng quảng cáo. Yêu cầu xoá tài khoản xử lý qua kênh liên hệ. Chi tiết đầy đủ xem ở Chính sách quyền riêng tư."
+      },
+      "contact": {
+        "title": "Liên hệ",
+        "body": "Báo lỗi giá/chính hãng, hỏi về thuật toán, hoặc đề nghị hợp tác affiliate: gửi mail tới support@tonyshopping.io. Chúng tôi trả lời trong 3 ngày làm việc."
       }
     }
   },

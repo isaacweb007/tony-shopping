@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl';
 import { Logo } from '@/components/brand/logo';
+import { Link } from '@/i18n/routing';
 
 export function Footer() {
   const t = useTranslations('footer');
@@ -32,6 +33,14 @@ export function Footer() {
             <li>{t('support2')}</li>
             <li>{t('support3')}</li>
             <li>{t('support4')}</li>
+            <li>
+              <Link
+                href="/disclosure"
+                className="hover:text-ink-800 hover:underline dark:hover:text-ink-100"
+              >
+                {t('support5')}
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
