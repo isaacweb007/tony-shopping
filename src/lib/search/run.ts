@@ -15,7 +15,7 @@ const ADAPTER_TIMEOUT_MS = 1500;
 
 export async function runServerSearch(
   query: SearchQuery,
-  opts: { signal?: AbortSignal } = {},
+  opts: { signal?: AbortSignal; locale?: 'ko' | 'en' | 'vi' } = {},
 ): Promise<SearchResult> {
   const adapters = getEnabledAdapters();
   const results = await Promise.allSettled(
@@ -23,6 +23,7 @@ export async function runServerSearch(
       a.search({
         q: query.q,
         limit: PER_ADAPTER_LIMIT,
+        locale: opts.locale,
         signal: withTimeout(opts.signal, ADAPTER_TIMEOUT_MS),
       }),
     ),

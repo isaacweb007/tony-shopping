@@ -19,6 +19,8 @@ export interface SearchInput {
   limit?: number;
   /** Country preference (affects which adapters/items are prioritised). */
   country?: CountryCode;
+  /** UI locale — adapters use it to pick gl/hl/etc. when the upstream supports it. */
+  locale?: 'ko' | 'en' | 'vi';
   /** Per-request abort signal. */
   signal?: AbortSignal;
 }

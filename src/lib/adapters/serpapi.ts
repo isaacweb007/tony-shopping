@@ -111,16 +111,51 @@ function toProduct(item: SerpShoppingItem, idx: number): Product | null {
   };
 }
 
-async function searchReal(q: string, limit: number, signal?: AbortSignal): Promise<Product[]> {
+/**
+ * Locale → SerpAPI search params.
+ *
+ *   gl  — country code Google should search from (kr / us / vn).
+ *   hl  — language of the result page.
+ *   google_domain — which Google TLD to query, e.g. google.co.kr.
+ *   location — broad geolocation label that improves merchant coverage.
+ *
+ * The result: a KO user searches and sees Naver/Coupang/G마켓/11번가 mixed
+ * in alongside Amazon/eBay rather than a US-default Walmart/Target dump.
+ */
+const LOCALE_PARAMS: Record<
+  'ko' | 'en' | 'vi',
+  { gl: string; hl: string; google_domain: string; location: string }
+> = {
+  ko: { gl: 'kr', hl: 'ko', google_domain: 'google.co.kr', location: 'Seoul, South Korea' },
+  en: { gl: 'us', hl: 'en', google_domain: 'google.com', location: 'United States' },
+  vi: { gl: 'vn', hl: 'vi', google_domain: 'google.com.vn', location: 'Ho Chi Minh City, Vietnam' },
+};
+
+async function searchReal(
+  q: string,
+  limit: number,
+  locale: 'ko' | 'en' | 'vi' = 'ko',
+  signal?: AbortSignal,
+): Promise<Product[]> {
   const key = process.env.SERPAPI_KEY;
   if (!key) return [];
-  const url =
-    `${ENDPOINT}?engine=google_shopping&q=${encodeURIComponent(q)}` +
-    `&num=${Math.min(limit * 2, 40)}&api_key=${encodeURIComponent(key)}`;
+
+  const loc = LOCALE_PARAMS[locale];
+  const params = new URLSearchParams({
+    engine: 'google_shopping',
+    q,
+    num: String(Math.min(limit * 2, 40)),
+    api_key: key,
+    gl: loc.gl,
+    hl: loc.hl,
+    google_domain: loc.google_domain,
+    location: loc.location,
+    device: 'desktop',
+  });
 
   let res: Response;
   try {
-    res = await fetch(url, {
+    res = await fetch(`${ENDPOINT}?${params.toString()}`, {
       signal,
       headers: { Accept: 'application/json' },
       next: { revalidate: 60 },
@@ -141,11 +176,11 @@ async function searchReal(q: string, limit: number, signal?: AbortSignal): Promi
 export const serpapiAdapter: SearchAdapter = {
   id: 'GoogleShopping',
   isEnabled: () => true,
-  async search({ q, limit = 6, signal }: SearchInput) {
+  async search({ q, limit = 6, locale = 'ko', signal }: SearchInput) {
     const mode = ADAPTER_MODE.serpapi();
     if (mode.real) {
       try {
-        const real = await searchReal(q, limit, signal);
+        const real = await searchReal(q, limit, locale, signal);
         if (real.length > 0) return real;
       } catch {
         /* fall through */

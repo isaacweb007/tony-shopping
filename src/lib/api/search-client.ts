@@ -20,9 +20,11 @@ export class SearchApiError extends Error {
 export async function searchProducts(
   q: string,
   signal?: AbortSignal,
+  locale?: 'ko' | 'en' | 'vi',
 ): Promise<SearchResult> {
   const url = new URL('/api/search', window.location.origin);
   url.searchParams.set('q', q);
+  if (locale) url.searchParams.set('locale', locale);
   const res = await fetch(url.toString(), { signal });
   if (!res.ok) {
     const body = (await res.json().catch(() => ({}))) as { error?: string; message?: string };

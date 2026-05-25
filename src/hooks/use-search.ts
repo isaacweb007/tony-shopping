@@ -1,13 +1,14 @@
 'use client';
 
 import * as React from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
 import { searchProducts } from '@/lib/api/search-client';
 import { useSearchStore } from '@/stores/search-store';
 import { useShortlistStore } from '@/stores/shortlist-store';
 import { usePriceWatchStore } from '@/stores/price-watch-store';
 import { toast } from '@/stores/toast-store';
+import type { AppLocale } from '@/i18n/routing';
 
 /**
  * useSearch — fetches results from `/api/search` and mirrors them into the
@@ -23,10 +24,11 @@ export function useSearch(q: string) {
   const watchedItems = useShortlistStore((s) => s.items);
   const observe = usePriceWatchStore((s) => s.observe);
   const tw = useTranslations('watch');
+  const locale = useLocale() as AppLocale;
 
   const query = useQuery({
-    queryKey: ['search', q],
-    queryFn: ({ signal }) => searchProducts(q, signal),
+    queryKey: ['search', q, locale],
+    queryFn: ({ signal }) => searchProducts(q, signal, locale),
     enabled: q.length > 0,
     staleTime: 60_000,
   });

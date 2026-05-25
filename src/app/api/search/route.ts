@@ -7,11 +7,13 @@ export const dynamic = 'force-dynamic';
 
 const QuerySchema = z.object({
   q: z.string().min(1, 'query is required').max(500),
+  locale: z.enum(['ko', 'en', 'vi']).optional(),
 });
 
 export async function GET(req: NextRequest) {
   const parsed = QuerySchema.safeParse({
     q: req.nextUrl.searchParams.get('q') ?? '',
+    locale: req.nextUrl.searchParams.get('locale') ?? undefined,
   });
   if (!parsed.success) {
     return NextResponse.json(
@@ -23,7 +25,7 @@ export async function GET(req: NextRequest) {
   try {
     const result = await runServerSearch(
       { q: parsed.data.q, attachments: [] },
-      { signal: req.signal },
+      { signal: req.signal, locale: parsed.data.locale },
     );
     return NextResponse.json(result, {
       headers: {
