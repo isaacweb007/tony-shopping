@@ -10,6 +10,7 @@ import { toast } from '@/stores/toast-store';
 import { recordProductClick } from '@/stores/click-store';
 import { affiliateUrl } from '@/lib/affiliate';
 import { useCheckoutGuide } from '@/hooks/use-checkout-guide';
+import { haptic } from '@/lib/haptic';
 import { ReviewAnalysis } from '@/components/search/review-analysis';
 import { PriceSparkline } from '@/components/product/price-sparkline';
 import { usePriceWatchStore } from '@/stores/price-watch-store';
@@ -40,6 +41,7 @@ export function ProductDetailView({ product, q }: Props) {
 
   function toggle() {
     const added = toggleRaw(product);
+    haptic('tap');
     toast.success(
       added ? tg('toast.shortlistAdded') : tg('toast.shortlistRemoved'),
       product.name,

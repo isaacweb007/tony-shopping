@@ -13,7 +13,10 @@ import type { MetadataRoute } from 'next';
  * follow-up once design ships them.
  */
 export default function manifest(): MetadataRoute.Manifest {
-  return {
+  // Build as a plain record so the share_target object-form params (which
+  // the spec + every browser supports, but Next types as a {name,value}[])
+  // can sit on the object without fighting the framework's narrower type.
+  const m: Record<string, unknown> = {
     name: 'Tony Shopping — AI Meta Shopping Agent',
     short_name: 'Tony',
     description:
@@ -40,5 +43,14 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: 'maskable',
       },
     ],
+    // Web Share Target — when Tony is installed as a PWA, it appears in the
+    // OS share sheet. A shared URL or text lands at /share, which redirects
+    // into a search using the payload as the query.
+    share_target: {
+      action: '/share',
+      method: 'get',
+      params: { title: 'title', text: 'text', url: 'url' },
+    },
   };
+  return m as MetadataRoute.Manifest;
 }

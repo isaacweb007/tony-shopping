@@ -11,6 +11,7 @@ import { toast } from '@/stores/toast-store';
 import { recordProductClick } from '@/stores/click-store';
 import { affiliateUrl } from '@/lib/affiliate';
 import { useCheckoutGuide } from '@/hooks/use-checkout-guide';
+import { haptic } from '@/lib/haptic';
 import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
 import { DualMoney } from '@/components/ui/dual-money';
@@ -59,6 +60,7 @@ export function VerdictCard({ product }: Props) {
 
   function toggle() {
     const added = toggleRaw(product);
+    haptic('tap');
     toast.success(
       added ? tg('toast.shortlistAdded') : tg('toast.shortlistRemoved'),
       product.name,

@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { useCheckoutGuideStore } from '@/stores/checkout-guide-store';
 import { useCheckoutPrefsStore } from '@/stores/checkout-prefs-store';
 import { buildCheckoutChecks, type ChecklistItem } from '@/lib/checkout/checks';
+import { haptic } from '@/lib/haptic';
 import { cn } from '@/lib/utils';
 import type { AppLocale } from '@/i18n/routing';
 
@@ -35,6 +36,7 @@ export function CheckoutGuideModal() {
 
   function onProceed() {
     if (!pending) return;
+    haptic('success');
     pending.onProceed();
     dismiss();
   }
