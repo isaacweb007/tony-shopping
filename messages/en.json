@@ -197,7 +197,16 @@
     "emptyTab": "Nothing in this bucket yet.",
     "emptyTitle": "Nothing on watch yet",
     "emptyHint": "Bookmark anything from a search result and Tony will watch its price — moves land here.",
-    "goSearch": "Start a search"
+    "goSearch": "Start a search",
+    "buyNow": {
+      "label": "Tony's pick: a good time to buy",
+      "reason": {
+        "bigDrop": "Price dropped {pct}%.",
+        "qualityAndDrop": "A strong Tony score, now down {pct}%.",
+        "genuineAndDrop": "A high-authenticity seller, now down {pct}%."
+      },
+      "cta": "Open on {store}"
+    }
   },
   "dashboard": {
     "title": "Dashboard · Tony Shopping",

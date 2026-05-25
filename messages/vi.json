@@ -197,7 +197,16 @@
     "emptyTab": "Chưa có gì trong nhóm này.",
     "emptyTitle": "Chưa theo dõi sản phẩm nào",
     "emptyHint": "Đánh dấu kết quả tìm kiếm để Tony theo dõi giá — biến động sẽ xuất hiện ở đây.",
-    "goSearch": "Bắt đầu tìm kiếm"
+    "goSearch": "Bắt đầu tìm kiếm",
+    "buyNow": {
+      "label": "Tony gợi ý: thời điểm tốt để mua",
+      "reason": {
+        "bigDrop": "Giá giảm {pct}%.",
+        "qualityAndDrop": "Điểm Tony cao, lại đang giảm {pct}%.",
+        "genuineAndDrop": "Người bán độ tin cậy cao đang giảm {pct}%."
+      },
+      "cta": "Mở trên {store}"
+    }
   },
   "dashboard": {
     "title": "Bảng điều khiển · Tony Shopping",

@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { useShortlistStore } from '@/stores/shortlist-store';
 import { usePriceWatchStore } from '@/stores/price-watch-store';
 import { buildAlerts, countByStatus, type AlertRow, type AlertStatus } from '@/lib/alerts/build-alerts';
+import { pickBuyNow } from '@/lib/alerts/pick-buy-now';
 import { formatMoneyLocale } from '@/lib/format';
 import { intlLocale } from '@/lib/format';
 import { affiliateUrl } from '@/lib/affiliate';
@@ -51,6 +52,10 @@ export function AlertsView() {
   }, [mounted, items, snapshots, threshold]);
 
   const counts = React.useMemo(() => countByStatus(rows), [rows]);
+  const buyNow = React.useMemo(
+    () => pickBuyNow({ rows, threshold }),
+    [rows, threshold],
+  );
 
   const visible = React.useMemo(() => {
     if (tab === 'all') return rows;
@@ -99,6 +104,8 @@ export function AlertsView() {
           </p>
         </div>
       </div>
+
+      {buyNow && <BuyNowBanner pick={buyNow} locale={locale} t={t} />}
 
       <div className="mt-6 flex flex-wrap items-center gap-1.5" role="tablist" aria-label={t('tabsAria')}>
         {([
@@ -155,6 +162,64 @@ export function AlertsView() {
             />
           ))}
         </ul>
+      )}
+    </div>
+  );
+}
+
+function BuyNowBanner({
+  pick,
+  locale,
+  t,
+}: {
+  pick: NonNullable<ReturnType<typeof pickBuyNow>>;
+  locale: AppLocale;
+  t: ReturnType<typeof useTranslations<'alerts'>>;
+}) {
+  const { row, reasonKey } = pick;
+  const snap = row.snap;
+  const delta = row.delta!;
+  const pct = Math.abs(delta * 100).toFixed(1);
+  const buyHref = snap.buyUrl
+    ? affiliateUrl({ store: snap.store as Parameters<typeof affiliateUrl>[0]['store'], url: snap.buyUrl })
+    : null;
+  return (
+    <div className="relative mt-6 overflow-hidden rounded-3xl border border-emerald-300/70 bg-gradient-to-br from-emerald-50 via-white to-sky-50 p-5 shadow-card dark:border-emerald-700/50 dark:from-emerald-950/40 dark:via-ink-900 dark:to-sky-950/30 md:p-6">
+      <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-emerald-400/30 blur-3xl" />
+      <div className="relative inline-flex items-center gap-1.5 rounded-full bg-emerald-700 px-2.5 py-1 text-[11px] font-bold tracking-wider text-white dark:bg-emerald-500">
+        <Sparkles className="h-3.5 w-3.5" strokeWidth={2} />
+        {t('buyNow.label')}
+      </div>
+      <p className="relative mt-3 text-[14px] font-semibold text-emerald-700 dark:text-emerald-300">
+        {t(`buyNow.reason.${reasonKey}` as 'buyNow.reason.bigDrop', { pct })}
+      </p>
+      <div className="relative mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <h2 className="text-[20px] font-extrabold leading-tight tracking-tighter2 md:text-[24px]">
+          {snap.name}
+        </h2>
+        <span className="text-[12px] font-semibold text-ink-600 dark:text-ink-300">
+          {snap.store}
+        </span>
+      </div>
+      <div className="relative mt-2 flex flex-wrap items-baseline gap-3">
+        <span className="text-[22px] font-extrabold tracking-tighter2">
+          {formatMoneyLocale(snap.finalPrice, locale)}
+        </span>
+        <span className="rounded bg-emerald-600 px-1.5 py-0.5 text-[11px] font-extrabold text-white">
+          ▼ {pct}%
+        </span>
+      </div>
+      {buyHref && (
+        <Button
+          asChild
+          variant="primary"
+          className="mt-4 h-11 rounded-xl px-5 font-bold"
+        >
+          <a href={buyHref} target="_blank" rel="noreferrer noopener sponsored">
+            {t('buyNow.cta', { store: snap.store })}
+            <ExternalLink className="h-4 w-4" strokeWidth={1.9} />
+          </a>
+        </Button>
       )}
     </div>
   );

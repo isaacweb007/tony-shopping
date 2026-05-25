@@ -197,7 +197,16 @@
     "emptyTab": "이 카테고리에는 아직 변동이 없어요.",
     "emptyTitle": "추적 중인 상품이 없어요",
     "emptyHint": "검색 결과에서 북마크하면 토니가 가격을 지켜보고, 변동을 여기에 모아 보여줘요.",
-    "goSearch": "검색하러 가기"
+    "goSearch": "검색하러 가기",
+    "buyNow": {
+      "label": "토니가 추천: 지금 살 만해요",
+      "reason": {
+        "bigDrop": "가격이 {pct}% 떨어졌어요.",
+        "qualityAndDrop": "토니 점수도 높은데 {pct}%까지 떨어졌어요.",
+        "genuineAndDrop": "정품 안심도 높은 셀러가 {pct}%까지 떨어졌어요."
+      },
+      "cta": "{store}에서 구매"
+    }
   },
   "dashboard": {
     "title": "내 대시보드 · Tony Shopping",
