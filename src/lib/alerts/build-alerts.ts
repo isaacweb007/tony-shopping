@@ -36,8 +36,13 @@ export function buildAlerts({ snaps, snapshots, threshold }: BuildArgs): AlertRo
   const rows: AlertRow[] = snaps.map((snap) => {
     const watch = snapshots[snap.id] ?? null;
     let delta: number | null = null;
-    if (watch && watch.prevAmount != null && watch.prevAmount !== 0) {
-      delta = (watch.amount - watch.prevAmount) / watch.prevAmount;
+    if (watch) {
+      const n = watch.entries.length;
+      const prev = watch.entries[n - 2];
+      const curr = watch.entries[n - 1];
+      if (prev && curr && prev.amount !== 0) {
+        delta = (curr.amount - prev.amount) / prev.amount;
+      }
     }
     const status: AlertStatus = watch ? classify(delta, threshold) : 'unobserved';
     return { snap, watch, delta, status };

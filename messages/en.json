@@ -267,6 +267,17 @@
       }
     }
   },
+  "product": {
+    "history": {
+      "title": "Price history",
+      "low": "Low",
+      "high": "High",
+      "flat": "Flat",
+      "empty": "Watching begins now — bookmark this listing and Tony will plot price moves here.",
+      "caption": "{n} observations",
+      "a11y": "Recent {n} price observations"
+    }
+  },
   "disclosure": {
     "title": "Affiliate disclosure · Tony Shopping",
     "eyebrow": "Transparency",

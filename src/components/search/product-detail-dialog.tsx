@@ -13,6 +13,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { ShareButton } from '@/components/ui/share-button';
 import { ReviewAnalysis } from './review-analysis';
+import { PriceSparkline } from '@/components/product/price-sparkline';
+import { usePriceWatchStore } from '@/stores/price-watch-store';
 import { useShortlistStore } from '@/stores/shortlist-store';
 import { recordProductClick } from '@/stores/click-store';
 import { affiliateUrl } from '@/lib/affiliate';
@@ -40,6 +42,9 @@ export function ProductDetailDialog({ product, onOpenChange }: Props) {
   const inShortlist = useShortlistStore((s) => (product ? product.id in s.items : false));
   const toggle = useShortlistStore((s) => s.toggle);
   const { guard } = useCheckoutGuide();
+  const priceWatch = usePriceWatchStore((s) =>
+    product ? s.snapshots[product.id] ?? null : null,
+  );
 
   const open = product !== null;
 
@@ -122,6 +127,8 @@ export function ProductDetailDialog({ product, onOpenChange }: Props) {
                 <Kv label={td('kAuth')} value={`${product.score.authenticity}%`} />
               </div>
             </div>
+
+            <PriceSparkline snapshot={priceWatch} className="mt-5" />
 
             <ReviewAnalysis product={product} />
 

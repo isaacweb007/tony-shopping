@@ -11,6 +11,8 @@ import { recordProductClick } from '@/stores/click-store';
 import { affiliateUrl } from '@/lib/affiliate';
 import { useCheckoutGuide } from '@/hooks/use-checkout-guide';
 import { ReviewAnalysis } from '@/components/search/review-analysis';
+import { PriceSparkline } from '@/components/product/price-sparkline';
+import { usePriceWatchStore } from '@/stores/price-watch-store';
 import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { useRouter } from '@/i18n/routing';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
@@ -33,6 +35,7 @@ export function ProductDetailView({ product, q }: Props) {
 
   const inShortlist = useShortlistStore((s) => product.id in s.items);
   const toggleRaw = useShortlistStore((s) => s.toggle);
+  const priceWatch = usePriceWatchStore((s) => s.snapshots[product.id] ?? null);
   const { guard } = useCheckoutGuide();
 
   function toggle() {
@@ -170,6 +173,8 @@ export function ProductDetailView({ product, q }: Props) {
           </div>
         </div>
       </div>
+
+      <PriceSparkline snapshot={priceWatch} className="mt-8" />
 
       <ReviewAnalysis product={product} />
     </div>

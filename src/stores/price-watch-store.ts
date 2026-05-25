@@ -1,53 +1,65 @@
 'use client';
 
 /**
- * Per-device price watch ledger.
+ * Per-device price-watch timeline.
  *
- * For every product in the user's compare list we keep:
- *   - the most recent observed final price (amount + currency)
- *   - the timestamp of that observation
+ * For every product the user has shortlisted we keep a capped time series of
+ * observed prices (up to MAX_ENTRIES per product). Every fresh search adds an
+ * entry — but only when the price actually changed, so the series is a clean
+ * record of *moves*, not a noisy "we re-saw this listing" log.
  *
- * On every fresh search, the store reconciles results against this ledger. If
- * a watched product's price dropped meaningfully (default 5%), the UI surfaces
- * a toast + the compare drawer shows a ▼-N% indicator.
+ * Derived helpers:
+ *   - delta(id)       — signed ratio between the two most recent entries
+ *   - dismiss(id)     — forget the series entirely
+ *   - acknowledge(id) — keep the most recent entry, drop everything older
+ *                       (resets the comparison baseline)
  *
- * Phase 5 (Supabase) will mirror this to a server so the watch survives
- * cross-device. For now it's purely local + best-effort.
+ * The store is a v1 → v2 schema bump. v1 stored a single { amount, prevAmount,
+ * at } per product; v2 stores { currency, entries: [{at, amount}] }. The
+ * persist migrate function converts the v1 record into a one-entry timeline.
  */
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Product } from '@/types/product';
 
-export interface PriceSnapshot {
-  productId: string;
-  amount: number;
-  currency: 'KRW' | 'USD' | 'VND' | 'JPY';
+export interface PriceObservation {
   /** ms since epoch. */
   at: number;
-  /** Last *previous* recorded amount (or null). Used to render ▼ deltas. */
-  prevAmount: number | null;
+  amount: number;
+}
+
+export interface PriceSnapshot {
+  productId: string;
+  currency: 'KRW' | 'USD' | 'VND' | 'JPY';
+  /** Oldest → newest. Capped at MAX_ENTRIES via observe(). */
+  entries: PriceObservation[];
 }
 
 interface PriceWatchState {
   snapshots: Record<string, PriceSnapshot>;
-  /** Threshold ratio: a drop ≥ DROP_THRESHOLD triggers a toast. */
   threshold: number;
-  /** Returns the delta vs prevAmount as a signed ratio (-0.08 = down 8%). */
+  /** Signed ratio between the two most recent entries (newest vs previous). */
   delta: (productId: string) => number | null;
   /**
-   * Take a fresh observation for the given products.
-   * Returns the list of products whose price dropped past the threshold.
+   * Take a fresh observation for each product. Returns products whose latest
+   * change was a drop past the threshold (used by the search hook to toast).
    */
   observe: (products: Product[]) => Product[];
   setThreshold: (t: number) => void;
-  /** Forget one product entirely (alerts page "dismiss" → remove from watch). */
+  /** Drop the product from the ledger entirely. */
   dismiss: (productId: string) => void;
-  /** Acknowledge the delta — keeps the current price as the new baseline. */
+  /** Collapse the series to the latest entry — baseline reset. */
   acknowledge: (productId: string) => void;
   reset: () => void;
 }
 
 const DEFAULT_THRESHOLD = 0.05;
+const MAX_ENTRIES = 30;
+
+function lastTwo(entries: PriceObservation[]): [PriceObservation | null, PriceObservation | null] {
+  const n = entries.length;
+  return [entries[n - 2] ?? null, entries[n - 1] ?? null];
+}
 
 export const usePriceWatchStore = create<PriceWatchState>()(
   persist(
@@ -57,13 +69,15 @@ export const usePriceWatchStore = create<PriceWatchState>()(
 
       delta: (productId) => {
         const snap = get().snapshots[productId];
-        if (!snap || snap.prevAmount === null || snap.prevAmount === 0) return null;
-        return (snap.amount - snap.prevAmount) / snap.prevAmount;
+        if (!snap) return null;
+        const [prev, curr] = lastTwo(snap.entries);
+        if (!prev || !curr || prev.amount === 0) return null;
+        return (curr.amount - prev.amount) / prev.amount;
       },
 
       observe: (products) => {
         const { snapshots, threshold } = get();
-        const next = { ...snapshots };
+        const next: Record<string, PriceSnapshot> = { ...snapshots };
         const dropped: Product[] = [];
 
         for (const p of products) {
@@ -72,35 +86,36 @@ export const usePriceWatchStore = create<PriceWatchState>()(
           if (!prev) {
             next[p.id] = {
               productId: p.id,
-              amount: newAmount,
               currency: p.finalPrice.currency,
-              at: Date.now(),
-              prevAmount: null,
+              entries: [{ at: Date.now(), amount: newAmount }],
             };
             continue;
           }
-          // Same currency required; if currency changed, reset baseline.
+          // Currency drift = reset series.
           if (prev.currency !== p.finalPrice.currency) {
             next[p.id] = {
               productId: p.id,
-              amount: newAmount,
               currency: p.finalPrice.currency,
-              at: Date.now(),
-              prevAmount: null,
+              entries: [{ at: Date.now(), amount: newAmount }],
             };
             continue;
           }
-          if (prev.amount === newAmount) continue;
+          const lastEntry = prev.entries[prev.entries.length - 1];
+          // Skip noise: if the price didn't move, don't add a redundant point.
+          if (lastEntry && lastEntry.amount === newAmount) continue;
 
-          const ratio = (newAmount - prev.amount) / prev.amount;
+          const updatedEntries = [
+            ...prev.entries.slice(-MAX_ENTRIES + 1),
+            { at: Date.now(), amount: newAmount },
+          ];
           next[p.id] = {
-            productId: p.id,
-            amount: newAmount,
-            currency: p.finalPrice.currency,
-            at: Date.now(),
-            prevAmount: prev.amount,
+            ...prev,
+            entries: updatedEntries,
           };
-          if (ratio <= -threshold) dropped.push(p);
+          if (lastEntry) {
+            const ratio = (newAmount - lastEntry.amount) / lastEntry.amount;
+            if (ratio <= -threshold) dropped.push(p);
+          }
         }
         set({ snapshots: next });
         return dropped;
@@ -110,18 +125,20 @@ export const usePriceWatchStore = create<PriceWatchState>()(
       dismiss: (productId) =>
         set((s) => {
           if (!(productId in s.snapshots)) return s;
-          const next = { ...s.snapshots };
-          delete next[productId];
-          return { snapshots: next };
+          const nextSnaps = { ...s.snapshots };
+          delete nextSnaps[productId];
+          return { snapshots: nextSnaps };
         }),
       acknowledge: (productId) =>
         set((s) => {
           const snap = s.snapshots[productId];
           if (!snap) return s;
+          const last = snap.entries[snap.entries.length - 1];
+          if (!last) return s;
           return {
             snapshots: {
               ...s.snapshots,
-              [productId]: { ...snap, prevAmount: null, at: Date.now() },
+              [productId]: { ...snap, entries: [last] },
             },
           };
         }),
@@ -130,7 +147,31 @@ export const usePriceWatchStore = create<PriceWatchState>()(
     {
       name: 'tony.price-watch',
       storage: createJSONStorage(() => localStorage),
-      version: 1,
+      version: 2,
+      migrate: (persisted, fromVersion) => {
+        if (fromVersion < 2 && persisted && typeof persisted === 'object') {
+          const legacy = persisted as {
+            snapshots?: Record<
+              string,
+              { productId: string; amount: number; currency: PriceSnapshot['currency']; at: number; prevAmount: number | null }
+            >;
+            threshold?: number;
+          };
+          const oldSnaps = legacy.snapshots ?? {};
+          const next: Record<string, PriceSnapshot> = {};
+          for (const [id, s] of Object.entries(oldSnaps)) {
+            const entries: PriceObservation[] = [];
+            if (s.prevAmount != null) {
+              // Approximate: place prev a few hours before current.
+              entries.push({ at: Math.max(0, s.at - 60 * 60 * 1000), amount: s.prevAmount });
+            }
+            entries.push({ at: s.at, amount: s.amount });
+            next[id] = { productId: s.productId, currency: s.currency, entries };
+          }
+          return { snapshots: next, threshold: legacy.threshold ?? DEFAULT_THRESHOLD } as Partial<PriceWatchState>;
+        }
+        return persisted as Partial<PriceWatchState>;
+      },
     },
   ),
 );

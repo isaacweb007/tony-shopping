@@ -267,6 +267,17 @@
       }
     }
   },
+  "product": {
+    "history": {
+      "title": "Lịch sử giá",
+      "low": "Thấp",
+      "high": "Cao",
+      "flat": "Ổn định",
+      "empty": "Bắt đầu theo dõi — đánh dấu để Tony vẽ biến động giá tại đây.",
+      "caption": "{n} lần quan sát",
+      "a11y": "Biểu đồ {n} lần quan sát gần đây"
+    }
+  },
   "disclosure": {
     "title": "Thông báo liên kết tiếp thị · Tony Shopping",
     "eyebrow": "Minh bạch",

@@ -267,6 +267,17 @@
       }
     }
   },
+  "product": {
+    "history": {
+      "title": "가격 추이",
+      "low": "최저",
+      "high": "최고",
+      "flat": "변동 없음",
+      "empty": "관측 시작 — 비교함에 추가하면 토니가 가격을 지켜보고 여기에 추이를 그려드려요.",
+      "caption": "{n}회 관측",
+      "a11y": "최근 {n}회 가격 관측 추이"
+    }
+  },
   "disclosure": {
     "title": "광고·제휴 안내 · Tony Shopping",
     "eyebrow": "투명성",

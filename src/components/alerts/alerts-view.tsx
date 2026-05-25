@@ -243,8 +243,11 @@ function AlertCard({
   const buyHref = snap.buyUrl
     ? affiliateUrl({ store: snap.store as Parameters<typeof affiliateUrl>[0]['store'], url: snap.buyUrl })
     : null;
-  const observedRel = watch ? formatRelative(watch.at, intlLocale(locale)) : null;
-  const prevAmount = watch?.prevAmount;
+  const lastObsAt = watch?.entries[watch.entries.length - 1]?.at ?? null;
+  const observedRel = lastObsAt != null ? formatRelative(lastObsAt, intlLocale(locale)) : null;
+  const prevAmount = watch
+    ? watch.entries[watch.entries.length - 2]?.amount ?? null
+    : null;
   const prevMoney =
     prevAmount != null && watch
       ? formatMoneyLocale({ amount: prevAmount, currency: watch.currency }, locale)
