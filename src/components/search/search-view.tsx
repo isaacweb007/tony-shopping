@@ -14,7 +14,7 @@ import { VerdictCard } from './verdict-card';
 import { PriceDistribution } from './price-distribution';
 import { Clusters } from './clusters';
 import { ProductCard } from './product-card';
-import { FilterBar } from './filter-bar';
+import { StickyFilterBar } from './sticky-filter-bar';
 import { ProductDetailDialog } from './product-detail-dialog';
 import { WarningList } from './warning-list';
 import { SearchSkeleton } from './search-skeleton';
@@ -196,7 +196,7 @@ export function SearchView() {
           </div>
         </div>
         <div className="mt-3">
-          <FilterBar />
+          <StickyFilterBar />
         </div>
         <div
           ref={grid.containerRef}
