@@ -20,6 +20,9 @@ export type AdapterName =
   | 'coupang'
   | 'shopee'
   | 'lazada'
+  | 'rakuten'
+  | 'yahoojp'
+  | 'aliexpress'
   | 'vision'
   | 'llm';
 
@@ -40,6 +43,9 @@ const LABELS: Record<AdapterName, string> = {
   coupang: 'Coupang',
   shopee: 'Shopee',
   lazada: 'Lazada',
+  rakuten: 'Rakuten',
+  yahoojp: 'Yahoo JP',
+  aliexpress: 'AliExpress',
   vision: 'Vision',
   llm: 'LLM',
 };
@@ -68,9 +74,9 @@ export interface OverallStatus {
 export function getOverallStatus(): OverallStatus {
   const all = getAdapterStatuses();
   const searchAdapters = all.filter((a) =>
-    (['naver', 'ebay', 'serpapi', 'amazon', 'coupang', 'shopee', 'lazada'] as const).includes(
-      a.name as Exclude<AdapterName, 'vision' | 'llm'>,
-    ),
+    (
+      ['naver', 'ebay', 'serpapi', 'amazon', 'coupang', 'shopee', 'lazada', 'rakuten', 'yahoojp', 'aliexpress'] as const
+    ).includes(a.name as Exclude<AdapterName, 'vision' | 'llm'>),
   );
   const live = searchAdapters.filter((a) => a.real);
   return {

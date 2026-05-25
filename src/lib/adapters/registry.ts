@@ -6,6 +6,9 @@ import { shopeeAdapter } from './shopee';
 import { lazadaAdapter } from './lazada';
 import { naverAdapter } from './naver';
 import { serpapiAdapter } from './serpapi';
+import { rakutenAdapter } from './rakuten';
+import { yahooJpAdapter } from './yahoo-jp';
+import { aliexpressAdapter } from './aliexpress';
 
 /** All registered adapters. Order is the default UI ordering. */
 export const ALL_ADAPTERS: SearchAdapter[] = [
@@ -15,6 +18,9 @@ export const ALL_ADAPTERS: SearchAdapter[] = [
   ebayAdapter,
   shopeeAdapter,
   lazadaAdapter,
+  rakutenAdapter,
+  yahooJpAdapter,
+  aliexpressAdapter,
   // Meta-search comes last so its broad results don't dominate the BEST tag
   // assignment unless they win on their own merits.
   serpapiAdapter,

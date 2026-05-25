@@ -22,6 +22,8 @@ const STORE_LABELS: Record<string, string> = {
   '11st': '11번가',
   TikTokShop: 'TikTok Shop',
   GoogleShopping: 'Google Shopping',
+  Rakuten: '楽天',
+  YahooJP: 'Yahoo! JP',
 };
 
 export function DashboardView() {

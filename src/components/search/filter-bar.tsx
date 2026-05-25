@@ -14,6 +14,8 @@ const STORE_KEYS: StoreFilter[] = [
   'eBay',
   'Shopee',
   'Lazada',
+  'Rakuten',
+  'YahooJP',
   'AliExpress',
   'GoogleShopping',
 ];
@@ -31,6 +33,8 @@ const STORE_LABEL: Record<StoreFilter, string> = {
   '11st': '11번가',
   TikTokShop: 'TikTok Shop',
   GoogleShopping: 'Google Shopping',
+  Rakuten: '楽天',
+  YahooJP: 'Yahoo! JP',
 };
 
 export function FilterBar() {

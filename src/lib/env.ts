@@ -41,4 +41,10 @@ export const ADAPTER_MODE = {
   coupang: () => decide(process.env.COUPANG_ACCESS_KEY, process.env.COUPANG_SECRET_KEY),
   shopee: () => decide(process.env.SHOPEE_APP_KEY, process.env.SHOPEE_APP_SECRET),
   lazada: () => decide(process.env.LAZADA_APP_KEY, process.env.LAZADA_APP_SECRET),
+  /** Rakuten Ichiba Item Search — JP. Free 1 req/sec. */
+  rakuten: () => decide(process.env.RAKUTEN_APP_ID),
+  /** Yahoo! Shopping Web Services — JP. Free with Application ID. */
+  yahoojp: () => decide(process.env.YAHOO_JP_APP_ID),
+  /** AliExpress Affiliate Open Platform. */
+  aliexpress: () => decide(process.env.ALIEXPRESS_APP_KEY, process.env.ALIEXPRESS_APP_SECRET),
 } as const;
