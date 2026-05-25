@@ -10,6 +10,7 @@ import { Footer } from '@/components/site/footer';
 import { HistoryDrawer } from '@/components/site/history-drawer';
 import { ShortlistDrawer } from '@/components/site/shortlist-drawer';
 import { ChatPanel } from '@/components/chat/chat-panel';
+import { CheckoutGuideModal } from '@/components/checkout/checkout-guide-modal';
 import { JsonLd } from '@/components/site/json-ld';
 import { ToastViewport } from '@/components/ui/toast-viewport';
 import { FxPreloader } from '@/components/providers/fx-preloader';
@@ -119,6 +120,7 @@ export default async function LocaleLayout({
               <HistoryDrawer />
               <ShortlistDrawer />
               <ChatPanel />
+              <CheckoutGuideModal />
               <ToastViewport />
               <FxPreloader />
               <AuthBridge />

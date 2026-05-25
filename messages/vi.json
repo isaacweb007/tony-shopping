@@ -126,6 +126,39 @@
     "support4": "Quyền riêng tư",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "checkout": {
+    "title": "Tony nhắc trước khi thanh toán",
+    "subtitle": "Một cái nhìn nhanh trước khi mua \"{name}\".",
+    "cancel": "Huỷ",
+    "proceed": "Ổn rồi — tiếp tục",
+    "dontShow": "Không hiện lại nữa",
+    "checks": {
+      "customsKR": {
+        "label": "Hải quan",
+        "body": "{price} — vượt mức miễn {threshold}. Có thể chịu thuế nhập khẩu + VAT."
+      },
+      "customsVN": {
+        "label": "Hải quan",
+        "body": "Có thể vượt ngưỡng nhập khẩu {threshold}. Kiểm tra lại phí ở trang thanh toán."
+      },
+      "authenticityLow": {
+        "label": "Độ tin cậy hàng chính hãng thấp",
+        "body": "{store} chỉ ở mức {pct}%. Tìm tuỳ chọn bảo hành chính hãng."
+      },
+      "discountExpiry": {
+        "label": "Đang giảm giá",
+        "body": "-{pct}% nên vẫn áp dụng ở trang thanh toán."
+      },
+      "freeShip": {
+        "label": "Miễn phí vận chuyển",
+        "body": "Hiện đang miễn phí. Thêm món khác có thể làm thay đổi điều này."
+      },
+      "returnPolicy": {
+        "label": "Chính sách đổi trả",
+        "body": "Xem lại thời hạn đổi trả của {store} trước khi trả tiền."
+      }
+    }
+  },
   "alerts": {
     "title": "Thông báo của tôi · Tony Shopping",
     "eyebrow": "Tony cảnh báo",

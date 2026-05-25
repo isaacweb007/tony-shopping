@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { Check, Sparkles, ArrowRight, Bookmark } from 'lucide-react';
@@ -9,6 +10,7 @@ import { useShortlistStore } from '@/stores/shortlist-store';
 import { toast } from '@/stores/toast-store';
 import { recordProductClick } from '@/stores/click-store';
 import { affiliateUrl } from '@/lib/affiliate';
+import { useCheckoutGuide } from '@/hooks/use-checkout-guide';
 import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
 import type { AppLocale } from '@/i18n/routing';
@@ -38,6 +40,21 @@ export function VerdictCard({ product }: Props) {
   const inShortlist = useShortlistStore((s) => product.id in s.items);
   const toggleRaw = useShortlistStore((s) => s.toggle);
   const buyHref = affiliateUrl({ store: product.store, url: product.buyUrl });
+  const { guard } = useCheckoutGuide();
+
+  function onBuyClick(e: React.MouseEvent) {
+    guard(
+      {
+        product,
+        href: buyHref,
+        onProceed: () => {
+          recordProductClick(product, q, true);
+          window.open(buyHref, '_blank', 'noopener,noreferrer');
+        },
+      },
+      e,
+    );
+  }
 
   function toggle() {
     const added = toggleRaw(product);
@@ -141,7 +158,7 @@ export function VerdictCard({ product }: Props) {
                 href={buyHref}
                 target="_blank"
                 rel="noreferrer noopener sponsored"
-                onClick={() => recordProductClick(product, q, true)}
+                onClick={onBuyClick}
               >
                 {tv('cta')}
                 <ArrowRight className="h-4 w-4" strokeWidth={2.2} />

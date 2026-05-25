@@ -9,6 +9,7 @@ import { useShortlistStore } from '@/stores/shortlist-store';
 import { toast } from '@/stores/toast-store';
 import { recordProductClick } from '@/stores/click-store';
 import { affiliateUrl } from '@/lib/affiliate';
+import { useCheckoutGuide } from '@/hooks/use-checkout-guide';
 import { ReviewAnalysis } from '@/components/search/review-analysis';
 import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { useRouter } from '@/i18n/routing';
@@ -31,6 +32,7 @@ export function ProductDetailView({ product, q }: Props) {
 
   const inShortlist = useShortlistStore((s) => product.id in s.items);
   const toggleRaw = useShortlistStore((s) => s.toggle);
+  const { guard } = useCheckoutGuide();
 
   function toggle() {
     const added = toggleRaw(product);
@@ -148,7 +150,20 @@ export function ProductDetailView({ product, q }: Props) {
                 href={affiliateUrl({ store: product.store, url: product.buyUrl })}
                 target="_blank"
                 rel="noreferrer noopener sponsored"
-                onClick={() => recordProductClick(product, q, false)}
+                onClick={(e) => {
+                  const href = affiliateUrl({ store: product.store, url: product.buyUrl });
+                  guard(
+                    {
+                      product,
+                      href,
+                      onProceed: () => {
+                        recordProductClick(product, q, false);
+                        window.open(href, '_blank', 'noopener,noreferrer');
+                      },
+                    },
+                    e,
+                  );
+                }}
               >
                 {td('buyAt', { store: product.store })}
               </a>

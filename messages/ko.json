@@ -126,6 +126,39 @@
     "support4": "개인정보처리방침",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "checkout": {
+    "title": "토니의 결제 전 체크",
+    "subtitle": "\"{name}\" 구매 직전에 한 번 확인할게요.",
+    "cancel": "취소",
+    "proceed": "확인하고 이동",
+    "dontShow": "다음부터는 자동으로 이동",
+    "checks": {
+      "customsKR": {
+        "label": "관세",
+        "body": "{price} — {threshold} 한도를 넘어 통관 시 관세·부가세가 부과될 수 있어요."
+      },
+      "customsVN": {
+        "label": "Hải quan",
+        "body": "{threshold} 한도 초과 가능성. 통관 비용을 결제 페이지에서 다시 확인하세요."
+      },
+      "authenticityLow": {
+        "label": "정품 안심도 낮음",
+        "body": "{store} 셀러 정품 가능성 {pct}%. 정품 보증 옵션이 있는지 확인하세요."
+      },
+      "discountExpiry": {
+        "label": "할인 적용 중",
+        "body": "-{pct}% 할인이 결제 페이지에서도 그대로 보이는지 확인하세요."
+      },
+      "freeShip": {
+        "label": "무료 배송",
+        "body": "현재 배송비 무료. 결제 시 다른 항목과 합산되며 바뀔 수 있어요."
+      },
+      "returnPolicy": {
+        "label": "환불 정책",
+        "body": "{store} 환불 기간을 결제 직전 다시 한 번 보세요."
+      }
+    }
+  },
   "alerts": {
     "title": "내 알림 · Tony Shopping",
     "eyebrow": "토니 알림",

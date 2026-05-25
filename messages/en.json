@@ -126,6 +126,39 @@
     "support4": "Privacy",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "checkout": {
+    "title": "Tony's pre-checkout glance",
+    "subtitle": "One look before you head out to buy \"{name}\".",
+    "cancel": "Cancel",
+    "proceed": "Looks good — proceed",
+    "dontShow": "Don't show this again",
+    "checks": {
+      "customsKR": {
+        "label": "Customs",
+        "body": "{price} — above the {threshold} de-minimis. KR customs duty + VAT may apply."
+      },
+      "customsVN": {
+        "label": "Customs",
+        "body": "May exceed {threshold} import threshold. Recheck customs fees at checkout."
+      },
+      "authenticityLow": {
+        "label": "Low authenticity confidence",
+        "body": "{store} seller is at {pct}% authenticity. Look for an official-warranty option."
+      },
+      "discountExpiry": {
+        "label": "Discount active",
+        "body": "-{pct}% should still be reflected on the merchant's checkout page."
+      },
+      "freeShip": {
+        "label": "Free shipping",
+        "body": "Shipping is free here. Bundled items at checkout may change that."
+      },
+      "returnPolicy": {
+        "label": "Return policy",
+        "body": "Double-check {store}'s return window before paying."
+      }
+    }
+  },
   "alerts": {
     "title": "My alerts · Tony Shopping",
     "eyebrow": "Tony alerts",

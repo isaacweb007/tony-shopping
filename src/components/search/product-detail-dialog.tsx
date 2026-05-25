@@ -16,6 +16,7 @@ import { ReviewAnalysis } from './review-analysis';
 import { useShortlistStore } from '@/stores/shortlist-store';
 import { recordProductClick } from '@/stores/click-store';
 import { affiliateUrl } from '@/lib/affiliate';
+import { useCheckoutGuide } from '@/hooks/use-checkout-guide';
 import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
 import { Link } from '@/i18n/routing';
@@ -37,6 +38,7 @@ export function ProductDetailDialog({ product, onOpenChange }: Props) {
   const locale = useLocale() as AppLocale;
   const inShortlist = useShortlistStore((s) => (product ? product.id in s.items : false));
   const toggle = useShortlistStore((s) => s.toggle);
+  const { guard } = useCheckoutGuide();
 
   const open = product !== null;
 
@@ -141,7 +143,20 @@ export function ProductDetailDialog({ product, onOpenChange }: Props) {
                   href={affiliateUrl({ store: product.store, url: product.buyUrl })}
                   target="_blank"
                   rel="noreferrer noopener sponsored"
-                  onClick={() => recordProductClick(product, q, false)}
+                  onClick={(e) => {
+                    const href = affiliateUrl({ store: product.store, url: product.buyUrl });
+                    guard(
+                      {
+                        product,
+                        href,
+                        onProceed: () => {
+                          recordProductClick(product, q, false);
+                          window.open(href, '_blank', 'noopener,noreferrer');
+                        },
+                      },
+                      e,
+                    );
+                  }}
                 >
                   {td('buyAt', { store: product.store })}
                 </a>

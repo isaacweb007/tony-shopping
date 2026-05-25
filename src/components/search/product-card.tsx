@@ -11,6 +11,7 @@ import { useShortlistStore } from '@/stores/shortlist-store';
 import { toast } from '@/stores/toast-store';
 import { recordProductClick } from '@/stores/click-store';
 import { affiliateUrl } from '@/lib/affiliate';
+import { useCheckoutGuide } from '@/hooks/use-checkout-guide';
 import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
 import { useSearchParams } from 'next/navigation';
@@ -32,6 +33,24 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
   const inShortlist = useShortlistStore((s) => product.id in s.items);
   const toggleRaw = useShortlistStore((s) => s.toggle);
   const buyHref = affiliateUrl({ store: product.store, url: product.buyUrl });
+  const { guard } = useCheckoutGuide();
+
+  const onBuyClick = React.useCallback(
+    (e: React.MouseEvent) => {
+      guard(
+        {
+          product,
+          href: buyHref,
+          onProceed: () => {
+            recordProductClick(product, q, false);
+            window.open(buyHref, '_blank', 'noopener,noreferrer');
+          },
+        },
+        e,
+      );
+    },
+    [guard, product, buyHref, q],
+  );
 
   const toggle = React.useCallback(() => {
     const added = toggleRaw(product);
@@ -194,7 +213,7 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
               href={buyHref}
               target="_blank"
               rel="noreferrer noopener sponsored"
-              onClick={() => recordProductClick(product, q, false)}
+              onClick={onBuyClick}
             >
               {isFeature ? tc('buyNow') : tc('buy')}
             </a>
