@@ -179,6 +179,15 @@
     },
     "narrativeError": "Không lấy được lời khuyên của Tony. Vui lòng thử lại sau.",
     "narrativeFallback": "Tóm tắt offline",
+    "auto": {
+      "recommendedAria": "Tony gợi ý",
+      "basedOn": "Tony thấy bạn nghiêng về \"{signal}\" trong {n} lựa chọn gần đây.",
+      "signal": {
+        "value": "giá tốt",
+        "fast": "giao nhanh",
+        "genuine": "chính hãng"
+      }
+    },
     "product": "Sản phẩm",
     "action": "Mua",
     "bestBadge": "BEST",

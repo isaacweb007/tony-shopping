@@ -13,6 +13,8 @@ import { formatMoneyLocale, formatCount, shipLabel } from '@/lib/format';
 import { shareOrCopy } from '@/lib/share';
 import { affiliateUrl } from '@/lib/affiliate';
 import { useCompareNarrative } from '@/hooks/use-compare-narrative';
+import { useAutoPriority } from '@/hooks/use-auto-priority';
+import type { AutoPriorityResult } from '@/lib/compare/auto-priority';
 import { cn } from '@/lib/utils';
 import type { AppLocale } from '@/i18n/routing';
 import type { ShortlistSnap } from '@/types/shortlist';
@@ -30,7 +32,25 @@ export function CompareView() {
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
 
-  const [priority, setPriority] = React.useState<ComparePriority>('balanced');
+  const [priority, setPriorityState] = React.useState<ComparePriority>('balanced');
+  const [userOverrode, setUserOverrode] = React.useState(false);
+  const auto = useAutoPriority();
+
+  // One-shot: if auto-priority is confident on first hydration AND the user
+  // hasn't already picked a chip, adopt the recommendation. Subsequent
+  // recomputations never override an explicit choice.
+  const appliedAutoRef = React.useRef(false);
+  React.useEffect(() => {
+    if (userOverrode || appliedAutoRef.current) return;
+    if (!auto || auto.confidence < 0.4) return;
+    appliedAutoRef.current = true;
+    setPriorityState(auto.priority);
+  }, [auto, userOverrode]);
+
+  const setPriority = React.useCallback((next: ComparePriority) => {
+    setUserOverrode(true);
+    setPriorityState(next);
+  }, []);
 
   const snaps: ShortlistSnap[] = React.useMemo(() => {
     if (!mounted) return [];
@@ -123,7 +143,12 @@ export function CompareView() {
       </div>
 
       {snaps.length >= 2 && (
-        <PriorityChips value={priority} onChange={setPriority} />
+        <PriorityChips
+          value={priority}
+          onChange={setPriority}
+          auto={auto}
+          autoApplied={appliedAutoRef.current && !userOverrode}
+        />
       )}
 
       {winner ? (
@@ -276,36 +301,59 @@ const PRIORITY_OPTIONS: Array<{ key: ComparePriority; iconKey: string }> = [
 function PriorityChips({
   value,
   onChange,
+  auto,
+  autoApplied,
 }: {
   value: ComparePriority;
   onChange: (next: ComparePriority) => void;
+  auto: AutoPriorityResult | null;
+  autoApplied: boolean;
 }) {
   const t = useTranslations('compare');
+  const recommendedKey = auto && auto.confidence >= 0.4 ? auto.priority : null;
   return (
-    <div className="mt-5 flex flex-wrap items-center gap-1.5" role="radiogroup" aria-label={t('priorityAria')}>
-      <span className="mr-1 text-[11px] font-bold uppercase tracking-widest text-ink-500 dark:text-ink-400">
-        {t('priorityLabel')}
-      </span>
-      {PRIORITY_OPTIONS.map(({ key }) => {
-        const active = value === key;
-        return (
-          <button
-            key={key}
-            type="button"
-            role="radio"
-            aria-checked={active}
-            onClick={() => onChange(key)}
-            className={cn(
-              'h-8 rounded-full border px-3 text-[12px] font-bold tracking-tight transition',
-              active
-                ? 'border-accent-500 bg-accent-600 text-white shadow-sm dark:border-accent-400 dark:bg-accent-500'
-                : 'border-ink-200 bg-white text-ink-700 hover:border-ink-300 hover:text-ink-900 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200 dark:hover:border-ink-600',
-            )}
-          >
-            {t(`priority.${key}` as 'priority.balanced')}
-          </button>
-        );
-      })}
+    <div className="mt-5">
+      <div className="flex flex-wrap items-center gap-1.5" role="radiogroup" aria-label={t('priorityAria')}>
+        <span className="mr-1 text-[11px] font-bold uppercase tracking-widest text-ink-500 dark:text-ink-400">
+          {t('priorityLabel')}
+        </span>
+        {PRIORITY_OPTIONS.map(({ key }) => {
+          const active = value === key;
+          const recommended = recommendedKey === key;
+          return (
+            <button
+              key={key}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => onChange(key)}
+              className={cn(
+                'inline-flex h-8 items-center gap-1 rounded-full border px-3 text-[12px] font-bold tracking-tight transition',
+                active
+                  ? 'border-accent-500 bg-accent-600 text-white shadow-sm dark:border-accent-400 dark:bg-accent-500'
+                  : 'border-ink-200 bg-white text-ink-700 hover:border-ink-300 hover:text-ink-900 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200 dark:hover:border-ink-600',
+              )}
+            >
+              {recommended && (
+                <Sparkles
+                  className={cn('h-3 w-3', active ? 'text-white' : 'text-accent-600 dark:text-accent-400')}
+                  strokeWidth={2.4}
+                  aria-label={t('auto.recommendedAria')}
+                />
+              )}
+              {t(`priority.${key}` as 'priority.balanced')}
+            </button>
+          );
+        })}
+      </div>
+      {auto && recommendedKey && autoApplied && (
+        <p className="mt-2 text-[11.5px] text-ink-500 dark:text-ink-400">
+          {t('auto.basedOn', {
+            n: auto.sampleSize,
+            signal: t(`auto.signal.${auto.signal ?? 'value'}` as 'auto.signal.value'),
+          })}
+        </p>
+      )}
     </div>
   );
 }

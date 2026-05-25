@@ -179,6 +179,15 @@
     },
     "narrativeError": "Couldn't fetch Tony's comment. Try again in a moment.",
     "narrativeFallback": "Offline summary",
+    "auto": {
+      "recommendedAria": "Tony's pick",
+      "basedOn": "Tony noticed you've leaned toward \"{signal}\" across your last {n} picks.",
+      "signal": {
+        "value": "best value",
+        "fast": "fast shipping",
+        "genuine": "authenticity"
+      }
+    },
     "product": "Product",
     "action": "Buy",
     "bestBadge": "BEST",

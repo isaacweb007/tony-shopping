@@ -179,6 +179,15 @@
     },
     "narrativeError": "토니의 코멘트를 가져오지 못했어요. 잠시 후 다시 시도해주세요.",
     "narrativeFallback": "오프라인 요약",
+    "auto": {
+      "recommendedAria": "토니 추천",
+      "basedOn": "토니가 최근 {n}번의 선택에서 \"{signal}\"을(를) 자주 고른 걸 보고 골라봤어요.",
+      "signal": {
+        "value": "가성비",
+        "fast": "빠른 배송",
+        "genuine": "정품 안심"
+      }
+    },
     "product": "상품",
     "action": "구매",
     "bestBadge": "BEST",
