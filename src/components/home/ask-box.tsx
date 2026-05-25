@@ -122,7 +122,7 @@ export function AskBox() {
       const res = await fetch('/api/extract', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageDataUrl: dataUrl }),
+        body: JSON.stringify({ imageDataUrl: dataUrl, filename: f.name }),
       });
       if (res.ok) {
         const data = (await res.json()) as ExtractResult & { source: ExtractResult['source'] };

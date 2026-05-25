@@ -24,6 +24,8 @@ export const dynamic = 'force-dynamic';
 
 const Body = z.object({
   imageDataUrl: z.string().startsWith('data:image/').optional(),
+  /** Original filename — used by the Vision-less fallback heuristic. */
+  filename: z.string().max(300).optional(),
   link: z.string().url().optional(),
 });
 
@@ -52,14 +54,14 @@ export async function POST(req: Request) {
     );
   }
 
-  const { imageDataUrl, link } = parsed.data;
+  const { imageDataUrl, filename, link } = parsed.data;
   if (!imageDataUrl && !link) {
     return NextResponse.json({ error: 'empty_input' }, { status: 400 });
   }
 
   // ----- Image path -----
   if (imageDataUrl) {
-    const v = await extractFromImage(imageDataUrl);
+    const v = await extractFromImage(imageDataUrl, filename);
     return NextResponse.json({
       suggestedQuery: v.suggestedQuery,
       hint: v.source === 'vision' ? 'Vision API detected' : 'Heuristic placeholder',
