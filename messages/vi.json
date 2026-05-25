@@ -414,6 +414,8 @@
     "warn4": "Hàng chưa nhận sau 24 tháng có thể không được hoàn tiền.",
     "empty": "Không có sản phẩm trùng cửa hàng đã chọn.",
     "emptyAction": "Xoá bộ lọc",
+    "loadMore": "Hiển thị thêm {n}",
+    "loadMoreHint": "{shown} / {total}",
     "noResultsTitle": "Chưa có kết quả",
     "noResultsDesc": "Thử cụm từ khác, hoặc đính kèm ảnh / link.",
     "noResultsCta": "Tìm mới"

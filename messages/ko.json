@@ -414,6 +414,8 @@
     "warn4": "24개월 이상 미수령 시 환불·교환이 어려울 수 있으니 빠른 결정을 권장합니다.",
     "empty": "선택한 쇼핑몰에 해당하는 상품이 없습니다.",
     "emptyAction": "필터 초기화",
+    "loadMore": "{n}개 더 보기",
+    "loadMoreHint": "{shown}개 / {total}개",
     "noResultsTitle": "검색 결과가 없어요",
     "noResultsDesc": "다른 단어로 다시 시도해보거나 사진/링크를 첨부해보세요.",
     "noResultsCta": "새 검색"

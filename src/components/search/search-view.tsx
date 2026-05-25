@@ -19,6 +19,7 @@ import { ProductDetailDialog } from './product-detail-dialog';
 import { WarningList } from './warning-list';
 import { SearchSkeleton } from './search-skeleton';
 import { useGridKeyboardNav } from '@/hooks/use-grid-keyboard-nav';
+import { useProgressiveList } from '@/hooks/use-progressive-list';
 import type { Product } from '@/types/product';
 
 export function SearchView() {
@@ -50,16 +51,26 @@ export function SearchView() {
 
   const [detail, setDetail] = React.useState<Product | null>(null);
 
+  // Progressive disclosure — render 12 results, extend on scroll. Re-sorts /
+  // store changes reset the cursor so the user always sees the *new* result
+  // set from the top.
+  const paginated = useProgressiveList({
+    items: visible,
+    batchSize: 12,
+    resetKey: `${q}|${store}|${sort}`,
+  });
+
   // Grid keyboard nav. Cols mirror the Tailwind grid breakpoints below: 1 / 2 /
   // 3 / 4. We pick 4 as the "fully-expanded" cols count — desktop traffic
   // dominates; mobile users won't be using arrow keys anyway. Enter on the
-  // active cell opens the detail dialog for that product.
+  // active cell opens the detail dialog for that product. Count tracks the
+  // *paginated* visible window so arrows can't jump to hidden items.
   const grid = useGridKeyboardNav({
-    count: visible.length,
+    count: paginated.visible.length,
     cols: 4,
     cellSelector: '[data-search-cell]',
     onEnter: (i) => {
-      const p = visible[i];
+      const p = paginated.visible[i];
       if (p) setDetail(p);
     },
     enabled: detail === null,
@@ -204,7 +215,7 @@ export function SearchView() {
               </Button>
             </div>
           ) : (
-            visible.map((p, i) => (
+            paginated.visible.map((p, i) => (
               <div
                 key={p.id}
                 data-search-cell=""
@@ -216,6 +227,29 @@ export function SearchView() {
             ))
           )}
         </div>
+
+        {paginated.hasMore && (
+          <>
+            <div
+              ref={paginated.sentinelRef}
+              aria-hidden
+              className="h-px w-full"
+            />
+            <div className="mt-6 flex flex-col items-center gap-2">
+              <Button
+                variant="outline"
+                size="md"
+                onClick={paginated.loadMore}
+                className="h-11 rounded-xl px-6 font-semibold"
+              >
+                {t('loadMore', { n: visible.length - paginated.visible.length })}
+              </Button>
+              <p className="text-[11px] text-ink-400 dark:text-ink-500">
+                {t('loadMoreHint', { shown: paginated.visible.length, total: visible.length })}
+              </p>
+            </div>
+          </>
+        )}
       </section>
 
       <section className="mt-14">

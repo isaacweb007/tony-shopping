@@ -414,6 +414,8 @@
     "warn4": "Items unclaimed for over 24 months may not be refundable.",
     "empty": "No items match the selected store.",
     "emptyAction": "Reset filters",
+    "loadMore": "Show {n} more",
+    "loadMoreHint": "{shown} of {total}",
     "noResultsTitle": "No results yet",
     "noResultsDesc": "Try a different phrase, or attach a photo or link.",
     "noResultsCta": "New search"
