@@ -41,6 +41,14 @@ export function Footer() {
                 {t('support5')}
               </Link>
             </li>
+            <li>
+              <Link
+                href="/setup"
+                className="hover:text-ink-800 hover:underline dark:hover:text-ink-100"
+              >
+                {t('support6')}
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

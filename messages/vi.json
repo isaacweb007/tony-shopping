@@ -125,6 +125,7 @@
     "support3": "Điều khoản",
     "support4": "Quyền riêng tư",
     "support5": "Thông báo liên kết tiếp thị",
+    "support6": "Cài đặt bộ chuyển đổi",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
   "keyboard": {
@@ -265,6 +266,33 @@
         "title": "{n} ứng viên đang nằm im trong shortlist.",
         "body": "Đã một tuần. Xem lại hay dọn dẹp đi?"
       }
+    }
+  },
+  "setup": {
+    "title": "Cài đặt · Tony Shopping",
+    "eyebrow": "Console vận hành",
+    "heading": "Cài khoá API",
+    "subtitle": "{live} / {total} bộ chuyển đổi đang chạy với khoá thật.",
+    "overall": {
+      "live": "Tìm kiếm trực tiếp: {stores}",
+      "liveHint": "Các bộ chuyển này trả về dữ liệu thật. Thêm khoá khác sẽ ghép vào.",
+      "mock": "Tất cả đang ở chế độ mẫu",
+      "mockHint": "Chưa có khoá nào. Dùng liên kết console trên từng thẻ để cấp khoá, rồi thêm vào biến môi trường Vercel."
+    },
+    "howto": {
+      "title": "Thêm khoá vào Vercel (3 bước)",
+      "s1": "https://vercel.com/dashboard → tony-shopping → Settings → Environment Variables",
+      "s2": "Sao chép tên biến môi trường, dán giá trị đã cấp, tick cả Production·Preview·Development",
+      "s3": "Tab Deployments → ⋯ trên bản mới nhất → Redeploy. Pill bên dưới sẽ tự chuyển sang LIVE."
+    },
+    "adapters": {
+      "title": "12 bộ chuyển đổi",
+      "subtitle": "10 sàn TMĐT + Vision + LLM. Mỗi thẻ hiển thị trạng thái thời gian thực và nơi cấp khoá.",
+      "openConsole": "Mở console"
+    },
+    "pill": {
+      "live": "LIVE",
+      "mock": "MOCK"
     }
   },
   "product": {

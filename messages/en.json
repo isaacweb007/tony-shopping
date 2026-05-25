@@ -125,6 +125,7 @@
     "support3": "Terms",
     "support4": "Privacy",
     "support5": "Affiliate disclosure",
+    "support6": "Adapter setup",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
   "keyboard": {
@@ -265,6 +266,33 @@
         "title": "{n} candidates idle in your shortlist.",
         "body": "It's been a week. Worth a revisit, or clear them out?"
       }
+    }
+  },
+  "setup": {
+    "title": "Setup · Tony Shopping",
+    "eyebrow": "Operator console",
+    "heading": "Adapter key setup",
+    "subtitle": "{live} of {total} adapters are running with real credentials.",
+    "overall": {
+      "live": "Live search: {stores}",
+      "liveHint": "These adapters return real merchant data. Adding more keys layers them in.",
+      "mock": "All adapters in mock mode",
+      "mockHint": "No keys are wired yet. Use the console links on each card to issue keys, then add them to Vercel env vars."
+    },
+    "howto": {
+      "title": "Wire keys into Vercel (3 steps)",
+      "s1": "https://vercel.com/dashboard → tony-shopping → Settings → Environment Variables",
+      "s2": "Copy each adapter's env names verbatim, paste the issued values, and check Production·Preview·Development",
+      "s3": "Deployments tab → latest ⋯ → Redeploy. After the next deploy this page's pills flip to LIVE automatically."
+    },
+    "adapters": {
+      "title": "12 adapters",
+      "subtitle": "10 search merchants + Vision + LLM. Each card shows real-time state and where the key is issued.",
+      "openConsole": "Open console"
+    },
+    "pill": {
+      "live": "LIVE",
+      "mock": "MOCK"
     }
   },
   "product": {

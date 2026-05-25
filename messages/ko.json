@@ -125,6 +125,7 @@
     "support3": "이용약관",
     "support4": "개인정보처리방침",
     "support5": "광고/제휴 안내",
+    "support6": "어댑터 설정",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
   "keyboard": {
@@ -265,6 +266,33 @@
         "title": "비교함에 잠자는 후보 {n}개.",
         "body": "한 주가 지났어요. 다시 볼지, 비울지 정해보세요."
       }
+    }
+  },
+  "setup": {
+    "title": "셋업 · Tony Shopping",
+    "eyebrow": "운영자 콘솔",
+    "heading": "어댑터 키 설정",
+    "subtitle": "{total}개 중 {live}개가 실어댑터로 작동 중이에요.",
+    "overall": {
+      "live": "검색 실시간: {stores}",
+      "liveHint": "이 매장들은 실제 API 결과를 반환합니다. 키 추가하면 즉시 합쳐져요.",
+      "mock": "모든 어댑터가 mock 모드",
+      "mockHint": "아직 키가 등록되지 않았어요. 아래 카드의 콘솔 링크에서 발급 후 Vercel 환경변수에 추가하세요."
+    },
+    "howto": {
+      "title": "Vercel에 키 등록하기 (3단계)",
+      "s1": "https://vercel.com/dashboard → tony-shopping 프로젝트 → Settings → Environment Variables",
+      "s2": "아래 어댑터 카드의 env 이름을 그대로 복사 + 발급받은 값을 붙여넣고 Production·Preview·Development 모두 체크",
+      "s3": "Deployments 탭 → 최신 ⋯ → Redeploy. 다음 배포부터 이 페이지의 pill이 자동으로 LIVE로 바뀝니다."
+    },
+    "adapters": {
+      "title": "어댑터 12개",
+      "subtitle": "검색 매장 10 + Vision + LLM. 각 카드는 실시간 상태 + 발급 위치를 보여줍니다.",
+      "openConsole": "발급 콘솔 열기"
+    },
+    "pill": {
+      "live": "LIVE",
+      "mock": "MOCK"
     }
   },
   "product": {
