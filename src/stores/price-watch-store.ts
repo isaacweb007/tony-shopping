@@ -40,6 +40,10 @@ interface PriceWatchState {
    */
   observe: (products: Product[]) => Product[];
   setThreshold: (t: number) => void;
+  /** Forget one product entirely (alerts page "dismiss" → remove from watch). */
+  dismiss: (productId: string) => void;
+  /** Acknowledge the delta — keeps the current price as the new baseline. */
+  acknowledge: (productId: string) => void;
   reset: () => void;
 }
 
@@ -103,6 +107,24 @@ export const usePriceWatchStore = create<PriceWatchState>()(
       },
 
       setThreshold: (t) => set({ threshold: Math.max(0, Math.min(0.5, t)) }),
+      dismiss: (productId) =>
+        set((s) => {
+          if (!(productId in s.snapshots)) return s;
+          const next = { ...s.snapshots };
+          delete next[productId];
+          return { snapshots: next };
+        }),
+      acknowledge: (productId) =>
+        set((s) => {
+          const snap = s.snapshots[productId];
+          if (!snap) return s;
+          return {
+            snapshots: {
+              ...s.snapshots,
+              [productId]: { ...snap, prevAmount: null, at: Date.now() },
+            },
+          };
+        }),
       reset: () => set({ snapshots: {} }),
     }),
     {

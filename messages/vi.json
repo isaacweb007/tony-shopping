@@ -126,6 +126,34 @@
     "support4": "Quyền riêng tư",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "alerts": {
+    "title": "Thông báo của tôi · Tony Shopping",
+    "eyebrow": "Tony cảnh báo",
+    "heading": "Hộp thư biến động giá",
+    "subtitle": "Đang theo dõi {total} sản phẩm — {drops} đã giảm từ {threshold}% trở lên.",
+    "menu": "Thông báo của tôi",
+    "tabsAria": "Bộ lọc cảnh báo",
+    "tabs": {
+      "all": "Tất cả",
+      "drop": "Giảm giá",
+      "rise": "Tăng giá",
+      "flat": "Ổn định"
+    },
+    "status": {
+      "drop": "GIẢM",
+      "rise": "TĂNG",
+      "flat": "ỔN ĐỊNH"
+    },
+    "wasPrice": "trước {was}",
+    "observedAgo": "thấy {rel}",
+    "open": "Mở",
+    "acknowledge": "Đã xem",
+    "acknowledgeAria": "Đặt giá hiện tại làm mốc mới",
+    "emptyTab": "Chưa có gì trong nhóm này.",
+    "emptyTitle": "Chưa theo dõi sản phẩm nào",
+    "emptyHint": "Đánh dấu kết quả tìm kiếm để Tony theo dõi giá — biến động sẽ xuất hiện ở đây.",
+    "goSearch": "Bắt đầu tìm kiếm"
+  },
   "dashboard": {
     "title": "Bảng điều khiển · Tony Shopping",
     "heading": "Bảng điều khiển mua sắm",

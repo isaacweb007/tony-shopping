@@ -126,6 +126,34 @@
     "support4": "개인정보처리방침",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "alerts": {
+    "title": "내 알림 · Tony Shopping",
+    "eyebrow": "토니 알림",
+    "heading": "가격 변동 인박스",
+    "subtitle": "{total}개를 추적 중, 그중 {drops}개가 {threshold}% 이상 떨어졌어요.",
+    "menu": "내 알림",
+    "tabsAria": "알림 필터",
+    "tabs": {
+      "all": "전체",
+      "drop": "가격 하락",
+      "rise": "가격 상승",
+      "flat": "변동 없음"
+    },
+    "status": {
+      "drop": "하락",
+      "rise": "상승",
+      "flat": "보합"
+    },
+    "wasPrice": "이전 {was}",
+    "observedAgo": "관측 {rel}",
+    "open": "쇼핑몰",
+    "acknowledge": "확인",
+    "acknowledgeAria": "현재 가격을 새 기준으로 등록",
+    "emptyTab": "이 카테고리에는 아직 변동이 없어요.",
+    "emptyTitle": "추적 중인 상품이 없어요",
+    "emptyHint": "검색 결과에서 북마크하면 토니가 가격을 지켜보고, 변동을 여기에 모아 보여줘요.",
+    "goSearch": "검색하러 가기"
+  },
   "dashboard": {
     "title": "내 대시보드 · Tony Shopping",
     "heading": "내 쇼핑 대시보드",

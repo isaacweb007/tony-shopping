@@ -126,6 +126,34 @@
     "support4": "Privacy",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "alerts": {
+    "title": "My alerts · Tony Shopping",
+    "eyebrow": "Tony alerts",
+    "heading": "Price-move inbox",
+    "subtitle": "Watching {total} items — {drops} are down by {threshold}%+ since last seen.",
+    "menu": "My alerts",
+    "tabsAria": "Alert filter",
+    "tabs": {
+      "all": "All",
+      "drop": "Price drops",
+      "rise": "Price rises",
+      "flat": "Steady"
+    },
+    "status": {
+      "drop": "DROP",
+      "rise": "RISE",
+      "flat": "STEADY"
+    },
+    "wasPrice": "was {was}",
+    "observedAgo": "seen {rel}",
+    "open": "Open",
+    "acknowledge": "Mark seen",
+    "acknowledgeAria": "Mark current price as the new baseline",
+    "emptyTab": "Nothing in this bucket yet.",
+    "emptyTitle": "Nothing on watch yet",
+    "emptyHint": "Bookmark anything from a search result and Tony will watch its price — moves land here.",
+    "goSearch": "Start a search"
+  },
   "dashboard": {
     "title": "Dashboard · Tony Shopping",
     "heading": "Your shopping dashboard",
