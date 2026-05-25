@@ -72,12 +72,18 @@ function buildCriterion(
   return { key, higherIsBetter, values, ranks };
 }
 
-const WEIGHTS: Record<CriterionTable['key'], number> = {
-  price: 0.35,
-  score: 0.25,
-  ship: 0.15,
-  reviews: 0.15,
-  authenticity: 0.10,
+export type ComparePriority = 'balanced' | 'value' | 'fast' | 'genuine';
+
+/**
+ * Per-priority weight maps. Each row must sum to 1.0 so the resulting cohort
+ * score stays comparable across priorities (i.e., 0..100 means the same thing
+ * regardless of which preset the user chose).
+ */
+const WEIGHT_PRESETS: Record<ComparePriority, Record<CriterionTable['key'], number>> = {
+  balanced:  { price: 0.35, score: 0.25, ship: 0.15, reviews: 0.15, authenticity: 0.10 },
+  value:     { price: 0.55, score: 0.15, ship: 0.05, reviews: 0.15, authenticity: 0.10 },
+  fast:      { price: 0.15, score: 0.15, ship: 0.50, reviews: 0.10, authenticity: 0.10 },
+  genuine:   { price: 0.15, score: 0.15, ship: 0.05, reviews: 0.20, authenticity: 0.45 },
 };
 
 /**
@@ -86,11 +92,20 @@ const WEIGHTS: Record<CriterionTable['key'], number> = {
  * The cohort score is a weighted blend of normalised criterion ranks (0..1
  * where 1 = best in the cohort for that criterion). Missing values contribute
  * 0 to that slot's weight — they neither help nor hurt.
+ *
+ * `priority` tilts the weights without changing the algorithm — useful when
+ * the user explicitly says "find me the cheapest decent one" vs. "fastest
+ * arrival" vs. "lowest counterfeit risk".
  */
-export function buildCompare(snaps: ShortlistSnap[]): {
+export function buildCompare(
+  snaps: ShortlistSnap[],
+  priority: ComparePriority = 'balanced',
+): {
   criteria: CriterionTable[];
   verdict: CohortVerdict;
+  priority: ComparePriority;
 } {
+  const weights = WEIGHT_PRESETS[priority];
   const criteria: CriterionTable[] = [
     buildCriterion('price', false, snaps, priceInUsd),
     buildCriterion('score', true, snaps, (s) => s.score?.total ?? null),
@@ -131,7 +146,7 @@ export function buildCompare(snaps: ShortlistSnap[]): {
       if (v == null || !Number.isFinite(v)) continue;
       const norm01 = (v - min) / (max - min); // 0 (min) .. 1 (max)
       const friendly = c.higherIsBetter ? norm01 : 1 - norm01;
-      const contribution = WEIGHTS[c.key] * friendly;
+      const contribution = weights[c.key] * friendly;
       scores[s.id] = (scores[s.id] ?? 0) + contribution;
       criterionContrib[s.id]![c.key] = contribution;
     }
@@ -158,5 +173,10 @@ export function buildCompare(snaps: ShortlistSnap[]): {
     for (const [k] of top) reasonKeys.push(k);
   }
 
-  return { criteria, verdict: { winnerId, scores, reasonKeys } };
+  return { criteria, verdict: { winnerId, scores, reasonKeys }, priority };
+}
+
+/** Exposed for tests + the LLM prompt builder. */
+export function priorityWeights(priority: ComparePriority): Record<CriterionTable['key'], number> {
+  return WEIGHT_PRESETS[priority];
 }

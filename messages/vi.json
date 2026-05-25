@@ -169,6 +169,16 @@
     "cohortLabel": "Kết luận của Tony",
     "cohortTagline": "Trong {count} ứng viên, Tony chọn cái này",
     "cohortScore": "Điểm so sánh {score}/100",
+    "priorityLabel": "Ưu tiên",
+    "priorityAria": "Chọn ưu tiên so sánh",
+    "priority": {
+      "balanced": "Cân bằng",
+      "value": "Tốt giá",
+      "fast": "Nhanh nhất",
+      "genuine": "An toàn nhất"
+    },
+    "narrativeError": "Không lấy được lời khuyên của Tony. Vui lòng thử lại sau.",
+    "narrativeFallback": "Tóm tắt offline",
     "product": "Sản phẩm",
     "action": "Mua",
     "bestBadge": "BEST",

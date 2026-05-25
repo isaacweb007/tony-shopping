@@ -169,6 +169,16 @@
     "cohortLabel": "Tony's verdict",
     "cohortTagline": "Out of {count}, Tony picks this one",
     "cohortScore": "Cohort score {score}/100",
+    "priorityLabel": "Priority",
+    "priorityAria": "Choose compare priority",
+    "priority": {
+      "balanced": "Balanced",
+      "value": "Best value",
+      "fast": "Fastest",
+      "genuine": "Most authentic"
+    },
+    "narrativeError": "Couldn't fetch Tony's comment. Try again in a moment.",
+    "narrativeFallback": "Offline summary",
     "product": "Product",
     "action": "Buy",
     "bestBadge": "BEST",

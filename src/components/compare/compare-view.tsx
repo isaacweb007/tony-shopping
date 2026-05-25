@@ -8,10 +8,12 @@ import { Link } from '@/i18n/routing';
 import { Button } from '@/components/ui/button';
 import { useShortlistStore } from '@/stores/shortlist-store';
 import { deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
-import { buildCompare } from '@/lib/compare/verdict';
+import { buildCompare, type ComparePriority } from '@/lib/compare/verdict';
 import { formatMoneyLocale, formatCount, shipLabel } from '@/lib/format';
 import { shareOrCopy } from '@/lib/share';
 import { affiliateUrl } from '@/lib/affiliate';
+import { useCompareNarrative } from '@/hooks/use-compare-narrative';
+import { cn } from '@/lib/utils';
 import type { AppLocale } from '@/i18n/routing';
 import type { ShortlistSnap } from '@/types/shortlist';
 
@@ -28,6 +30,8 @@ export function CompareView() {
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
 
+  const [priority, setPriority] = React.useState<ComparePriority>('balanced');
+
   const snaps: ShortlistSnap[] = React.useMemo(() => {
     if (!mounted) return [];
     if (idsParam) {
@@ -39,7 +43,24 @@ export function CompareView() {
     return Object.values(items).sort((a, b) => b.addedAt - a.addedAt);
   }, [mounted, items, idsParam]);
 
-  const compare = React.useMemo(() => buildCompare(snaps), [snaps]);
+  const compare = React.useMemo(() => buildCompare(snaps, priority), [snaps, priority]);
+
+  // Pre-render localised price strings once so both the table and the LLM
+  // prompt see exactly the same text — keeps the narrative honest.
+  const priceLabels = React.useMemo<Record<string, string>>(() => {
+    const out: Record<string, string> = {};
+    for (const s of snaps) out[s.id] = formatMoneyLocale(s.finalPrice, locale);
+    return out;
+  }, [snaps, locale]);
+
+  const narrative = useCompareNarrative({
+    snaps,
+    priority,
+    winnerId: compare.verdict.winnerId,
+    reasonKeys: compare.verdict.reasonKeys,
+    priceLabels,
+    locale,
+  });
 
   async function shareSet() {
     if (snaps.length === 0) return;
@@ -101,12 +122,20 @@ export function CompareView() {
         </Button>
       </div>
 
+      {snaps.length >= 2 && (
+        <PriorityChips value={priority} onChange={setPriority} />
+      )}
+
       {winner ? (
         <CohortVerdictCard
           winner={winner}
           score={compare.verdict.scores[winner.id] ?? 0}
           reasonKeys={compare.verdict.reasonKeys}
           totalCount={snaps.length}
+          narrative={narrative.data?.narrative ?? null}
+          narrativeSource={narrative.data?.source ?? null}
+          narrativeLoading={narrative.isFetching}
+          narrativeError={narrative.isError}
         />
       ) : (
         <div className="mt-6 rounded-2xl border border-dashed border-ink-200 bg-ink-50/40 p-5 text-[13px] text-ink-500 dark:border-ink-700 dark:bg-ink-800/30 dark:text-ink-400">
@@ -132,11 +161,19 @@ function CohortVerdictCard({
   score,
   reasonKeys,
   totalCount,
+  narrative,
+  narrativeSource,
+  narrativeLoading,
+  narrativeError,
 }: {
   winner: ShortlistSnap;
   score: number;
   reasonKeys: string[];
   totalCount: number;
+  narrative: string | null;
+  narrativeSource: 'anthropic' | 'openai' | 'fallback' | null;
+  narrativeLoading: boolean;
+  narrativeError: boolean;
 }) {
   const t = useTranslations('compare');
   return (
@@ -160,6 +197,14 @@ function CohortVerdictCard({
           {t('cohortScore', { score })}
         </span>
       </div>
+
+      <NarrativeBlock
+        text={narrative}
+        loading={narrativeLoading}
+        errored={narrativeError}
+        source={narrativeSource}
+      />
+
       {reasonKeys.length > 0 && (
         <ul className="relative mt-4 grid gap-1.5 sm:grid-cols-2">
           {reasonKeys.map((k) => (
@@ -176,6 +221,91 @@ function CohortVerdictCard({
           ))}
         </ul>
       )}
+    </div>
+  );
+}
+
+function NarrativeBlock({
+  text,
+  loading,
+  errored,
+  source,
+}: {
+  text: string | null;
+  loading: boolean;
+  errored: boolean;
+  source: 'anthropic' | 'openai' | 'fallback' | null;
+}) {
+  const t = useTranslations('compare');
+  if (loading && !text) {
+    return (
+      <div className="relative mt-4 space-y-1.5">
+        <div className="h-3 w-11/12 animate-pulse rounded bg-ink-200/70 dark:bg-ink-700/70" />
+        <div className="h-3 w-10/12 animate-pulse rounded bg-ink-200/70 dark:bg-ink-700/70" />
+        <div className="h-3 w-7/12 animate-pulse rounded bg-ink-200/70 dark:bg-ink-700/70" />
+      </div>
+    );
+  }
+  if (errored && !text) {
+    return (
+      <p className="relative mt-4 text-[12.5px] text-ink-500 dark:text-ink-400">
+        {t('narrativeError')}
+      </p>
+    );
+  }
+  if (!text) return null;
+  return (
+    <div className="relative mt-4">
+      <p className="text-[13.5px] leading-relaxed text-ink-800 dark:text-ink-100">{text}</p>
+      {source === 'fallback' && (
+        <span className="mt-1 inline-block text-[10px] uppercase tracking-widest text-ink-400 dark:text-ink-500">
+          {t('narrativeFallback')}
+        </span>
+      )}
+    </div>
+  );
+}
+
+const PRIORITY_OPTIONS: Array<{ key: ComparePriority; iconKey: string }> = [
+  { key: 'balanced', iconKey: 'balanced' },
+  { key: 'value', iconKey: 'value' },
+  { key: 'fast', iconKey: 'fast' },
+  { key: 'genuine', iconKey: 'genuine' },
+];
+
+function PriorityChips({
+  value,
+  onChange,
+}: {
+  value: ComparePriority;
+  onChange: (next: ComparePriority) => void;
+}) {
+  const t = useTranslations('compare');
+  return (
+    <div className="mt-5 flex flex-wrap items-center gap-1.5" role="radiogroup" aria-label={t('priorityAria')}>
+      <span className="mr-1 text-[11px] font-bold uppercase tracking-widest text-ink-500 dark:text-ink-400">
+        {t('priorityLabel')}
+      </span>
+      {PRIORITY_OPTIONS.map(({ key }) => {
+        const active = value === key;
+        return (
+          <button
+            key={key}
+            type="button"
+            role="radio"
+            aria-checked={active}
+            onClick={() => onChange(key)}
+            className={cn(
+              'h-8 rounded-full border px-3 text-[12px] font-bold tracking-tight transition',
+              active
+                ? 'border-accent-500 bg-accent-600 text-white shadow-sm dark:border-accent-400 dark:bg-accent-500'
+                : 'border-ink-200 bg-white text-ink-700 hover:border-ink-300 hover:text-ink-900 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200 dark:hover:border-ink-600',
+            )}
+          >
+            {t(`priority.${key}` as 'priority.balanced')}
+          </button>
+        );
+      })}
     </div>
   );
 }

@@ -169,6 +169,16 @@
     "cohortLabel": "토니의 비교 결론",
     "cohortTagline": "{count}개 중에서, 토니는 이걸 추천해요",
     "cohortScore": "비교 점수 {score}/100",
+    "priorityLabel": "우선순위",
+    "priorityAria": "비교 우선순위 선택",
+    "priority": {
+      "balanced": "종합",
+      "value": "가성비",
+      "fast": "빠른배송",
+      "genuine": "정품안전"
+    },
+    "narrativeError": "토니의 코멘트를 가져오지 못했어요. 잠시 후 다시 시도해주세요.",
+    "narrativeFallback": "오프라인 요약",
     "product": "상품",
     "action": "구매",
     "bestBadge": "BEST",
