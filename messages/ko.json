@@ -606,7 +606,9 @@
     "kAuth": "정품 가능성",
     "verdictGood": "매우 합리적인 선택",
     "verdictOk": "무난한 선택",
-    "verdictWeak": "보완이 필요한 선택"
+    "verdictWeak": "보완이 필요한 선택",
+    "watchPrice": "이 가격 알림",
+    "watching": "가격 추적 중"
   },
   "chat": {
     "fabLong": "토니에게 더 물어보기",

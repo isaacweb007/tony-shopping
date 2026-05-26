@@ -606,7 +606,9 @@
     "kAuth": "Authenticity",
     "verdictGood": "a very reasonable choice",
     "verdictOk": "a solid choice",
-    "verdictWeak": "worth reconsidering"
+    "verdictWeak": "worth reconsidering",
+    "watchPrice": "Watch price",
+    "watching": "Watching"
   },
   "chat": {
     "fabLong": "Ask Tony more",

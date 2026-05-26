@@ -45,6 +45,10 @@ interface PriceWatchState {
    * change was a drop past the threshold (used by the search hook to toast).
    */
   observe: (products: Product[]) => Product[];
+  /** Convenience: observe a single product. Used by the standalone watch UI. */
+  track: (product: Product) => void;
+  /** Whether the product currently has at least one snapshot entry. */
+  isTracked: (productId: string) => boolean;
   setThreshold: (t: number) => void;
   /** Drop the product from the ledger entirely. */
   dismiss: (productId: string) => void;
@@ -121,6 +125,13 @@ export const usePriceWatchStore = create<PriceWatchState>()(
         return dropped;
       },
 
+      track: (product) => {
+        // Single-product variant of observe(). Discards the drop-list return
+        // value because the standalone UI shows the sparkline directly rather
+        // than firing a toast.
+        get().observe([product]);
+      },
+      isTracked: (productId) => productId in get().snapshots,
       setThreshold: (t) => set({ threshold: Math.max(0, Math.min(0.5, t)) }),
       dismiss: (productId) =>
         set((s) => {

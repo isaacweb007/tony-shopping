@@ -39,6 +39,9 @@ export function ProductDetailView({ product, q }: Props) {
   const inShortlist = useShortlistStore((s) => product.id in s.items);
   const toggleRaw = useShortlistStore((s) => s.toggle);
   const priceWatch = usePriceWatchStore((s) => s.snapshots[product.id] ?? null);
+  const trackPrice = usePriceWatchStore((s) => s.track);
+  const dismissPrice = usePriceWatchStore((s) => s.dismiss);
+  const watched = priceWatch !== null;
   const { guard } = useCheckoutGuide();
 
   function toggle() {
@@ -146,6 +149,24 @@ export function ProductDetailView({ product, q }: Props) {
               <Kv label={td('kAuth')} value={`${product.score.authenticity}%`} />
             </div>
           </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (watched) dismissPrice(product.id);
+              else trackPrice(product);
+            }}
+            aria-pressed={watched}
+            className={
+              'mt-4 inline-flex items-center gap-2 self-start rounded-full border px-3 py-1.5 text-[12px] font-bold tracking-tight transition ' +
+              (watched
+                ? 'border-emerald-400 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
+                : 'border-ink-200 bg-white text-ink-700 hover:border-ink-300 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200')
+            }
+          >
+            <span className={'h-1.5 w-1.5 rounded-full ' + (watched ? 'bg-emerald-500' : 'bg-ink-400')} />
+            {watched ? td('watching') : td('watchPrice')}
+          </button>
 
           <div className="mt-auto grid grid-cols-2 gap-2 pt-6">
             <Button variant="outline" className="h-12 rounded-xl" onClick={toggle}>

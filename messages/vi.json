@@ -606,7 +606,9 @@
     "kAuth": "Chính hãng",
     "verdictGood": "lựa chọn rất hợp lý",
     "verdictOk": "lựa chọn ổn",
-    "verdictWeak": "cần cân nhắc"
+    "verdictWeak": "cần cân nhắc",
+    "watchPrice": "Theo dõi giá",
+    "watching": "Đang theo dõi"
   },
   "chat": {
     "fabLong": "Hỏi Tony thêm",
