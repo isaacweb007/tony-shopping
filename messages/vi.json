@@ -235,6 +235,11 @@
     },
     "other": "Khác",
     "menu": "Bảng điều khiển",
+    "revenue": {
+      "eyebrow": "Giá trị giới thiệu ước tính tháng này",
+      "caption": "Dựa trên {clicks} lượt click trong 30 ngày qua · tỉ lệ hoa hồng × tỉ lệ chuyển đổi giả định.",
+      "disclaimer": "Ước tính định hướng theo mức benchmark công khai. Số thực tế có thể khác."
+    },
     "insights": {
       "heading": "Tony nhận thấy gì trong tuần",
       "signal": {

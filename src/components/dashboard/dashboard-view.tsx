@@ -6,6 +6,7 @@ import { StatCard } from './stat-card';
 import { DonutChart } from './donut-chart';
 import { CategoryBars } from './category-bars';
 import { InsightsRow } from './insights-row';
+import { RevenueCard } from './revenue-card';
 import { useDashboardStats } from '@/hooks/use-dashboard-stats';
 import { formatCount } from '@/lib/format';
 import type { AppLocale } from '@/i18n/routing';
@@ -82,6 +83,8 @@ export function DashboardView() {
           hint={`${formatCount(stats.verdictClicks, locale)} / ${formatCount(stats.clicks, locale)}`}
         />
       </div>
+
+      <RevenueCard />
 
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <DonutChart

@@ -235,6 +235,11 @@
     },
     "other": "Other",
     "menu": "My dashboard",
+    "revenue": {
+      "eyebrow": "Estimated referral value this month",
+      "caption": "Based on the last 30 days of {clicks} clicks · per-store rates × assumed conversion.",
+      "disclaimer": "Directional estimate using public benchmark rates. Actual payouts may differ."
+    },
     "insights": {
       "heading": "What Tony noticed this week",
       "signal": {
