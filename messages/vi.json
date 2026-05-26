@@ -22,6 +22,12 @@
     },
     "recentQueries": {
       "label": "Tiếp tục tìm kiếm gần đây"
+    },
+    "install": {
+      "title": "Thêm Tony vào màn hình chính",
+      "body": "Một chạm mở như một ứng dụng — không thanh trình duyệt.",
+      "cta": "Cài đặt",
+      "dismiss": "Để sau"
     }
   },
   "hero": {
@@ -437,7 +443,9 @@
       "sortLabel": "Sắp xếp",
       "sortNewest": "Mới nhất",
       "sortPopular": "Nhiều 👍",
-      "sortBiggest": "Lớn nhất"
+      "sortBiggest": "Lớn nhất",
+      "mineToggle": "Chỉ của tôi",
+      "mineNone": "Không có bộ so sánh nào của bạn khớp với bộ lọc này."
     },
     "clone": {
       "button": "Sao chép vào so sánh của tôi",
@@ -660,7 +668,9 @@
     "buyNow": "Đến cửa hàng",
     "report": "Báo cáo AI",
     "buy": "Mua",
-    "recentViewed": "Đã xem"
+    "recentViewed": "Đã xem",
+    "watchOnAria": "Đang theo dõi giá — bấm để dừng",
+    "watchOffAria": "Bắt đầu theo dõi giá sản phẩm này"
   },
   "detail": {
     "title": "Chi tiết sản phẩm",
@@ -729,7 +739,9 @@
     "voicePermissionDesc": "Hãy cấp quyền từ thanh địa chỉ trình duyệt.",
     "voiceUnsupported": "Trình duyệt không hỗ trợ nhập giọng nói",
     "ttsUnsupported": "Trình duyệt không hỗ trợ phát giọng nói",
-    "voiceCaptured": "Đã nghe — Tony đang tìm."
+    "voiceCaptured": "Đã nghe — Tony đang tìm.",
+    "watchOn": "Tony đang theo dõi giá này",
+    "watchOff": "Đã dừng theo dõi giá"
   },
   "share": {
     "button": "Chia sẻ",

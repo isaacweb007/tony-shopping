@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { formatRelativeTime } from '@/lib/format';
 import { useGridKeyboardNav } from '@/hooks/use-grid-keyboard-nav';
+import { useMySharesStore } from '@/stores/my-shares-store';
 
 type PriorityFilter = 'all' | 'balanced' | 'value' | 'fast' | 'genuine';
 const FILTERS: readonly PriorityFilter[] = ['all', 'balanced', 'value', 'fast', 'genuine'];
@@ -73,6 +74,16 @@ export function CohortsGallery() {
   const pathname = usePathname();
   const filter = parsePriority(params.get('priority'));
   const sort = parseSort(params.get('sort'));
+  const mineOnly = params.get('mine') === '1';
+
+  // Hydration-safe: my-shares-store is persisted, so wait for client mount
+  // before deciding whether to show the toggle. Server pass renders without
+  // it; client upgrades in place.
+  const mySlugs = useMySharesStore((s) => s.slugs);
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+  const canFilterMine = mounted && mySlugs.length > 0;
+  const mySlugSet = React.useMemo(() => new Set(mySlugs), [mySlugs]);
 
   const setUrlParam = React.useCallback(
     (key: string, value: string, defaultValue: string) => {
@@ -92,6 +103,10 @@ export function CohortsGallery() {
   const setSort = React.useCallback(
     (next: SortMode) => setUrlParam('sort', next, 'newest'),
     [setUrlParam],
+  );
+  const toggleMine = React.useCallback(
+    () => setUrlParam('mine', mineOnly ? '0' : '1', '0'),
+    [setUrlParam, mineOnly],
   );
 
   const query = useInfiniteQuery({
@@ -122,8 +137,13 @@ export function CohortsGallery() {
   });
 
   const pages = query.data?.pages ?? [];
-  const items = pages.flatMap((p) => p.items);
-  const total = pages[0]?.total ?? 0;
+  const allItems = pages.flatMap((p) => p.items);
+  const items = mineOnly
+    ? allItems.filter((it) => mySlugSet.has(it.slug))
+    : allItems;
+  const total = mineOnly
+    ? items.length
+    : pages[0]?.total ?? 0;
   const supabaseOff = pages[0]?.error === 'supabase_unconfigured';
 
   // Same arrow/h/j/k/l/Home/End grid nav as /search. cols=3 matches the
@@ -201,6 +221,17 @@ export function CohortsGallery() {
           <option value="popular">{t('sortPopular')}</option>
           <option value="biggest">{t('sortBiggest')}</option>
         </select>
+        {canFilterMine && (
+          <label className="ml-1 inline-flex items-center gap-1.5 text-[12px] font-semibold text-ink-700 dark:text-ink-200">
+            <input
+              type="checkbox"
+              checked={mineOnly}
+              onChange={toggleMine}
+              className="h-3.5 w-3.5 accent-accent-600"
+            />
+            {t('mineToggle')}
+          </label>
+        )}
       </div>
 
       {supabaseOff ? (
@@ -211,7 +242,7 @@ export function CohortsGallery() {
         <GallerySkeleton />
       ) : items.length === 0 ? (
         <div className="mt-10 rounded-3xl border border-dashed border-ink-200 bg-white p-10 text-center text-ink-500 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-400">
-          {t('empty')}
+          {mineOnly ? t('mineNone') : t('empty')}
         </div>
       ) : (
         <>

@@ -22,6 +22,12 @@
     },
     "recentQueries": {
       "label": "Pick up a recent search"
+    },
+    "install": {
+      "title": "Add Tony to your home screen",
+      "body": "One tap and it opens like an app — no browser chrome.",
+      "cta": "Install",
+      "dismiss": "Not now"
     }
   },
   "hero": {
@@ -437,7 +443,9 @@
       "sortLabel": "Sort",
       "sortNewest": "Newest",
       "sortPopular": "Most 👍",
-      "sortBiggest": "Largest"
+      "sortBiggest": "Largest",
+      "mineToggle": "Mine only",
+      "mineNone": "None of your shared compares match this filter."
     },
     "clone": {
       "button": "Copy to my compare",
@@ -660,7 +668,9 @@
     "buyNow": "Go to store",
     "report": "AI report",
     "buy": "Buy",
-    "recentViewed": "Seen"
+    "recentViewed": "Seen",
+    "watchOnAria": "Watching price — tap to stop",
+    "watchOffAria": "Start watching this product's price"
   },
   "detail": {
     "title": "Product details",
@@ -729,7 +739,9 @@
     "voicePermissionDesc": "Allow microphone access from the browser address bar.",
     "voiceUnsupported": "Voice input isn't supported in this browser",
     "ttsUnsupported": "Speech playback isn't supported in this browser",
-    "voiceCaptured": "Got it — Tony is searching."
+    "voiceCaptured": "Got it — Tony is searching.",
+    "watchOn": "Tony is watching this price",
+    "watchOff": "Stopped watching this price"
   },
   "share": {
     "button": "Share",

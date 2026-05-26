@@ -2,13 +2,14 @@
 
 import * as React from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { Bookmark, Star } from 'lucide-react';
+import { Bell, BellRing, Bookmark, Star } from 'lucide-react';
 import type { Product } from '@/types/product';
 import { Button } from '@/components/ui/button';
 import { TagBadge } from './tag-badge';
 import { TonyBar } from './tony-bar';
 import { useShortlistStore } from '@/stores/shortlist-store';
 import { useRecentProductsStore } from '@/stores/recent-products-store';
+import { usePriceWatchStore } from '@/stores/price-watch-store';
 import { toast } from '@/stores/toast-store';
 import { recordProductClick } from '@/stores/click-store';
 import { affiliateUrl } from '@/lib/affiliate';
@@ -41,6 +42,11 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
   const recentSeen = useRecentProductsStore(
     (s) => s.items.findIndex((it) => it.id === product.id) >= 0,
   );
+  // Standalone price-watch toggle — same store as the detail page's pill.
+  // Lets the user start tracking a price without opening the full detail.
+  const watching = usePriceWatchStore((s) => product.id in s.snapshots);
+  const trackPrice = usePriceWatchStore((s) => s.track);
+  const dismissPrice = usePriceWatchStore((s) => s.dismiss);
   const buyHref = affiliateUrl({ store: product.store, url: product.buyUrl });
   const { guard } = useCheckoutGuide();
 
@@ -71,6 +77,17 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
     if (added) void pushShortlistItem(product);
     else void deleteShortlistItem(product.id);
   }, [toggleRaw, t, product]);
+
+  const toggleWatch = React.useCallback(() => {
+    haptic('tap');
+    if (watching) {
+      dismissPrice(product.id);
+      toast.success(t('toast.watchOff'), product.name);
+    } else {
+      trackPrice(product);
+      toast.success(t('toast.watchOn'), product.name);
+    }
+  }, [watching, dismissPrice, trackPrice, product, t]);
 
   const isFeature = variant === 'feature';
 
@@ -111,6 +128,11 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
               pressed={inShortlist}
               onClick={toggle}
               floating
+            />
+            <WatchBtn
+              pressed={watching}
+              onClick={toggleWatch}
+              label={watching ? tc('watchOnAria') : tc('watchOffAria')}
             />
             {recentSeen && (
               <div className="absolute bottom-2 right-2 rounded-md bg-ink-900/75 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur dark:bg-white/80 dark:text-ink-900">
@@ -257,6 +279,41 @@ function BookmarkBtn({
         strokeWidth={1.6}
         {...(pressed ? { fill: 'currentColor' } : {})}
       />
+    </button>
+  );
+}
+
+/**
+ * Floating watch toggle on the image overlay — slots below the bookmark.
+ * Switches between Bell (off) and BellRing (on) with an emerald accent
+ * when active. Always floating (never the inline variant) so it only
+ * appears on compact cards where there's image real estate to host it.
+ */
+function WatchBtn({
+  pressed,
+  onClick,
+  label,
+}: {
+  pressed: boolean;
+  onClick: () => void;
+  label: string;
+}) {
+  const Icon = pressed ? BellRing : Bell;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={pressed}
+      aria-label={label}
+      title={label}
+      className={
+        'absolute right-2 top-11 flex h-7 w-7 items-center justify-center rounded-full border backdrop-blur transition ' +
+        (pressed
+          ? 'border-emerald-300/70 bg-emerald-50/90 text-emerald-700 hover:text-emerald-800 dark:border-emerald-700/70 dark:bg-emerald-950/60 dark:text-emerald-300 dark:hover:text-emerald-200'
+          : 'border-ink-200/70 bg-white/90 text-ink-500 hover:text-emerald-600 dark:border-ink-700/70 dark:bg-ink-900/80 dark:text-ink-400 dark:hover:text-emerald-400')
+      }
+    >
+      <Icon className="h-[14px] w-[14px]" strokeWidth={1.8} />
     </button>
   );
 }
