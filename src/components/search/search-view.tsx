@@ -86,6 +86,15 @@ export function SearchView() {
     enabled: detail === null,
   });
 
+  // Keyboard-infinite nav — when the user reaches the last visible cell and
+  // there's more behind the curtain, auto-extend so arrow keys keep working
+  // past the current batch (parity with the IntersectionObserver sentinel).
+  React.useEffect(() => {
+    if (paginated.hasMore && grid.activeIndex >= paginated.visible.length - 1) {
+      paginated.loadMore();
+    }
+  }, [grid.activeIndex, paginated.hasMore, paginated.visible.length, paginated]);
+
   if (!q) {
     return (
       <div className="container max-w-3xl py-20 text-center">
