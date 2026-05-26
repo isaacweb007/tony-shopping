@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { FilterBar } from './filter-bar';
+import type { StoreId } from '@/types/product';
 import { cn } from '@/lib/utils';
 
 /**
@@ -14,7 +15,12 @@ import { cn } from '@/lib/utils';
  * scrolls out, the bar is pinned and we add a soft border + shadow + slightly
  * stronger backdrop.
  */
-export function StickyFilterBar() {
+interface Props {
+  storeCounts?: Partial<Record<StoreId, number>>;
+  totalCount?: number;
+}
+
+export function StickyFilterBar({ storeCounts, totalCount }: Props = {}) {
   const sentinelRef = React.useRef<HTMLDivElement>(null);
   const [pinned, setPinned] = React.useState(false);
 
@@ -41,7 +47,7 @@ export function StickyFilterBar() {
             : 'bg-transparent',
         )}
       >
-        <FilterBar />
+        <FilterBar storeCounts={storeCounts} totalCount={totalCount} />
       </div>
     </>
   );

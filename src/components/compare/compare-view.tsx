@@ -8,6 +8,7 @@ import { Link } from '@/i18n/routing';
 import { Button } from '@/components/ui/button';
 import { useShortlistStore } from '@/stores/shortlist-store';
 import { useMySharesStore } from '@/stores/my-shares-store';
+import { useComparePrefsStore } from '@/stores/compare-prefs-store';
 import { useSpeechSynthesis } from '@/hooks/use-speech-synthesis';
 import { deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { buildCompare, type ComparePriority } from '@/lib/compare/verdict';
@@ -49,26 +50,42 @@ export function CompareView({ seedSnaps, initialPriority, readOnly }: Props = {}
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
 
-  const [priority, setPriorityState] = React.useState<ComparePriority>(initialPriority ?? 'balanced');
+  const lastPriority = useComparePrefsStore((s) => s.lastPriority);
+  const persistLastPriority = useComparePrefsStore((s) => s.setLastPriority);
+  // Priority resolution order (highest first):
+  //   1. initialPriority from props (shared cohort)
+  //   2. lastPriority from prefs (returning user's last manual pick)
+  //   3. 'balanced' default
+  // Auto-priority can still upgrade (1)-(3) on first paint if confidence > 0.4
+  // AND the user hasn't manually picked yet.
+  const [priority, setPriorityState] = React.useState<ComparePriority>(
+    initialPriority ?? (lastPriority as ComparePriority | null) ?? 'balanced',
+  );
   const [userOverrode, setUserOverrode] = React.useState(false);
   const auto = useAutoPriority();
 
   // One-shot: if auto-priority is confident on first hydration AND the user
   // hasn't already picked a chip, adopt the recommendation. Subsequent
   // recomputations never override an explicit choice. Skip entirely when a
-  // shared cohort came in with an explicit initialPriority.
+  // shared cohort came in with an explicit initialPriority OR when we
+  // restored from prefs (the user's last manual pick should beat auto).
   const appliedAutoRef = React.useRef(false);
   React.useEffect(() => {
-    if (initialPriority || userOverrode || appliedAutoRef.current) return;
+    if (initialPriority || lastPriority || userOverrode || appliedAutoRef.current) return;
     if (!auto || auto.confidence < 0.4) return;
     appliedAutoRef.current = true;
     setPriorityState(auto.priority);
-  }, [auto, userOverrode, initialPriority]);
+  }, [auto, userOverrode, initialPriority, lastPriority]);
 
-  const setPriority = React.useCallback((next: ComparePriority) => {
-    setUserOverrode(true);
-    setPriorityState(next);
-  }, []);
+  const setPriority = React.useCallback(
+    (next: ComparePriority) => {
+      setUserOverrode(true);
+      setPriorityState(next);
+      // Persist the manual pick so the next visit starts here.
+      persistLastPriority(next);
+    },
+    [persistLastPriority],
+  );
 
   const snaps: ShortlistSnap[] = React.useMemo(() => {
     if (seedSnaps) return seedSnaps;

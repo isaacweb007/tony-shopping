@@ -102,6 +102,15 @@ export function SearchView() {
     return u.toString();
   }, [store, sort]);
 
+  // Per-store result counts across the full (un-store-filtered) set so the
+  // chip badges reflect what's actually there to drill into. Updates with
+  // the underlying result, not with the user's chip pick.
+  const storeCounts = React.useMemo(() => {
+    const out: Partial<Record<Product['store'], number>> = {};
+    for (const p of products ?? []) out[p.store] = (out[p.store] ?? 0) + 1;
+    return out;
+  }, [products]);
+
   const visible = React.useMemo<Product[]>(() => {
     if (!products) return [];
     const arr = store === 'all' ? [...products] : products.filter((p) => p.store === store);
@@ -285,7 +294,7 @@ export function SearchView() {
           </div>
         </div>
         <div className="mt-3">
-          <StickyFilterBar />
+          <StickyFilterBar storeCounts={storeCounts} totalCount={products?.length ?? 0} />
         </div>
         <MockStoresNote />
         <CategoryChips

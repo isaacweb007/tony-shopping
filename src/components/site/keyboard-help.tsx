@@ -37,7 +37,9 @@ export function KeyboardHelp() {
     }
 
     function focusSearch() {
-      // Try the main search input on the page. Falls back gracefully.
+      // Try the main search input on the page. Falls back gracefully —
+      // pages without an input (alerts/dashboard/cohorts) navigate to
+      // home with ?focus=ask so the user lands directly on the AskBox.
       const target =
         document.querySelector<HTMLInputElement | HTMLTextAreaElement>(
           'main input[type="search"], main input[type="text"], main textarea',
@@ -49,7 +51,11 @@ export function KeyboardHelp() {
         } catch {
           /* readonly selects on some inputs */
         }
+        return;
       }
+      // No input on this page — send the user home with the focus hint.
+      // AskBox already reads ?focus=ask and autofocuses the textarea.
+      router.push('/?focus=ask');
     }
 
     function onKey(e: KeyboardEvent) {
