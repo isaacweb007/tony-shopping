@@ -9,6 +9,7 @@ import { InsightsRow } from './insights-row';
 import { RevenueCard } from './revenue-card';
 import { CategoryTrendCard } from './category-trend-card';
 import { MySharesCard } from './my-shares-card';
+import { HeatmapCard } from './heatmap-card';
 import { useDashboardStats } from '@/hooks/use-dashboard-stats';
 import { formatCount } from '@/lib/format';
 import type { AppLocale } from '@/i18n/routing';
@@ -91,6 +92,8 @@ export function DashboardView() {
       <RevenueCard />
 
       <MySharesCard />
+
+      <HeatmapCard />
 
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <DonutChart

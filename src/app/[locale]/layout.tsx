@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/components/providers/theme-provider';
 import { QueryProvider } from '@/components/providers/query-provider';
 import { Header } from '@/components/site/header';
 import { Footer } from '@/components/site/footer';
+import { MobileBottomNav } from '@/components/site/mobile-bottom-nav';
 import { HistoryDrawer } from '@/components/site/history-drawer';
 import { ShortlistDrawer } from '@/components/site/shortlist-drawer';
 import { ChatPanel } from '@/components/chat/chat-panel';
@@ -124,8 +125,9 @@ export default async function LocaleLayout({
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <QueryProvider>
               <Header />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1 pb-16 md:pb-0">{children}</main>
               <Footer />
+              <MobileBottomNav />
               <HistoryDrawer />
               <ShortlistDrawer />
               <ChatPanel />

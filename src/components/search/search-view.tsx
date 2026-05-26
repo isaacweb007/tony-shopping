@@ -59,6 +59,34 @@ export function SearchView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortParam, q]);
 
+  // "," / "." cycles through the sort order (tony → price → ship → review
+  // → authentic, wrapping). Modeled after the keyboard-nav rule of not
+  // hijacking typing — we no-op when focus is inside an editable element.
+  React.useEffect(() => {
+    const SORT_CYCLE: ReadonlyArray<typeof sort> = ['tony', 'price', 'ship', 'review', 'authentic'];
+    function inEditable(el: EventTarget | null) {
+      const node = el as HTMLElement | null;
+      if (!node) return false;
+      const tag = node.tagName?.toLowerCase();
+      return tag === 'input' || tag === 'textarea' || tag === 'select' || node.isContentEditable;
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key !== ',' && e.key !== '.') return;
+      if (inEditable(e.target)) return;
+      const i = SORT_CYCLE.indexOf(sort);
+      if (i < 0) return;
+      const next =
+        e.key === '.'
+          ? SORT_CYCLE[(i + 1) % SORT_CYCLE.length]!
+          : SORT_CYCLE[(i - 1 + SORT_CYCLE.length) % SORT_CYCLE.length]!;
+      e.preventDefault();
+      setSort(next);
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [sort, setSort]);
+
   // Share URL bakes in the current filter state so anyone who opens
   // the link sees the same product set + ordering. We omit the
   // defaults ('all' / 'tony') to keep the URL tidy.

@@ -3,6 +3,10 @@
     "title": "Tony Shopping — AI Meta Shopping Agent",
     "description": "One photo. Tony compares stores worldwide on price, shipping, reviews and authenticity — and recommends the smartest pick."
   },
+  "nav": {
+    "home": "Home",
+    "cohorts": "Gallery"
+  },
   "header": {
     "tagline": "AI Meta Shopping Agent",
     "history": "History",
@@ -166,7 +170,8 @@
       "help": "Toggle this shortcut sheet",
       "esc": "Close the open dialog",
       "compare": "Open compare (≥ 2 shortlisted)",
-      "gallery": "Open shared cohort gallery"
+      "gallery": "Open shared cohort gallery",
+      "sortCycle": "Cycle search sort (, prev · . next)"
     }
   },
   "checkout": {
@@ -291,6 +296,13 @@
       "popularEyebrow": "Your most-cloned",
       "popularEmpty": "No clones yet — share the link with someone.",
       "popularRow": "{store} · {n} items"
+    },
+    "heatmap": {
+      "eyebrow": "Activity heatmap",
+      "title": "{total} searches & clicks in the last 2 weeks",
+      "empty": "Not enough activity yet — keep searching and your pattern will show.",
+      "dayLabels": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+      "a11y": "{day} {hour}h: {count}"
     },
     "insights": {
       "heading": "What Tony noticed this week",

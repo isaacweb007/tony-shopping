@@ -105,6 +105,7 @@ export function KeyboardHelp() {
     { keys: ['/'], key: 'focus' },
     { keys: ['Shift', 'C'], key: 'compare' },
     { keys: ['Shift', 'G'], key: 'gallery' },
+    { keys: [',', '.'], key: 'sortCycle' },
     { keys: ['?'], key: 'help' },
     { keys: ['Esc'], key: 'esc' },
   ];

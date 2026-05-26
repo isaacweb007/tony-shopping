@@ -3,6 +3,10 @@
     "title": "Tony Shopping — Trợ lý Mua sắm AI Meta",
     "description": "Một tấm ảnh — Tony so sánh các cửa hàng toàn cầu về giá, vận chuyển, đánh giá và độ chính hãng, rồi đề xuất lựa chọn hợp lý nhất."
   },
+  "nav": {
+    "home": "Trang chủ",
+    "cohorts": "Thư viện"
+  },
   "header": {
     "tagline": "Trợ lý Mua sắm AI Meta",
     "history": "Lịch sử",
@@ -166,7 +170,8 @@
       "help": "Mở/đóng bảng phím tắt này",
       "esc": "Đóng hộp thoại đang mở",
       "compare": "Mở trang so sánh (≥ 2 mục)",
-      "gallery": "Mở thư viện so sánh chia sẻ"
+      "gallery": "Mở thư viện so sánh chia sẻ",
+      "sortCycle": "Đổi sắp xếp kết quả (, trước · . sau)"
     }
   },
   "checkout": {
@@ -291,6 +296,13 @@
       "popularEyebrow": "Bộ phổ biến nhất của bạn",
       "popularEmpty": "Chưa có ai sao chép — hãy gửi liên kết.",
       "popularRow": "{store} · {n} mục"
+    },
+    "heatmap": {
+      "eyebrow": "Bản đồ hoạt động",
+      "title": "{total} tìm kiếm & nhấp trong 2 tuần",
+      "empty": "Chưa đủ hoạt động — tìm kiếm thêm để thấy mẫu hình.",
+      "dayLabels": ["CN", "T2", "T3", "T4", "T5", "T6", "T7"],
+      "a11y": "{day} {hour}h: {count}"
     },
     "insights": {
       "heading": "Tony nhận thấy gì trong tuần",
