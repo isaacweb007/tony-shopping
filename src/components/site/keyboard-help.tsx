@@ -8,20 +8,25 @@ import {
   DialogDescription,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useRouter } from '@/i18n/routing';
+import { useShortlistStore } from '@/stores/shortlist-store';
 
 /**
  * Global keyboard shortcuts + the help overlay (toggled by "?").
  *
- * "/" focuses the first search input on the page (home / search).
- * "?" toggles this overlay.
- * Esc closes it.
+ * "/"          focuses the first search input on the page (home / search).
+ * "?"          toggles this overlay.
+ * Shift+C      jumps to /compare when shortlist has ≥ 2 snaps.
+ * Esc          closes the open dialog.
  *
  * We deliberately don't hijack typing — if the user is already inside an
- * input/textarea/contenteditable we no-op, except for Esc.
+ * input/textarea/contenteditable we no-op (Esc is handled by the dialog
+ * primitive itself).
  */
 export function KeyboardHelp() {
   const t = useTranslations('keyboard');
   const [open, setOpen] = React.useState(false);
+  const router = useRouter();
 
   React.useEffect(() => {
     function inEditable() {
@@ -48,6 +53,8 @@ export function KeyboardHelp() {
     }
 
     function onKey(e: KeyboardEvent) {
+      // Block when meta / ctrl / alt is held so we don't steal OS shortcuts.
+      // Shift is allowed because "?" (Shift+/) and Shift+C both need it.
       if (e.metaKey || e.ctrlKey || e.altKey) return;
 
       // "?" — Shift+/ on most layouts.
@@ -63,17 +70,31 @@ export function KeyboardHelp() {
         focusSearch();
         return;
       }
+
+      // Shift+C — jump to /compare when the shortlist has ≥ 2 snaps. We
+      // require Shift specifically so lowercase "c" stays usable for typing
+      // anywhere. We read the latest count via getState() instead of
+      // subscribing — the listener never needs to re-bind.
+      if (e.key === 'C' && e.shiftKey && !inEditable()) {
+        const count = Object.keys(useShortlistStore.getState().items).length;
+        if (count >= 2) {
+          e.preventDefault();
+          router.push('/compare');
+        }
+        return;
+      }
     }
 
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  }, [router]);
 
   const SHORTCUTS: Array<{ keys: string[]; key: string }> = [
     { keys: ['↑', '↓', '←', '→'], key: 'arrows' },
     { keys: ['h', 'j', 'k', 'l'], key: 'vim' },
     { keys: ['Enter'], key: 'open' },
     { keys: ['/'], key: 'focus' },
+    { keys: ['Shift', 'C'], key: 'compare' },
     { keys: ['?'], key: 'help' },
     { keys: ['Esc'], key: 'esc' },
   ];

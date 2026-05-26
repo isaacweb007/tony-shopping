@@ -145,7 +145,8 @@
       "open": "Mở sản phẩm đang chọn",
       "focus": "Đưa con trỏ vào ô tìm kiếm",
       "help": "Mở/đóng bảng phím tắt này",
-      "esc": "Đóng hộp thoại đang mở"
+      "esc": "Đóng hộp thoại đang mở",
+      "compare": "Mở trang so sánh (≥ 2 mục)"
     }
   },
   "checkout": {
@@ -531,6 +532,8 @@
     "warn4": "Hàng chưa nhận sau 24 tháng có thể không được hoàn tiền.",
     "empty": "Không có sản phẩm trùng cửa hàng đã chọn.",
     "emptyAction": "Xoá bộ lọc",
+    "categoryEmpty": "Không có sản phẩm trong danh mục này.",
+    "categoryEmptyAction": "Hiện tất cả danh mục",
     "loadMore": "Hiển thị thêm {n}",
     "loadMoreHint": "{shown} / {total}",
     "categories": {

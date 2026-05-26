@@ -145,7 +145,8 @@
       "open": "Open the focused product",
       "focus": "Focus the search input",
       "help": "Toggle this shortcut sheet",
-      "esc": "Close the open dialog"
+      "esc": "Close the open dialog",
+      "compare": "Open compare (≥ 2 shortlisted)"
     }
   },
   "checkout": {
@@ -531,6 +532,8 @@
     "warn4": "Items unclaimed for over 24 months may not be refundable.",
     "empty": "No items match the selected store.",
     "emptyAction": "Reset filters",
+    "categoryEmpty": "No items match this category.",
+    "categoryEmptyAction": "Show all categories",
     "loadMore": "Show {n} more",
     "loadMoreHint": "{shown} of {total}",
     "categories": {

@@ -243,6 +243,20 @@ export function SearchView() {
                 {t('emptyAction')}
               </Button>
             </div>
+          ) : paginated.visible.length === 0 ? (
+            // Store filter has matches but the category filter wiped them.
+            // Without this branch the grid would render empty and silent.
+            <div className="col-span-full rounded-2xl border border-dashed border-ink-200 px-6 py-12 text-center text-ink-500 dark:border-ink-700 dark:text-ink-400">
+              <p>{t('categoryEmpty')}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-3"
+                onClick={() => setCategoryFilter(null)}
+              >
+                {t('categoryEmptyAction')}
+              </Button>
+            </div>
           ) : (
             paginated.visible.map((p, i) => (
               <div
