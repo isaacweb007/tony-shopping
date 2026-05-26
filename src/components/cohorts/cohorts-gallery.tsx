@@ -6,6 +6,10 @@ import { useTranslations } from 'next-intl';
 import { Sparkles, ThumbsDown, ThumbsUp, Loader2 } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
+type PriorityFilter = 'all' | 'balanced' | 'value' | 'fast' | 'genuine';
+const FILTERS: readonly PriorityFilter[] = ['all', 'balanced', 'value', 'fast', 'genuine'];
 
 interface Item {
   slug: string;
@@ -39,16 +43,23 @@ const PAGE_SIZE = 12;
 export function CohortsGallery() {
   const t = useTranslations('compare.gallery');
   const tr = useTranslations('compare.recent');
+  // Reuse the existing priority chip labels from /compare so the
+  // gallery doesn't need its own translations for "value/fast/genuine".
+  const tp = useTranslations('compare.priority');
+
+  const [filter, setFilter] = React.useState<PriorityFilter>('all');
 
   const query = useInfiniteQuery({
-    queryKey: ['cohorts-gallery'],
+    queryKey: ['cohorts-gallery', filter],
     initialPageParam: 0,
     staleTime: 60_000,
     queryFn: async ({ pageParam }): Promise<ApiResponse> => {
-      const res = await fetch(
-        `/api/cohort/recent?limit=${PAGE_SIZE}&offset=${pageParam as number}`,
-        { cache: 'no-store' },
-      );
+      const params = new URLSearchParams({
+        limit: String(PAGE_SIZE),
+        offset: String(pageParam as number),
+      });
+      if (filter !== 'all') params.set('priority', filter);
+      const res = await fetch(`/api/cohort/recent?${params.toString()}`, { cache: 'no-store' });
       if (res.status === 503) {
         // Surface the unconfigured state up to the UI so we can render
         // the soft message instead of treating it as a network error.
@@ -81,6 +92,35 @@ export function CohortsGallery() {
       <p className="mt-2 max-w-2xl text-[14px] text-ink-600 dark:text-ink-300">
         {t('subtitle')}
       </p>
+
+      <div className="mt-5 flex flex-wrap items-center gap-1.5" role="radiogroup" aria-label={t('filterLabel')}>
+        <span className="mr-1 text-[11px] font-bold uppercase tracking-widest text-ink-500 dark:text-ink-400">
+          {t('filterLabel')}
+        </span>
+        {FILTERS.map((f) => {
+          const active = filter === f;
+          // 'all' has no translation under compare.priority, so we use
+          // the gallery's own filterAll label for that single chip.
+          const label = f === 'all' ? t('filterAll') : tp(f);
+          return (
+            <button
+              key={f}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => setFilter(f)}
+              className={cn(
+                'inline-flex h-8 items-center rounded-full border px-3 text-[12px] font-bold tracking-tight transition',
+                active
+                  ? 'border-accent-500 bg-accent-600 text-white shadow-sm dark:border-accent-400 dark:bg-accent-500'
+                  : 'border-ink-200 bg-white text-ink-700 hover:border-ink-300 hover:text-ink-900 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200 dark:hover:border-ink-600',
+              )}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
 
       {supabaseOff ? (
         <div className="mt-10 rounded-3xl border border-dashed border-amber-300/60 bg-amber-50/40 p-8 text-[13.5px] text-amber-800 dark:border-amber-800/60 dark:bg-amber-950/30 dark:text-amber-200">

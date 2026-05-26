@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useShortlistStore } from '@/stores/shortlist-store';
 import { useUIStore } from '@/stores/ui-store';
 import { usePriceWatchStore } from '@/stores/price-watch-store';
+import { useMySharesStore } from '@/stores/my-shares-store';
 import { deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { formatMoneyLocale } from '@/lib/format';
 import { DualMoney } from '@/components/ui/dual-money';
@@ -30,6 +31,7 @@ export function ShortlistDrawer() {
   const setNote = useShortlistStore((s) => s.setNote);
   const clearAll = useShortlistStore((s) => s.clear);
   const delta = usePriceWatchStore((s) => s.delta);
+  const addShare = useMySharesStore((s) => s.add);
 
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
@@ -60,6 +62,7 @@ export function ShortlistDrawer() {
         if (json.slug) {
           const path = locale === 'ko' ? `/c/${json.slug}` : `/${locale}/c/${json.slug}`;
           url = `${window.location.origin}${path}`;
+          addShare(json.slug);
         }
       }
     } catch {

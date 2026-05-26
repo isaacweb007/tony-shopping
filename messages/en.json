@@ -274,6 +274,11 @@
       "caption": "Based on the last 30 days of {clicks} clicks · per-store rates × assumed conversion.",
       "disclaimer": "Directional estimate using public benchmark rates. Actual payouts may differ."
     },
+    "myShares": {
+      "eyebrow": "Cohorts you've shared",
+      "title": "You've made {n} compare(s) public on Tony.",
+      "cta": "Open the gallery"
+    },
     "insights": {
       "heading": "What Tony noticed this week",
       "signal": {
@@ -419,7 +424,9 @@
       "loadMore": "Load more",
       "loading": "Loading…",
       "empty": "No public cohorts yet.",
-      "supabaseOff": "Supabase isn't configured, so the gallery can't load. Check env vars on /setup."
+      "supabaseOff": "Supabase isn't configured, so the gallery can't load. Check env vars on /setup.",
+      "filterLabel": "Filter by intent",
+      "filterAll": "All"
     },
     "eyebrow": "Tony's compare",
     "heading": "Your shortlist, side by side",

@@ -2,8 +2,10 @@
  * Per-process in-memory telemetry for adapter calls.
  *
  * Records the most recent invocation per adapter (wall time, duration,
- * success/failure, result count). Reset on each Node process restart —
- * acceptable for an operator overview UI, not for SLA tracking.
+ * success/failure, result count) plus a small ring buffer of the last
+ * MAX_HISTORY durations for the /setup sparkline. Reset on each Node
+ * process restart — acceptable for an operator overview UI, not for
+ * SLA tracking.
  *
  * Vercel serverless: instances are ephemeral, so the same /setup load may
  * see different snapshots depending on which lambda instance answered the
@@ -11,6 +13,14 @@
  */
 import 'server-only';
 import type { StoreId } from '@/types/product';
+
+const MAX_HISTORY = 10;
+
+export interface AdapterHistoryPoint {
+  at: number;
+  durationMs: number;
+  ok: boolean;
+}
 
 export interface AdapterCallStat {
   /** ms since epoch when the last call completed. */
@@ -21,6 +31,8 @@ export interface AdapterCallStat {
   lastOk: boolean;
   /** Result count returned by the last call. */
   lastResultCount: number;
+  /** Oldest → newest; capped at MAX_HISTORY. */
+  history: AdapterHistoryPoint[];
 }
 
 /**
@@ -35,8 +47,20 @@ const g = globalThis as StatsGlobal;
 if (!g.__tonyAdapterStats) g.__tonyAdapterStats = new Map<StoreId, AdapterCallStat>();
 const stats = g.__tonyAdapterStats;
 
-export function recordAdapterCall(store: StoreId, stat: AdapterCallStat): void {
-  stats.set(store, stat);
+interface RecordInput {
+  lastAt: number;
+  lastDurationMs: number;
+  lastOk: boolean;
+  lastResultCount: number;
+}
+
+export function recordAdapterCall(store: StoreId, stat: RecordInput): void {
+  const prev = stats.get(store);
+  const nextHistory = [
+    ...(prev?.history ?? []),
+    { at: stat.lastAt, durationMs: stat.lastDurationMs, ok: stat.lastOk },
+  ].slice(-MAX_HISTORY);
+  stats.set(store, { ...stat, history: nextHistory });
 }
 
 export function getAdapterStats(): Record<string, AdapterCallStat> {

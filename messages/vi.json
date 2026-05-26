@@ -274,6 +274,11 @@
       "caption": "Dựa trên {clicks} lượt click trong 30 ngày qua · tỉ lệ hoa hồng × tỉ lệ chuyển đổi giả định.",
       "disclaimer": "Ước tính định hướng theo mức benchmark công khai. Số thực tế có thể khác."
     },
+    "myShares": {
+      "eyebrow": "Bộ so sánh bạn đã chia sẻ",
+      "title": "Bạn đã công khai {n} bộ so sánh trên Tony.",
+      "cta": "Mở thư viện"
+    },
     "insights": {
       "heading": "Tony nhận thấy gì trong tuần",
       "signal": {
@@ -419,7 +424,9 @@
       "loadMore": "Tải thêm",
       "loading": "Đang tải…",
       "empty": "Chưa có bộ so sánh nào công khai.",
-      "supabaseOff": "Supabase chưa được cấu hình nên thư viện không tải được. Kiểm tra biến môi trường tại /setup."
+      "supabaseOff": "Supabase chưa được cấu hình nên thư viện không tải được. Kiểm tra biến môi trường tại /setup.",
+      "filterLabel": "Lọc theo tiêu chí",
+      "filterAll": "Tất cả"
     },
     "eyebrow": "Tony so sánh",
     "heading": "Danh sách của bạn, đặt cạnh nhau",

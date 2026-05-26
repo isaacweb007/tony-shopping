@@ -38,9 +38,13 @@ function clampInt(raw: string | null, min: number, max: number, fallback: number
   return Math.max(min, Math.min(max, Math.floor(n)));
 }
 
+const PRIORITY_VALUES = new Set(['balanced', 'value', 'fast', 'genuine']);
+
 export async function GET(req: NextRequest) {
   const limit = clampInt(req.nextUrl.searchParams.get('limit'), 1, 20, 5);
   const offset = clampInt(req.nextUrl.searchParams.get('offset'), 0, 500, 0);
+  const priorityParam = req.nextUrl.searchParams.get('priority');
+  const priority = priorityParam && PRIORITY_VALUES.has(priorityParam) ? priorityParam : null;
 
   const supabase = await getServerClient();
   if (!supabase) {
@@ -49,11 +53,12 @@ export async function GET(req: NextRequest) {
       { status: 503 },
     );
   }
-  const { data, error, count } = await supabase
+  let q = supabase
     .from('cohort_shares')
     .select('slug, snaps, winner_id, priority, locale, created_at', { count: 'exact' })
-    .order('created_at', { ascending: false })
-    .range(offset, offset + limit - 1);
+    .order('created_at', { ascending: false });
+  if (priority) q = q.eq('priority', priority);
+  const { data, error, count } = await q.range(offset, offset + limit - 1);
   if (error) return NextResponse.json({ error: error.message, items: [], total: 0 }, { status: 500 });
 
   const rows = data ?? [];

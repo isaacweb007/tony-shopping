@@ -7,6 +7,7 @@ import { Bookmark, Check, Copy, ExternalLink, GitCompare, Share2, Sparkles, Star
 import { Link } from '@/i18n/routing';
 import { Button } from '@/components/ui/button';
 import { useShortlistStore } from '@/stores/shortlist-store';
+import { useMySharesStore } from '@/stores/my-shares-store';
 import { deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { buildCompare, type ComparePriority } from '@/lib/compare/verdict';
 import { formatMoneyLocale, formatCount, shipLabel } from '@/lib/format';
@@ -42,6 +43,7 @@ export function CompareView({ seedSnaps, initialPriority, readOnly }: Props = {}
 
   const items = useShortlistStore((s) => s.items);
   const remove = useShortlistStore((s) => s.remove);
+  const addShare = useMySharesStore((s) => s.add);
 
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
@@ -124,6 +126,7 @@ export function CompareView({ seedSnaps, initialPriority, readOnly }: Props = {}
         if (json.slug) {
           const path = locale === 'ko' ? `/c/${json.slug}` : `/${locale}/c/${json.slug}`;
           url = `${window.location.origin}${path}`;
+          addShare(json.slug);
         }
       }
     } catch {
