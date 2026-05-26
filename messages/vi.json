@@ -7,10 +7,19 @@
     "tagline": "Trợ lý Mua sắm AI Meta",
     "history": "Lịch sử",
     "shortlist": "So sánh",
+    "alerts": "Thông báo",
+    "alertsUnread": "{n} đợt giảm giá chưa xem",
     "login": "Đăng nhập",
     "theme": "Giao diện",
     "menu": "Menu",
     "language": "Ngôn ngữ"
+  },
+  "home": {
+    "recent": {
+      "title": "Xem gần đây",
+      "subtitle": "Nhìn lại một lần nữa thường giúp bạn quyết định.",
+      "clear": "Xoá"
+    }
   },
   "hero": {
     "eyebrow": "So sánh Amazon · Coupang · Shopee · Lazada · Naver · TikTok Shop cùng lúc",
@@ -414,6 +423,9 @@
     },
     "narrativeError": "Không lấy được lời khuyên của Tony. Vui lòng thử lại sau.",
     "narrativeFallback": "Tóm tắt offline",
+    "narrativeCopy": "Sao chép",
+    "narrativeCopied": "Đã sao chép",
+    "narrativeCopyFailed": "Sao chép thất bại",
     "auto": {
       "recommendedAria": "Tony gợi ý",
       "basedOn": "Tony thấy bạn nghiêng về \"{signal}\" trong {n} lựa chọn gần đây.",

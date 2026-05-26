@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useTranslations } from 'next-intl';
-import { Bookmark, Clock, Menu } from 'lucide-react';
+import { Bell, Bookmark, Clock, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { LanguageSwitch } from '@/components/ui/language-switch';
@@ -11,6 +11,7 @@ import { Link } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
 import { useUIStore } from '@/stores/ui-store';
 import { useShortlistStore } from '@/stores/shortlist-store';
+import { useAlertsUnread } from '@/hooks/use-alerts-unread';
 import { UserMenu } from './user-menu';
 
 export function Header() {
@@ -21,11 +22,13 @@ export function Header() {
   const openHistory = React.useCallback(() => setHistoryOpen(true), [setHistoryOpen]);
   const openShortlist = React.useCallback(() => setShortlistOpen(true), [setShortlistOpen]);
   const shortlistCount = useShortlistStore((s) => Object.keys(s.items).length);
+  const unreadAlerts = useAlertsUnread();
 
   // hydration guard for badge
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
   const badge = mounted ? shortlistCount : 0;
+  const unreadBadge = mounted ? unreadAlerts : 0;
 
   return (
     <header className="glass sticky top-0 z-40 border-b border-ink-200/70 dark:border-ink-800/70">
@@ -52,6 +55,24 @@ export function Header() {
               </span>
             )}
           </Button>
+          <Button
+            asChild
+            variant="ghost"
+            size="pill"
+            className="relative"
+            title={unreadBadge > 0 ? t('alertsUnread', { n: unreadBadge }) : t('alerts')}
+          >
+            <Link href="/alerts">
+              <Bell className="h-[18px] w-[18px]" strokeWidth={1.6} />
+              <span>{t('alerts')}</span>
+              {unreadBadge > 0 && (
+                <span
+                  aria-label={t('alertsUnread', { n: unreadBadge })}
+                  className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-ink-950"
+                />
+              )}
+            </Link>
+          </Button>
           <LanguageSwitch />
           <ThemeToggle label={t('theme')} />
           <span className="ml-1">
@@ -62,6 +83,19 @@ export function Header() {
         {/* mobile */}
         <div className="flex items-center gap-0.5 md:hidden">
           <ThemeToggle label={t('theme')} />
+          <Button asChild variant="ghost" size="icon" className="relative">
+            <Link
+              href="/alerts"
+              aria-label={
+                unreadBadge > 0 ? t('alertsUnread', { n: unreadBadge }) : t('alerts')
+              }
+            >
+              <Bell className="h-[18px] w-[18px]" strokeWidth={1.6} />
+              {unreadBadge > 0 && (
+                <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-ink-950" />
+              )}
+            </Link>
+          </Button>
           <Button
             variant="ghost"
             size="icon"

@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { ChevronLeft, Sparkles, Star } from 'lucide-react';
 import type { Product } from '@/types/product';
@@ -16,6 +17,7 @@ import { PriceSparkline } from '@/components/product/price-sparkline';
 import { FloatingCompareBar } from '@/components/product/floating-compare-bar';
 import { RelatedProducts } from '@/components/product/related-products';
 import { usePriceWatchStore } from '@/stores/price-watch-store';
+import { useRecentProductsStore } from '@/stores/recent-products-store';
 import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { useRouter } from '@/i18n/routing';
 import { formatMoney, formatCount, shipLabel } from '@/lib/format';
@@ -43,6 +45,14 @@ export function ProductDetailView({ product, q }: Props) {
   const dismissPrice = usePriceWatchStore((s) => s.dismiss);
   const watched = priceWatch !== null;
   const { guard } = useCheckoutGuide();
+  const recordView = useRecentProductsStore((s) => s.record);
+
+  // Stamp the recently-viewed feed once per (product, query) visit. Effect
+  // re-runs on product.id / q so back-button into the same detail bumps
+  // viewedAt without piling duplicates (store dedupes by id internally).
+  React.useEffect(() => {
+    recordView(product, q);
+  }, [recordView, product, q]);
 
   function toggle() {
     const added = toggleRaw(product);

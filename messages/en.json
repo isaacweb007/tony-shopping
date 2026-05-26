@@ -7,10 +7,19 @@
     "tagline": "AI Meta Shopping Agent",
     "history": "History",
     "shortlist": "Compare",
+    "alerts": "Alerts",
+    "alertsUnread": "{n} unread price drop(s)",
     "login": "Sign in",
     "theme": "Theme",
     "menu": "Menu",
     "language": "Language"
+  },
+  "home": {
+    "recent": {
+      "title": "Recently viewed",
+      "subtitle": "A second look usually settles it.",
+      "clear": "Clear"
+    }
   },
   "hero": {
     "eyebrow": "Compare Amazon · Coupang · Shopee · Lazada · Naver · TikTok Shop at once",
@@ -414,6 +423,9 @@
     },
     "narrativeError": "Couldn't fetch Tony's comment. Try again in a moment.",
     "narrativeFallback": "Offline summary",
+    "narrativeCopy": "Copy",
+    "narrativeCopied": "Copied",
+    "narrativeCopyFailed": "Copy failed",
     "auto": {
       "recommendedAria": "Tony's pick",
       "basedOn": "Tony noticed you've leaned toward \"{signal}\" across your last {n} picks.",

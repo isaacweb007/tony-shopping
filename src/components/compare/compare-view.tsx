@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import { Bookmark, Check, ExternalLink, GitCompare, Share2, Sparkles, Star, X } from 'lucide-react';
+import { Bookmark, Check, Copy, ExternalLink, GitCompare, Share2, Sparkles, Star, X } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { Button } from '@/components/ui/button';
 import { useShortlistStore } from '@/stores/shortlist-store';
@@ -298,6 +298,8 @@ function CohortVerdictCard({
         loading={narrativeLoading}
         errored={narrativeError}
         source={narrativeSource}
+        winnerName={winner.name}
+        winnerStore={winner.store}
       />
 
       {reasonKeys.length > 0 && (
@@ -325,13 +327,19 @@ function NarrativeBlock({
   loading,
   errored,
   source,
+  winnerName,
+  winnerStore,
 }: {
   text: string | null;
   loading: boolean;
   errored: boolean;
   source: 'anthropic' | 'openai' | 'fallback' | null;
+  winnerName: string;
+  winnerStore: string;
 }) {
   const t = useTranslations('compare');
+  const [copied, setCopied] = React.useState(false);
+
   if (loading && !text) {
     return (
       <div className="relative mt-4 space-y-1.5">
@@ -349,14 +357,61 @@ function NarrativeBlock({
     );
   }
   if (!text) return null;
+
+  // Plain-text payload built for paste-into-chat use. We deliberately
+  // include the winner + store on the header line so a reader sees the
+  // pick without context, and append the narrative as one paragraph.
+  const payload = `Tony · ${winnerName} (${winnerStore})\n\n${text}`;
+
+  async function copy() {
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(payload);
+      } else {
+        // Legacy fallback — match the share lib's pattern.
+        const ta = document.createElement('textarea');
+        ta.value = payload;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      // We could toast on failure, but the visual state already covers
+      // the success case — silent failure keeps the surface calm.
+    }
+  }
+
   return (
     <div className="relative mt-4">
       <p className="text-[13.5px] leading-relaxed text-ink-800 dark:text-ink-100">{text}</p>
-      {source === 'fallback' && (
-        <span className="mt-1 inline-block text-[10px] uppercase tracking-widest text-ink-400 dark:text-ink-500">
-          {t('narrativeFallback')}
-        </span>
-      )}
+      <div className="mt-2 flex items-center gap-3">
+        <button
+          type="button"
+          onClick={copy}
+          aria-label={t('narrativeCopy')}
+          className="inline-flex items-center gap-1 rounded-full border border-ink-200 bg-white px-2.5 py-1 text-[11px] font-bold tracking-tight text-ink-700 transition hover:border-accent-400 hover:text-accent-700 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200 dark:hover:border-accent-500 dark:hover:text-accent-300"
+        >
+          {copied ? (
+            <>
+              <Check className="h-3 w-3" strokeWidth={2.4} />
+              {t('narrativeCopied')}
+            </>
+          ) : (
+            <>
+              <Copy className="h-3 w-3" strokeWidth={2} />
+              {t('narrativeCopy')}
+            </>
+          )}
+        </button>
+        {source === 'fallback' && (
+          <span className="text-[10px] uppercase tracking-widest text-ink-400 dark:text-ink-500">
+            {t('narrativeFallback')}
+          </span>
+        )}
+      </div>
     </div>
   );
 }

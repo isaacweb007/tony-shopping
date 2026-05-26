@@ -18,6 +18,7 @@ import { useShortlistStore } from '@/stores/shortlist-store';
 import { usePriceWatchStore } from '@/stores/price-watch-store';
 import { buildAlerts, countByStatus, type AlertRow, type AlertStatus } from '@/lib/alerts/build-alerts';
 import { pickBuyNow } from '@/lib/alerts/pick-buy-now';
+import { markAlertsSeen } from '@/hooks/use-alerts-unread';
 import { formatMoneyLocale } from '@/lib/format';
 import { intlLocale } from '@/lib/format';
 import { DualMoney } from '@/components/ui/dual-money';
@@ -40,6 +41,14 @@ export function AlertsView() {
 
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
+
+  // Visiting /alerts counts as "I've seen the current state of price moves".
+  // Stamping on mount (not on unmount) means the header dot disappears the
+  // moment the page renders, which matches user intent — they came here to
+  // check, not to dismiss.
+  React.useEffect(() => {
+    if (mounted) markAlertsSeen();
+  }, [mounted]);
 
   const [tab, setTab] = React.useState<Tab>('all');
 
