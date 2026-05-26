@@ -23,6 +23,7 @@ import { categorize, type Category } from '@/lib/categorize';
 import { computePriceBuckets, bucketOf, type PriceBucket } from '@/lib/price-buckets';
 import { PriceBucketChips } from './price-bucket-chips';
 import { ProductDetailDialog } from './product-detail-dialog';
+import { FloatingCompareBar } from '@/components/product/floating-compare-bar';
 import { WarningList } from './warning-list';
 import { SearchSkeleton } from './search-skeleton';
 import { useGridKeyboardNav } from '@/hooks/use-grid-keyboard-nav';
@@ -391,6 +392,7 @@ export function SearchView() {
       </section>
 
       <WarningList />
+      <FloatingCompareBar />
 
       <ProductDetailDialog
         product={detail}

@@ -504,6 +504,17 @@ function PriorityChips({
 }) {
   const t = useTranslations('compare');
   const recommendedKey = auto && auto.confidence >= 0.4 ? auto.priority : null;
+  // Pre-computed once: the basedOn rationale, attached as a native `title`
+  // on the recommended chip so hover/long-press reveals "why this one was
+  // suggested" even when autoApplied is false (manual override / shared
+  // cohort with explicit priority).
+  const recommendedReason =
+    auto && recommendedKey
+      ? t('auto.basedOn', {
+          n: auto.sampleSize,
+          signal: t(`auto.signal.${auto.signal ?? 'value'}` as 'auto.signal.value'),
+        })
+      : null;
   return (
     <div className="mt-5">
       <div className="flex flex-wrap items-center gap-1.5" role="radiogroup" aria-label={t('priorityAria')}>
@@ -520,6 +531,7 @@ function PriorityChips({
               role="radio"
               aria-checked={active}
               onClick={() => onChange(key)}
+              title={recommended && recommendedReason ? recommendedReason : undefined}
               className={cn(
                 'inline-flex h-8 items-center gap-1 rounded-full border px-3 text-[12px] font-bold tracking-tight transition',
                 active

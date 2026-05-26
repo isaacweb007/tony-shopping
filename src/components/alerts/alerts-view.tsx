@@ -361,6 +361,12 @@ function AlertCard({
             </span>
           )}
           {delta !== null && <DeltaPill delta={delta} />}
+          {watch && watch.entries.length >= 2 && (
+            <MiniSparkline
+              amounts={watch.entries.map((e) => e.amount)}
+              tone={status === 'drop' ? 'down' : status === 'rise' ? 'up' : 'neutral'}
+            />
+          )}
         </div>
       </div>
 
@@ -465,6 +471,59 @@ function DeltaPill({ delta }: { delta: number }) {
       <Icon className="h-3 w-3" strokeWidth={2.2} />
       {pct}%
     </span>
+  );
+}
+
+/**
+ * 60×16 inline price sparkline for the right side of an AlertCard's
+ * price row. Tone-driven: drop = emerald, rise = red, flat = ink.
+ * Y-axis normalised per-series so each row's shape reads at a glance.
+ * Renders nothing for series < 2 points (caller already guards).
+ */
+function MiniSparkline({
+  amounts,
+  tone,
+}: {
+  amounts: readonly number[];
+  tone: 'up' | 'down' | 'neutral';
+}) {
+  if (amounts.length < 2) return null;
+  const width = 60;
+  const height = 16;
+  const min = Math.min(...amounts);
+  const max = Math.max(...amounts);
+  const span = Math.max(1, max - min);
+  const stepX = amounts.length === 1 ? width : width / (amounts.length - 1);
+  const points = amounts
+    .map((a, i) => {
+      const x = i * stepX;
+      const y = height - ((a - min) / span) * height;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(' ');
+  const stroke =
+    tone === 'down'
+      ? 'stroke-emerald-500 dark:stroke-emerald-400'
+      : tone === 'up'
+        ? 'stroke-red-500 dark:stroke-red-400'
+        : 'stroke-ink-400 dark:stroke-ink-500';
+  return (
+    <svg
+      viewBox={`0 0 ${width} ${height}`}
+      width={width}
+      height={height}
+      aria-hidden
+      className="shrink-0"
+    >
+      <polyline
+        points={points}
+        fill="none"
+        strokeWidth={1.4}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        className={stroke}
+      />
+    </svg>
   );
 }
 
