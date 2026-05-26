@@ -1,16 +1,20 @@
 /**
  * GET /api/cohort/recent
  *
- * Returns the 5 most recent publicly-shared cohorts so /compare's footer can
- * surface "what other people are comparing right now". PII-free: we expose
- * the slug, the winner's name + store (already in the open share payload),
- * snap count, priority, and createdAt — plus an aggregated up/down count
- * from cohort_reactions so the footer can show social proof without an
- * extra round-trip per chip.
+ * Returns publicly-shared cohorts so /compare's footer surfaces "what
+ * other people are comparing right now" and the standalone /cohorts
+ * gallery can paginate through the full set. PII-free: slug, winner
+ * name + store (already public in the share payload), snap count,
+ * priority, locale, createdAt, plus an aggregated up/down count
+ * from cohort_reactions.
+ *
+ * Query params:
+ *   ?limit  (1..20, default 5)
+ *   ?offset (≥ 0, default 0)
  *
  * 503 when Supabase isn't configured — caller hides the section.
  */
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { getServerClient } from '@/lib/supabase/server';
 
 export const runtime = 'nodejs';
@@ -27,23 +31,36 @@ interface ReactionRow {
   kind: 'up' | 'down';
 }
 
-export async function GET() {
+function clampInt(raw: string | null, min: number, max: number, fallback: number): number {
+  if (!raw) return fallback;
+  const n = Number(raw);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.max(min, Math.min(max, Math.floor(n)));
+}
+
+export async function GET(req: NextRequest) {
+  const limit = clampInt(req.nextUrl.searchParams.get('limit'), 1, 20, 5);
+  const offset = clampInt(req.nextUrl.searchParams.get('offset'), 0, 500, 0);
+
   const supabase = await getServerClient();
   if (!supabase) {
-    return NextResponse.json({ error: 'supabase_unconfigured', items: [] }, { status: 503 });
+    return NextResponse.json(
+      { error: 'supabase_unconfigured', items: [], total: 0 },
+      { status: 503 },
+    );
   }
-  const { data, error } = await supabase
+  const { data, error, count } = await supabase
     .from('cohort_shares')
-    .select('slug, snaps, winner_id, priority, locale, created_at')
+    .select('slug, snaps, winner_id, priority, locale, created_at', { count: 'exact' })
     .order('created_at', { ascending: false })
-    .limit(5);
-  if (error) return NextResponse.json({ error: error.message, items: [] }, { status: 500 });
+    .range(offset, offset + limit - 1);
+  if (error) return NextResponse.json({ error: error.message, items: [], total: 0 }, { status: 500 });
 
   const rows = data ?? [];
   const slugs = rows.map((r) => r.slug as string);
 
-  // One join query for all 5 cohorts. Tally locally — way cheaper than
-  // 5 separate aggregates and keeps the route under one DB round-trip.
+  // One join query for the visible page. Tally locally — way cheaper than
+  // N aggregates and keeps the route under one DB round-trip per page.
   const tallies = new Map<string, { up: number; down: number }>();
   if (slugs.length > 0) {
     const { data: reactRows, error: reactErr } = await supabase
@@ -78,7 +95,7 @@ export async function GET() {
     };
   });
   return NextResponse.json(
-    { items },
+    { items, total: count ?? items.length },
     { headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' } },
   );
 }

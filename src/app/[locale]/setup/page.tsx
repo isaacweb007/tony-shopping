@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { CheckCircle2, ExternalLink, KeyRound, Radio, Settings2 } from 'lucide-react';
 import { ADAPTER_META, getAdapterStatuses, getOverallStatus } from '@/lib/adapter-status';
 import { getAdapterStats } from '@/lib/adapter-stats';
+import { RunProbeButton } from '@/components/setup/run-probe-button';
 
 export async function generateMetadata({
   params,
@@ -97,6 +98,8 @@ export default async function SetupPage({
           </li>
         </ol>
       </div>
+
+      <RunProbeButton />
 
       <h2 className="mt-10 text-[20px] font-extrabold tracking-tighter2">{t('adapters.title')}</h2>
       <p className="mt-1 text-[13px] text-ink-500 dark:text-ink-400">{t('adapters.subtitle')}</p>

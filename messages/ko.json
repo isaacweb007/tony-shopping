@@ -19,6 +19,9 @@
       "title": "최근 본 상품",
       "subtitle": "다시 들여다보면 결정이 빨라져요.",
       "clear": "비우기"
+    },
+    "recentQueries": {
+      "label": "지난 검색 다시"
     }
   },
   "hero": {
@@ -327,6 +330,15 @@
     "pill": {
       "live": "LIVE",
       "mock": "MOCK"
+    },
+    "probe": {
+      "title": "지금 한 번 핑 테스트",
+      "subtitle": "샘플 검색을 1회 돌려서 어댑터 응답 시간을 갱신해요.",
+      "button": "테스트 검색 실행",
+      "running": "검색 중…",
+      "doneOk": "완료 · {ms}ms",
+      "doneErr": "실패 · 다시 시도",
+      "hint": "결과는 아래 카드에 latency / count 로 갱신됩니다."
     }
   },
   "product": {
@@ -395,7 +407,17 @@
       "eyebrow": "다른 사람들의 비교",
       "title": "최근 공유된 비교를 둘러보세요",
       "countSuffix": "개",
-      "noWinner": "(승자 미정)"
+      "noWinner": "(승자 미정)",
+      "viewAll": "전체 갤러리 보기"
+    },
+    "gallery": {
+      "title": "공유 비교 갤러리",
+      "subtitle": "토니로 비교한 결과를 다른 사용자들이 공개해둔 목록이에요. 클릭하면 그 비교를 그대로 열 수 있어요.",
+      "totalLabel": "총 {n}개",
+      "loadMore": "더 보기",
+      "loading": "불러오는 중…",
+      "empty": "아직 공개된 비교가 없어요.",
+      "supabaseOff": "Supabase가 설정되지 않아 갤러리를 불러올 수 없어요. /setup에서 환경 변수 확인이 필요해요."
     },
     "eyebrow": "토니 비교 분석",
     "heading": "내 비교함, 한눈에",

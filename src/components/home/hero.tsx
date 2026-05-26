@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl';
 import { AskBox } from './ask-box';
+import { RecentQueries } from './recent-queries';
 
 export function Hero() {
   const t = useTranslations('hero');
@@ -41,6 +42,8 @@ export function Hero() {
         <div className="mt-9 md:mt-10">
           <AskBox />
         </div>
+
+        <RecentQueries />
       </div>
     </section>
   );

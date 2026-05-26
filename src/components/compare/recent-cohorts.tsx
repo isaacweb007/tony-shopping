@@ -54,9 +54,17 @@ export function RecentCohorts() {
         <Sparkles className="h-3 w-3" strokeWidth={2.4} />
         {t('eyebrow')}
       </div>
-      <h3 className="mt-1 text-[16px] font-extrabold tracking-tighter2 md:text-[18px]">
-        {t('title')}
-      </h3>
+      <div className="mt-1 flex items-baseline justify-between gap-2">
+        <h3 className="text-[16px] font-extrabold tracking-tighter2 md:text-[18px]">
+          {t('title')}
+        </h3>
+        <Link
+          href="/cohorts"
+          className="shrink-0 text-[11.5px] font-bold tracking-tight text-accent-700 hover:underline dark:text-accent-300"
+        >
+          {t('viewAll')} →
+        </Link>
+      </div>
       <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
         {items.map((it) => (
           <li key={it.slug}>

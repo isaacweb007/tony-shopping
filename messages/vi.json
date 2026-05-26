@@ -19,6 +19,9 @@
       "title": "Xem gần đây",
       "subtitle": "Nhìn lại một lần nữa thường giúp bạn quyết định.",
       "clear": "Xoá"
+    },
+    "recentQueries": {
+      "label": "Tiếp tục tìm kiếm gần đây"
     }
   },
   "hero": {
@@ -327,6 +330,15 @@
     "pill": {
       "live": "LIVE",
       "mock": "MOCK"
+    },
+    "probe": {
+      "title": "Chạy thử một lần",
+      "subtitle": "Gửi một tìm kiếm mẫu để cập nhật độ trễ của các bộ chuyển bên dưới.",
+      "button": "Chạy tìm kiếm thử",
+      "running": "Đang tìm…",
+      "doneOk": "Xong · {ms}ms",
+      "doneErr": "Thất bại · thử lại",
+      "hint": "Các thẻ bộ chuyển bên dưới sẽ phản ánh độ trễ và số kết quả mới."
     }
   },
   "product": {
@@ -395,7 +407,17 @@
       "eyebrow": "Người khác đang so sánh gì",
       "title": "Các cohort công khai gần đây",
       "countSuffix": " mục",
-      "noWinner": "(chưa có người thắng)"
+      "noWinner": "(chưa có người thắng)",
+      "viewAll": "Xem cả thư viện"
+    },
+    "gallery": {
+      "title": "Thư viện so sánh đã chia sẻ",
+      "subtitle": "Các bộ so sánh đã được công khai trên Tony. Bấm để mở y nguyên.",
+      "totalLabel": "{n} bộ",
+      "loadMore": "Tải thêm",
+      "loading": "Đang tải…",
+      "empty": "Chưa có bộ so sánh nào công khai.",
+      "supabaseOff": "Supabase chưa được cấu hình nên thư viện không tải được. Kiểm tra biến môi trường tại /setup."
     },
     "eyebrow": "Tony so sánh",
     "heading": "Danh sách của bạn, đặt cạnh nhau",

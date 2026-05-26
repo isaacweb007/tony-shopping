@@ -19,6 +19,9 @@
       "title": "Recently viewed",
       "subtitle": "A second look usually settles it.",
       "clear": "Clear"
+    },
+    "recentQueries": {
+      "label": "Pick up a recent search"
     }
   },
   "hero": {
@@ -327,6 +330,15 @@
     "pill": {
       "live": "LIVE",
       "mock": "MOCK"
+    },
+    "probe": {
+      "title": "Run a one-off probe",
+      "subtitle": "Fires a sample search so adapter latency / counts refresh below.",
+      "button": "Run test search",
+      "running": "Searching…",
+      "doneOk": "Done · {ms}ms",
+      "doneErr": "Failed · try again",
+      "hint": "Adapter cards below will reflect the fresh latency and result count."
     }
   },
   "product": {
@@ -395,7 +407,17 @@
       "eyebrow": "What others are comparing",
       "title": "Recent public cohorts",
       "countSuffix": " items",
-      "noWinner": "(no clear winner)"
+      "noWinner": "(no clear winner)",
+      "viewAll": "See full gallery"
+    },
+    "gallery": {
+      "title": "Shared compare gallery",
+      "subtitle": "Cohorts other people made public on Tony. Click any one to open the same compare verbatim.",
+      "totalLabel": "{n} total",
+      "loadMore": "Load more",
+      "loading": "Loading…",
+      "empty": "No public cohorts yet.",
+      "supabaseOff": "Supabase isn't configured, so the gallery can't load. Check env vars on /setup."
     },
     "eyebrow": "Tony's compare",
     "heading": "Your shortlist, side by side",
