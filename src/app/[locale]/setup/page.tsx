@@ -6,6 +6,7 @@ import { getAdapterStats } from '@/lib/adapter-stats';
 import { RunProbeButton } from '@/components/setup/run-probe-button';
 import { LatencySparkline } from '@/components/setup/latency-sparkline';
 import { EnvVarChip } from '@/components/setup/env-var-chip';
+import { AdapterProbeButton } from '@/components/setup/adapter-probe-button';
 
 export async function generateMetadata({
   params,
@@ -169,6 +170,9 @@ export default async function SetupPage({
                 {meta.envVars.map((env) => (
                   <EnvVarChip key={env} name={env} />
                 ))}
+                {NAME_TO_STORE[s.name] ? (
+                  <AdapterProbeButton storeId={NAME_TO_STORE[s.name]!} />
+                ) : null}
               </div>
 
               <a

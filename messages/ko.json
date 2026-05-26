@@ -744,6 +744,7 @@
   "toast": {
     "shortlistAdded": "비교함에 담았어요",
     "shortlistRemoved": "비교함에서 제거했어요",
+    "shortlistOpen": "열기",
     "linkCopied": "링크가 복사됐어요",
     "shareFailed": "공유에 실패했어요",
     "searchFailed": "검색 중 문제가 발생했어요",

@@ -10,6 +10,7 @@ import { TonyBar } from './tony-bar';
 import { useShortlistStore } from '@/stores/shortlist-store';
 import { useRecentProductsStore } from '@/stores/recent-products-store';
 import { usePriceWatchStore } from '@/stores/price-watch-store';
+import { useUIStore } from '@/stores/ui-store';
 import { toast } from '@/stores/toast-store';
 import { recordProductClick } from '@/stores/click-store';
 import { affiliateUrl } from '@/lib/affiliate';
@@ -47,6 +48,7 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
   const watching = usePriceWatchStore((s) => product.id in s.snapshots);
   const trackPrice = usePriceWatchStore((s) => s.track);
   const dismissPrice = usePriceWatchStore((s) => s.dismiss);
+  const openShortlist = useUIStore((s) => s.setShortlistOpen);
   const buyHref = affiliateUrl({ store: product.store, url: product.buyUrl });
   const { guard } = useCheckoutGuide();
 
@@ -70,13 +72,22 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
   const toggle = React.useCallback(() => {
     const added = toggleRaw(product);
     haptic('tap');
-    toast.success(
-      added ? t('toast.shortlistAdded') : t('toast.shortlistRemoved'),
-      product.name,
-    );
-    if (added) void pushShortlistItem(product);
-    else void deleteShortlistItem(product.id);
-  }, [toggleRaw, t, product]);
+    if (added) {
+      // Adds get a "열기" action so the user can review the shortlist
+      // immediately without hunting for the header bookmark icon.
+      toast.success(t('toast.shortlistAdded'), {
+        description: product.name,
+        action: {
+          label: t('toast.shortlistOpen'),
+          onClick: () => openShortlist(true),
+        },
+      });
+      void pushShortlistItem(product);
+    } else {
+      toast.success(t('toast.shortlistRemoved'), product.name);
+      void deleteShortlistItem(product.id);
+    }
+  }, [toggleRaw, t, product, openShortlist]);
 
   const toggleWatch = React.useCallback(() => {
     haptic('tap');

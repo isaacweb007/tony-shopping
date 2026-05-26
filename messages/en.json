@@ -744,6 +744,7 @@
   "toast": {
     "shortlistAdded": "Added to compare",
     "shortlistRemoved": "Removed from compare",
+    "shortlistOpen": "Open",
     "linkCopied": "Link copied",
     "shareFailed": "Couldn't share",
     "searchFailed": "Search failed",

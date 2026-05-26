@@ -5,6 +5,11 @@ import { nanoid } from 'nanoid';
 
 export type ToastVariant = 'info' | 'success' | 'error' | 'warning';
 
+export interface ToastAction {
+  label: string;
+  onClick: () => void;
+}
+
 export interface ToastItem {
   id: string;
   title: string;
@@ -12,6 +17,8 @@ export interface ToastItem {
   variant: ToastVariant;
   /** ms before auto-dismiss. 0 = persistent. */
   durationMs: number;
+  /** Optional inline CTA — rendered as a pill button on the toast. */
+  action?: ToastAction;
 }
 
 interface ToastState {
@@ -32,19 +39,65 @@ export const useToastStore = create<ToastState>((set) => ({
   clear: () => set({ items: [] }),
 }));
 
+interface ToastOptions {
+  description?: string;
+  durationMs?: number;
+  action?: ToastAction;
+}
+
+/**
+ * Resolve the (description?, durationMs?, action?) overload into the canonical
+ * options shape. Keeps the existing positional call-sites working
+ * (toast.success("title")) while letting new call-sites pass an
+ * options object: toast.success("title", { action: {…} }).
+ */
+function resolveOpts(arg2: string | ToastOptions | undefined, arg3?: number): ToastOptions {
+  if (arg2 == null) return {};
+  if (typeof arg2 === 'string') return { description: arg2, durationMs: arg3 };
+  return arg2;
+}
+
 /** Convenience API — usable from anywhere, including non-React code. */
 export const toast = {
-  info(title: string, description?: string, durationMs = 4000) {
-    return useToastStore.getState().push({ title, description, variant: 'info', durationMs });
+  info(title: string, arg2?: string | ToastOptions, arg3?: number) {
+    const o = resolveOpts(arg2, arg3);
+    return useToastStore.getState().push({
+      title,
+      description: o.description,
+      action: o.action,
+      variant: 'info',
+      durationMs: o.durationMs ?? 4000,
+    });
   },
-  success(title: string, description?: string, durationMs = 3000) {
-    return useToastStore.getState().push({ title, description, variant: 'success', durationMs });
+  success(title: string, arg2?: string | ToastOptions, arg3?: number) {
+    const o = resolveOpts(arg2, arg3);
+    return useToastStore.getState().push({
+      title,
+      description: o.description,
+      action: o.action,
+      variant: 'success',
+      durationMs: o.durationMs ?? 3000,
+    });
   },
-  warning(title: string, description?: string, durationMs = 5000) {
-    return useToastStore.getState().push({ title, description, variant: 'warning', durationMs });
+  warning(title: string, arg2?: string | ToastOptions, arg3?: number) {
+    const o = resolveOpts(arg2, arg3);
+    return useToastStore.getState().push({
+      title,
+      description: o.description,
+      action: o.action,
+      variant: 'warning',
+      durationMs: o.durationMs ?? 5000,
+    });
   },
-  error(title: string, description?: string, durationMs = 6000) {
-    return useToastStore.getState().push({ title, description, variant: 'error', durationMs });
+  error(title: string, arg2?: string | ToastOptions, arg3?: number) {
+    const o = resolveOpts(arg2, arg3);
+    return useToastStore.getState().push({
+      title,
+      description: o.description,
+      action: o.action,
+      variant: 'error',
+      durationMs: o.durationMs ?? 6000,
+    });
   },
   dismiss(id: string) {
     useToastStore.getState().dismiss(id);

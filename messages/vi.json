@@ -744,6 +744,7 @@
   "toast": {
     "shortlistAdded": "Đã thêm vào so sánh",
     "shortlistRemoved": "Đã xoá khỏi so sánh",
+    "shortlistOpen": "Mở",
     "linkCopied": "Đã sao chép liên kết",
     "shareFailed": "Không thể chia sẻ",
     "searchFailed": "Tìm kiếm thất bại",

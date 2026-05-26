@@ -561,10 +561,10 @@ function CompareTable({
 
   return (
     <div className="mt-6 overflow-x-auto rounded-2xl border border-ink-200 bg-white dark:border-ink-800 dark:bg-ink-900">
-      <table className="w-full min-w-[640px] border-collapse text-sm">
+      <table className="w-full min-w-[640px] border-collapse text-sm [&_tbody_tr:hover_td]:bg-ink-50/40 dark:[&_tbody_tr:hover_td]:bg-ink-800/30">
         <thead>
           <tr className="border-b border-ink-200 dark:border-ink-800">
-            <th className="sticky left-0 z-10 w-32 bg-white p-3 text-left text-[11px] font-bold uppercase tracking-widest text-ink-500 dark:bg-ink-900 dark:text-ink-400">
+            <th className="sticky left-0 z-20 w-32 bg-white p-3 text-left text-[11px] font-bold uppercase tracking-widest text-ink-500 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.06)] dark:bg-ink-900 dark:text-ink-400 dark:shadow-[2px_0_4px_-2px_rgba(0,0,0,0.4)]">
               {t('product')}
             </th>
             {snaps.map((s) => (
@@ -606,8 +606,8 @@ function CompareTable({
         </thead>
         <tbody>
           {compare.criteria.map((c) => (
-            <tr key={c.key} className="border-b border-ink-100 dark:border-ink-800/60">
-              <td className="sticky left-0 z-10 bg-white p-3 align-top text-[11.5px] font-semibold text-ink-600 dark:bg-ink-900 dark:text-ink-300">
+            <tr key={c.key} className="border-b border-ink-100 transition-colors dark:border-ink-800/60">
+              <td className="sticky left-0 z-10 bg-white p-3 align-top text-[11.5px] font-semibold text-ink-600 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.06)] dark:bg-ink-900 dark:text-ink-300 dark:shadow-[2px_0_4px_-2px_rgba(0,0,0,0.4)]">
                 {t(`criteria.${c.key}` as 'criteria.price')}
               </td>
               {snaps.map((s) => {

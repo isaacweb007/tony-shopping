@@ -16,9 +16,17 @@ const ADAPTER_TIMEOUT_MS = 1500;
 
 export async function runServerSearch(
   query: SearchQuery,
-  opts: { signal?: AbortSignal; locale?: 'ko' | 'en' | 'vi' } = {},
+  opts: { signal?: AbortSignal; locale?: 'ko' | 'en' | 'vi'; only?: string } = {},
 ): Promise<SearchResult> {
-  const adapters = getEnabledAdapters();
+  const all = getEnabledAdapters();
+  // `only` lets the /setup probe button drive a single adapter through the
+  // runner so stats get stamped. Case-insensitive compare against the
+  // adapter's id (StoreId). Falls back to the full set on no-match so a
+  // typo doesn't return an empty search.
+  const filtered = opts.only
+    ? all.filter((a) => a.id.toLowerCase() === opts.only!.toLowerCase())
+    : all;
+  const adapters = filtered.length > 0 ? filtered : all;
   const results = await Promise.allSettled(
     adapters.map(async (a) => {
       const t0 = Date.now();
