@@ -9,6 +9,7 @@ import type { Product, TonyReport, TonyTag } from '@/types/product';
 import type { SearchQuery, SearchResult } from '@/types/search';
 import { getEnabledAdapters } from '@/lib/adapters/registry';
 import { withTimeout } from '@/lib/adapters/base';
+import { recordAdapterCall } from '@/lib/adapter-stats';
 
 const PER_ADAPTER_LIMIT = 4;
 const ADAPTER_TIMEOUT_MS = 1500;
@@ -19,14 +20,32 @@ export async function runServerSearch(
 ): Promise<SearchResult> {
   const adapters = getEnabledAdapters();
   const results = await Promise.allSettled(
-    adapters.map((a) =>
-      a.search({
-        q: query.q,
-        limit: PER_ADAPTER_LIMIT,
-        locale: opts.locale,
-        signal: withTimeout(opts.signal, ADAPTER_TIMEOUT_MS),
-      }),
-    ),
+    adapters.map(async (a) => {
+      const t0 = Date.now();
+      try {
+        const products = await a.search({
+          q: query.q,
+          limit: PER_ADAPTER_LIMIT,
+          locale: opts.locale,
+          signal: withTimeout(opts.signal, ADAPTER_TIMEOUT_MS),
+        });
+        recordAdapterCall(a.id, {
+          lastAt: Date.now(),
+          lastDurationMs: Date.now() - t0,
+          lastOk: true,
+          lastResultCount: products.length,
+        });
+        return products;
+      } catch (err) {
+        recordAdapterCall(a.id, {
+          lastAt: Date.now(),
+          lastDurationMs: Date.now() - t0,
+          lastOk: false,
+          lastResultCount: 0,
+        });
+        throw err;
+      }
+    }),
   );
 
   const products: Product[] = results

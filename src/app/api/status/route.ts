@@ -7,6 +7,7 @@
  */
 import { NextResponse } from 'next/server';
 import { getAdapterStatuses, getOverallStatus } from '@/lib/adapter-status';
+import { getAdapterStats } from '@/lib/adapter-stats';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -16,9 +17,12 @@ export async function GET() {
     {
       adapters: getAdapterStatuses(),
       overall: getOverallStatus(),
+      stats: getAdapterStats(),
     },
     {
-      headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=120' },
+      // Stats are per-process and refresh per call; don't cache the response
+      // itself or operators won't see fresh latency after triggering a search.
+      headers: { 'Cache-Control': 'no-store' },
     },
   );
 }

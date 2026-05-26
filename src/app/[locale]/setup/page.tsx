@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { CheckCircle2, ExternalLink, KeyRound, Radio, Settings2 } from 'lucide-react';
 import { ADAPTER_META, getAdapterStatuses, getOverallStatus } from '@/lib/adapter-status';
+import { getAdapterStats } from '@/lib/adapter-stats';
 
 export async function generateMetadata({
   params,
@@ -24,7 +25,23 @@ export default async function SetupPage({
 
   const statuses = getAdapterStatuses();
   const overall = getOverallStatus();
+  const stats = getAdapterStats();
   const live = statuses.filter((s) => s.real).length;
+
+  // adapter.name (lowercase enum) → StoreId used in the runner's recordAdapterCall key
+  const NAME_TO_STORE: Record<string, string> = {
+    naver: 'NaverShopping',
+    ebay: 'eBay',
+    serpapi: 'GoogleShopping',
+    amazon: 'Amazon',
+    coupang: 'Coupang',
+    shopee: 'Shopee',
+    lazada: 'Lazada',
+    rakuten: 'Rakuten',
+    yahoojp: 'YahooJP',
+    aliexpress: 'AliExpress',
+  };
+  const now = Date.now();
 
   return (
     <div className="container max-w-4xl pb-32 pt-10 md:pt-16">
@@ -102,6 +119,36 @@ export default async function SetupPage({
                 <StatusPill real={s.real} t={t} />
               </div>
               <p className="mt-2 text-[13px] text-ink-600 dark:text-ink-300">{meta.blurb}</p>
+
+              {(() => {
+                const storeKey = NAME_TO_STORE[s.name];
+                const stat = storeKey ? stats[storeKey] : null;
+                if (!stat) return null;
+                const ageSec = Math.max(0, Math.floor((now - stat.lastAt) / 1000));
+                const ageLabel =
+                  ageSec < 60
+                    ? `${ageSec}s ago`
+                    : ageSec < 3600
+                      ? `${Math.floor(ageSec / 60)}m ago`
+                      : `${Math.floor(ageSec / 3600)}h ago`;
+                return (
+                  <div
+                    className={
+                      'mt-2 inline-flex flex-wrap items-center gap-1.5 rounded-md border px-2 py-1 text-[10.5px] font-semibold ' +
+                      (stat.lastOk
+                        ? 'border-emerald-200 bg-emerald-50/60 text-emerald-700 dark:border-emerald-800/60 dark:bg-emerald-950/30 dark:text-emerald-300'
+                        : 'border-red-200 bg-red-50/60 text-red-700 dark:border-red-800/60 dark:bg-red-950/30 dark:text-red-300')
+                    }
+                    title={`${stat.lastResultCount} results · ${ageLabel}`}
+                  >
+                    <span className="font-mono">{stat.lastDurationMs}ms</span>
+                    <span className="opacity-60">·</span>
+                    <span>{stat.lastResultCount} results</span>
+                    <span className="opacity-60">·</span>
+                    <span>{ageLabel}</span>
+                  </div>
+                );
+              })()}
 
               <div className="mt-3 flex flex-wrap items-center gap-1.5">
                 {meta.envVars.map((env) => (
