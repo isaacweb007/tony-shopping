@@ -474,6 +474,9 @@
     "localeHint": {
       "label": "{lang}로 작성된 비교예요"
     },
+    "similar": {
+      "eyebrow": "{store} 관련 다른 비교"
+    },
     "clone": {
       "button": "내 비교함에 복사",
       "added": "{n}개를 내 비교함에 담았어요",
@@ -673,6 +676,7 @@
     "noResultsTitle": "검색 결과가 없어요",
     "noResultsDesc": "다른 단어로 다시 시도해보거나 사진/링크를 첨부해보세요.",
     "noResultsRecent": "이전에 검색해본 단어",
+    "storesCount": "{n}개 매장",
     "noResultsCta": "새 검색"
   },
   "sort": {

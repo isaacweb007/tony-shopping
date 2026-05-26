@@ -51,6 +51,32 @@ export default function manifest(): MetadataRoute.Manifest {
       method: 'get',
       params: { title: 'title', text: 'text', url: 'url' },
     },
+    // Right-click / long-press the installed PWA icon to jump straight
+    // into the most common surfaces. Most modern Chromium-based desktops
+    // and Android surface these as a jumplist.
+    shortcuts: [
+      {
+        name: 'Search',
+        short_name: 'Search',
+        description: 'Start a new search',
+        url: '/?focus=ask',
+        icons: [{ src: '/icon.svg', sizes: 'any', type: 'image/svg+xml' }],
+      },
+      {
+        name: 'Compare',
+        short_name: 'Compare',
+        description: 'Open my compare cohort',
+        url: '/compare',
+        icons: [{ src: '/icon.svg', sizes: 'any', type: 'image/svg+xml' }],
+      },
+      {
+        name: 'Alerts',
+        short_name: 'Alerts',
+        description: 'See price drops',
+        url: '/alerts',
+        icons: [{ src: '/icon.svg', sizes: 'any', type: 'image/svg+xml' }],
+      },
+    ],
   };
   return m as MetadataRoute.Manifest;
 }

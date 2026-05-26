@@ -232,6 +232,15 @@ export function SearchView() {
           {t('back')}
         </Button>
         <div className="flex items-center gap-2">
+          {(() => {
+            const uniqueStores = Object.keys(storeCounts).length;
+            if (uniqueStores < 2) return null;
+            return (
+              <span className="inline-flex items-center gap-1 rounded-full border border-ink-200 bg-white px-2 py-0.5 text-[10.5px] font-bold tracking-tight text-ink-600 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-300">
+                {t('storesCount', { n: uniqueStores })}
+              </span>
+            );
+          })()}
           <ResultsBadge />
             <ShareButton
             title={tShare('titleSearch')}

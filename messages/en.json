@@ -474,6 +474,9 @@
     "localeHint": {
       "label": "Originally compared in {lang}"
     },
+    "similar": {
+      "eyebrow": "Other {store} compares"
+    },
     "clone": {
       "button": "Copy to my compare",
       "added": "Added {n} item(s) to your compare",
@@ -673,6 +676,7 @@
     "noResultsTitle": "No results yet",
     "noResultsDesc": "Try a different phrase, or attach a photo or link.",
     "noResultsRecent": "Words you've searched before",
+    "storesCount": "{n} stores",
     "noResultsCta": "New search"
   },
   "sort": {

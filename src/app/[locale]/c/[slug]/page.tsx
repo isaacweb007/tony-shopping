@@ -6,6 +6,7 @@ import { CohortReactions } from '@/components/compare/cohort-reactions';
 import { CohortCloneButton } from '@/components/cohort/clone-button';
 import { CohortLocaleHint } from '@/components/cohort/locale-hint';
 import { CohortVisitMarker } from '@/components/cohort/visit-marker';
+import { SimilarCohorts } from '@/components/cohort/similar-cohorts';
 import { SITE_URL } from '@/lib/site';
 import type { ShortlistSnap } from '@/types/shortlist';
 import type { ComparePriority } from '@/lib/compare/verdict';
@@ -98,6 +99,14 @@ export default async function SharedCompare({
         <CohortLocaleHint cohortLocale={cohort.locale} />
         <CohortReactions slug={cohort.slug} />
         <CohortCloneButton snaps={cohort.snaps} slug={cohort.slug} initialClones={cohort.clones} />
+        <SimilarCohorts
+          currentSlug={cohort.slug}
+          winnerStore={
+            cohort.winnerId
+              ? String(cohort.snaps.find((s) => s.id === cohort.winnerId)?.store ?? '') || null
+              : null
+          }
+        />
       </div>
     </>
   );

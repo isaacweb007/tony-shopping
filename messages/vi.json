@@ -474,6 +474,9 @@
     "localeHint": {
       "label": "Bộ so sánh gốc bằng {lang}"
     },
+    "similar": {
+      "eyebrow": "So sánh khác về {store}"
+    },
     "clone": {
       "button": "Sao chép vào so sánh của tôi",
       "added": "Đã thêm {n} mục vào so sánh của bạn",
@@ -673,6 +676,7 @@
     "noResultsTitle": "Chưa có kết quả",
     "noResultsDesc": "Thử cụm từ khác, hoặc đính kèm ảnh / link.",
     "noResultsRecent": "Từ khoá bạn từng tìm",
+    "storesCount": "{n} cửa hàng",
     "noResultsCta": "Tìm mới"
   },
   "sort": {
