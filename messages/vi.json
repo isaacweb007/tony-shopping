@@ -236,6 +236,7 @@
     "open": "Mở",
     "acknowledge": "Đã xem",
     "acknowledgeAria": "Đặt giá hiện tại làm mốc mới",
+    "acknowledgeAll": "Đánh dấu tất cả đã xem",
     "snoozeAria": "Tạm ẩn thông báo này trong 24 giờ",
     "drops24h": "{n} đợt giảm giá trong 24 giờ qua",
     "drops24hZero": "Không có giảm giá trong 24 giờ qua",
@@ -372,6 +373,7 @@
       "live": "LIVE",
       "mock": "MOCK"
     },
+    "sessionCalls": "{n} lượt gọi bộ chuyển phiên này · {ok} thành công · {err} lỗi",
     "probe": {
       "title": "Chạy thử một lần",
       "subtitle": "Gửi một tìm kiếm mẫu để cập nhật độ trễ của các bộ chuyển bên dưới.",
@@ -512,6 +514,8 @@
     "narrativeSpeaking": "Đang phát…",
     "narrativeStop": "Dừng",
     "narrativeRefetch": "Viết lại",
+    "removedTitle": "Đã xoá {name}",
+    "removedUndo": "Hoàn tác",
     "auto": {
       "recommendedAria": "Tony gợi ý",
       "basedOn": "Tony thấy bạn nghiêng về \"{signal}\" trong {n} lựa chọn gần đây.",

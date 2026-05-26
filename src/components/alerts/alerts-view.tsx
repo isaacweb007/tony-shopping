@@ -173,6 +173,27 @@ export function AlertsView() {
         </span>
       </div>
 
+      {/* Bulk "전체 확인" — collapses every observed series to its latest
+          entry in one shot, resetting baselines for the next round. Only
+          surfaces when there are at least 2 rows with a delta, since
+          single-row use just taps the per-row Check button. */}
+      {counts.drop + counts.rise >= 2 && (
+        <div className="mt-4 flex justify-end">
+          <button
+            type="button"
+            onClick={() => {
+              for (const r of rows) {
+                if (r.delta !== null) acknowledgeWatch(r.snap.id);
+              }
+            }}
+            className="inline-flex h-8 items-center gap-1 rounded-lg border border-ink-200 bg-white px-3 text-[11.5px] font-bold tracking-tight text-ink-700 transition hover:border-accent-300 hover:text-accent-700 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200 dark:hover:border-accent-500 dark:hover:text-accent-300"
+          >
+            <Check className="h-3 w-3" strokeWidth={2.4} />
+            {t('acknowledgeAll')}
+          </button>
+        </div>
+      )}
+
       {buyNow && <BuyNowBanner pick={buyNow} locale={locale} t={t} />}
 
       <div className="mt-6 flex flex-wrap items-center gap-1.5" role="tablist" aria-label={t('tabsAria')}>

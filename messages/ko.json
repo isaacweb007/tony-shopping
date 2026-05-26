@@ -236,6 +236,7 @@
     "open": "쇼핑몰",
     "acknowledge": "확인",
     "acknowledgeAria": "현재 가격을 새 기준으로 등록",
+    "acknowledgeAll": "전체 확인",
     "snoozeAria": "24시간 동안 이 알림 잠시 숨기기",
     "drops24h": "최근 24시간 가격 인하 {n}건",
     "drops24hZero": "최근 24시간 가격 인하 없음",
@@ -372,6 +373,7 @@
       "live": "LIVE",
       "mock": "MOCK"
     },
+    "sessionCalls": "이번 세션 어댑터 호출 {n}회 · 성공 {ok} · 실패 {err}",
     "probe": {
       "title": "지금 한 번 핑 테스트",
       "subtitle": "샘플 검색을 1회 돌려서 어댑터 응답 시간을 갱신해요.",
@@ -512,6 +514,8 @@
     "narrativeSpeaking": "재생 중…",
     "narrativeStop": "정지",
     "narrativeRefetch": "다시 쓰기",
+    "removedTitle": "{name} 제거함",
+    "removedUndo": "되돌리기",
     "auto": {
       "recommendedAria": "토니 추천",
       "basedOn": "토니가 최근 {n}번의 선택에서 \"{signal}\"을(를) 자주 고른 걸 보고 골라봤어요.",

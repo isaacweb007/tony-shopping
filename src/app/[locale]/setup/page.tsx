@@ -104,6 +104,27 @@ export default async function SetupPage({
 
       <RunProbeButton />
 
+      {(() => {
+        // Sum history points across all adapters to get a "this session"
+        // adapter-call total. Per-process counter — resets when the Node
+        // worker restarts. okCount tallies successful calls; the rest
+        // failed (timeout, missing key, upstream 500, etc).
+        let total = 0;
+        let okCount = 0;
+        for (const s of Object.values(stats)) {
+          for (const h of s.history ?? []) {
+            total += 1;
+            if (h.ok) okCount += 1;
+          }
+        }
+        if (total === 0) return null;
+        return (
+          <p className="mt-3 text-[11.5px] text-ink-500 dark:text-ink-400">
+            {t('sessionCalls', { n: total, ok: okCount, err: total - okCount })}
+          </p>
+        );
+      })()}
+
       <h2 className="mt-10 text-[20px] font-extrabold tracking-tighter2">{t('adapters.title')}</h2>
       <p className="mt-1 text-[13px] text-ink-500 dark:text-ink-400">{t('adapters.subtitle')}</p>
 

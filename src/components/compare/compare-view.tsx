@@ -10,6 +10,7 @@ import { useShortlistStore } from '@/stores/shortlist-store';
 import { useMySharesStore } from '@/stores/my-shares-store';
 import { useComparePrefsStore } from '@/stores/compare-prefs-store';
 import { useSpeechSynthesis } from '@/hooks/use-speech-synthesis';
+import { toast } from '@/stores/toast-store';
 import { deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { buildCompare, type ComparePriority } from '@/lib/compare/verdict';
 import { formatMoneyLocale, formatCount, shipLabel } from '@/lib/format';
@@ -45,6 +46,7 @@ export function CompareView({ seedSnaps, initialPriority, readOnly }: Props = {}
 
   const items = useShortlistStore((s) => s.items);
   const remove = useShortlistStore((s) => s.remove);
+  const addSnap = useShortlistStore((s) => s.add);
   const addShare = useMySharesStore((s) => s.add);
 
   const [mounted, setMounted] = React.useState(false);
@@ -264,8 +266,23 @@ export function CompareView({ seedSnaps, initialPriority, readOnly }: Props = {}
           readOnly
             ? null
             : (id) => {
+                // Snapshot before removing so undo can re-add with the
+                // original addedAt and any user note intact.
+                const snap = items[id];
                 remove(id);
                 void deleteShortlistItem(id);
+                if (snap) {
+                  toast.info(t('removedTitle', { name: snap.name.slice(0, 40) }), {
+                    action: {
+                      label: t('removedUndo'),
+                      // Local-only restore — Supabase sync was hit on
+                      // remove. The next server pull will reconcile, and
+                      // the user has time-bounded affordance to re-add
+                      // their snap with note + addedAt intact.
+                      onClick: () => addSnap(snap),
+                    },
+                  });
+                }
               }
         }
       />

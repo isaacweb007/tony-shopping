@@ -236,6 +236,7 @@
     "open": "Open",
     "acknowledge": "Mark seen",
     "acknowledgeAria": "Mark current price as the new baseline",
+    "acknowledgeAll": "Mark all seen",
     "snoozeAria": "Snooze this alert for 24 hours",
     "drops24h": "{n} price drop(s) in the last 24 h",
     "drops24hZero": "No price drops in the last 24 h",
@@ -372,6 +373,7 @@
       "live": "LIVE",
       "mock": "MOCK"
     },
+    "sessionCalls": "{n} adapter call(s) this session · {ok} ok · {err} errored",
     "probe": {
       "title": "Run a one-off probe",
       "subtitle": "Fires a sample search so adapter latency / counts refresh below.",
@@ -512,6 +514,8 @@
     "narrativeSpeaking": "Playing…",
     "narrativeStop": "Stop",
     "narrativeRefetch": "Rewrite",
+    "removedTitle": "Removed {name}",
+    "removedUndo": "Undo",
     "auto": {
       "recommendedAria": "Tony's pick",
       "basedOn": "Tony noticed you've leaned toward \"{signal}\" across your last {n} picks.",
