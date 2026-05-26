@@ -260,6 +260,7 @@
     "menu": "Bảng điều khiển",
     "trend": {
       "eyebrow": "Danh mục nổi bật tuần này",
+      "wowNew": "MỚI",
       "title": "{n} tín hiệu hướng đến {cat}.",
       "runnerUp": "Á quân: {cat}.",
       "categoryNames": {
@@ -608,6 +609,7 @@
     },
     "noResultsTitle": "Chưa có kết quả",
     "noResultsDesc": "Thử cụm từ khác, hoặc đính kèm ảnh / link.",
+    "noResultsRecent": "Từ khoá bạn từng tìm",
     "noResultsCta": "Tìm mới"
   },
   "sort": {

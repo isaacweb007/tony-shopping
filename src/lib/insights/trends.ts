@@ -18,6 +18,8 @@ export interface CategoryTrend {
   runnerUp: Category | null;
   /** Total signal hits considered (history + clicks). */
   sample: number;
+  /** Hits the same category got in the *prior* 7 days, for WoW comparison. */
+  prevCount: number;
 }
 
 interface BuildArgs {
@@ -35,21 +37,30 @@ export function buildCategoryTrend({
   now = Date.now(),
 }: BuildArgs): CategoryTrend | null {
   const since = now - WEEK_MS;
+  const sincePrev = now - 2 * WEEK_MS;
   const hits = new Map<Category, number>();
+  const hitsPrev = new Map<Category, number>();
   let total = 0;
 
-  for (const h of history) {
-    if (h.createdAt < since) continue;
-    for (const c of categorize(h.q)) {
-      hits.set(c, (hits.get(c) ?? 0) + 1);
-      total += 1;
-    }
-  }
-  for (const c of clicks) {
-    if (c.at < since) continue;
-    for (const cat of categorize(c.q)) {
-      hits.set(cat, (hits.get(cat) ?? 0) + 1);
-      total += 1;
+  // History and clicks share the same shape after we normalise — bucket by
+  // age (this week vs. previous week) so we can compute WoW deltas without
+  // a second pass.
+  const stream: Array<{ q: string; at: number }> = [
+    ...history.map((h) => ({ q: h.q, at: h.createdAt })),
+    ...clicks.map((c) => ({ q: c.q, at: c.at })),
+  ];
+  for (const item of stream) {
+    if (item.at < sincePrev) continue;
+    const cats = categorize(item.q);
+    if (item.at >= since) {
+      for (const c of cats) {
+        hits.set(c, (hits.get(c) ?? 0) + 1);
+        total += 1;
+      }
+    } else {
+      for (const c of cats) {
+        hitsPrev.set(c, (hitsPrev.get(c) ?? 0) + 1);
+      }
     }
   }
 
@@ -68,5 +79,6 @@ export function buildCategoryTrend({
     count: top[1],
     runnerUp: runner ? runner[0] : null,
     sample: total,
+    prevCount: hitsPrev.get(top[0]) ?? 0,
   };
 }

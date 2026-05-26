@@ -3,11 +3,12 @@
 import * as React from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { ChevronLeft, AlertCircle } from 'lucide-react';
-import { useRouter } from '@/i18n/routing';
+import { ChevronLeft, AlertCircle, Search } from 'lucide-react';
+import { Link, useRouter } from '@/i18n/routing';
 import { Button } from '@/components/ui/button';
 import { ShareButton } from '@/components/ui/share-button';
 import { useSearchStore } from '@/stores/search-store';
+import { useHistoryStore } from '@/stores/history-store';
 import { useSearch } from '@/hooks/use-search';
 import { ReportCard } from './report-card';
 import { VerdictCard } from './verdict-card';
@@ -163,19 +164,7 @@ export function SearchView() {
   }
 
   if (result.products.length === 0) {
-    return (
-      <div className="container max-w-2xl py-20 text-center">
-        <h1 className="text-2xl font-extrabold tracking-tighter2 md:text-3xl">
-          {t('noResultsTitle')}
-        </h1>
-        <p className="mx-auto mt-3 max-w-md text-ink-500 dark:text-ink-400">
-          {t('noResultsDesc')}
-        </p>
-        <Button variant="primary" className="mt-6" onClick={() => router.push('/')}>
-          {t('noResultsCta')}
-        </Button>
-      </div>
-    );
+    return <NoResultsView q={q} t={t} onHome={() => router.push('/')} />;
   }
 
   const top3: Product[] = pickTop3(result.products);
@@ -363,5 +352,64 @@ function pickTop3(arr: Product[]): Product[] {
     .filter((p) => p.id !== best.id && p.id !== cheap.id)
     .sort((a, b) => a.shipDays - b.shipDays)[0];
   return fast ? [best, cheap, fast] : [best, cheap];
+}
+
+/**
+ * Empty-state for "the search ran cleanly but matched zero products".
+ * The original CTA shipped users back to /. Now we also surface their
+ * own recent queries (skipping the current one) as one-tap chips so
+ * the dead end becomes a soft pivot. Hidden when no relevant history.
+ */
+function NoResultsView({
+  q,
+  t,
+  onHome,
+}: {
+  q: string;
+  t: ReturnType<typeof useTranslations<'search'>>;
+  onHome: () => void;
+}) {
+  const entries = useHistoryStore((s) => s.entries);
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
+  const suggestions = React.useMemo(() => {
+    if (!mounted) return [];
+    return entries.filter((e) => e.q.trim().length > 0 && e.q !== q).slice(0, 4);
+  }, [mounted, entries, q]);
+
+  return (
+    <div className="container max-w-2xl py-20 text-center">
+      <h1 className="text-2xl font-extrabold tracking-tighter2 md:text-3xl">
+        {t('noResultsTitle')}
+      </h1>
+      <p className="mx-auto mt-3 max-w-md text-ink-500 dark:text-ink-400">
+        {t('noResultsDesc')}
+      </p>
+      <Button variant="primary" className="mt-6" onClick={onHome}>
+        {t('noResultsCta')}
+      </Button>
+
+      {suggestions.length > 0 && (
+        <div className="mx-auto mt-8 max-w-md">
+          <div className="flex items-center justify-center gap-1 text-[10.5px] font-bold uppercase tracking-widest text-ink-400 dark:text-ink-500">
+            <Search className="h-3 w-3" strokeWidth={2.4} />
+            {t('noResultsRecent')}
+          </div>
+          <div className="mt-2 flex flex-wrap justify-center gap-1.5">
+            {suggestions.map((e) => (
+              <Link
+                key={e.id}
+                href={`/search?q=${encodeURIComponent(e.q)}`}
+                className="inline-flex max-w-[12rem] items-center rounded-full border border-ink-200 bg-white px-2.5 py-1 text-[12px] font-semibold tracking-tight text-ink-700 transition hover:border-accent-300 hover:text-accent-700 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200 dark:hover:border-accent-500 dark:hover:text-accent-300"
+              >
+                <span className="truncate">{e.q}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 

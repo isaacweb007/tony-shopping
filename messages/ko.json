@@ -260,6 +260,7 @@
     "menu": "내 대시보드",
     "trend": {
       "eyebrow": "이번 주 카테고리",
+      "wowNew": "NEW",
       "title": "{cat}에 {n}번 관심을 두셨네요.",
       "runnerUp": "그 다음은 {cat}이에요.",
       "categoryNames": {
@@ -608,6 +609,7 @@
     },
     "noResultsTitle": "검색 결과가 없어요",
     "noResultsDesc": "다른 단어로 다시 시도해보거나 사진/링크를 첨부해보세요.",
+    "noResultsRecent": "이전에 검색해본 단어",
     "noResultsCta": "새 검색"
   },
   "sort": {

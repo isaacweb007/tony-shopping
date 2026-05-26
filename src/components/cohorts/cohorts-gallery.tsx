@@ -2,9 +2,10 @@
 
 import * as React from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { Sparkles, ThumbsDown, ThumbsUp, Loader2 } from 'lucide-react';
-import { Link } from '@/i18n/routing';
+import { Link, useRouter, usePathname } from '@/i18n/routing';
 import type { AppLocale } from '@/i18n/routing';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -13,6 +14,11 @@ import { useGridKeyboardNav } from '@/hooks/use-grid-keyboard-nav';
 
 type PriorityFilter = 'all' | 'balanced' | 'value' | 'fast' | 'genuine';
 const FILTERS: readonly PriorityFilter[] = ['all', 'balanced', 'value', 'fast', 'genuine'];
+
+function parsePriority(raw: string | null): PriorityFilter {
+  if (!raw) return 'all';
+  return (FILTERS as readonly string[]).includes(raw) ? (raw as PriorityFilter) : 'all';
+}
 
 interface Item {
   slug: string;
@@ -51,7 +57,24 @@ export function CohortsGallery() {
   const tp = useTranslations('compare.priority');
   const locale = useLocale() as AppLocale;
 
-  const [filter, setFilter] = React.useState<PriorityFilter>('all');
+  // Filter lives in the URL so users can deep-link a filtered view
+  // ("here's all the 'fast shipping' cohorts"). Reads on mount, writes
+  // via router.replace so the chip click doesn't push history entries.
+  const params = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const filter = parsePriority(params.get('priority'));
+
+  const setFilter = React.useCallback(
+    (next: PriorityFilter) => {
+      const u = new URLSearchParams(params.toString());
+      if (next === 'all') u.delete('priority');
+      else u.set('priority', next);
+      const qs = u.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    },
+    [params, router, pathname],
+  );
 
   const query = useInfiniteQuery({
     queryKey: ['cohorts-gallery', filter],

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useTranslations } from 'next-intl';
-import { TrendingUp } from 'lucide-react';
+import { TrendingDown, TrendingUp, Minus } from 'lucide-react';
 import { useClickStore } from '@/stores/click-store';
 import { useHistoryStore } from '@/stores/history-store';
 import { buildCategoryTrend } from '@/lib/insights/trends';
@@ -30,6 +30,11 @@ export function CategoryTrendCard() {
 
   if (!trend) return null;
 
+  // Direction: +ve, -ve, or first week (no prior). Three states, three icons.
+  const delta = trend.count - trend.prevCount;
+  const direction: 'up' | 'down' | 'flat' | 'new' =
+    trend.prevCount === 0 ? 'new' : delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat';
+
   return (
     <section
       className="mt-4 flex items-start gap-3 rounded-2xl border border-sky-200/60 bg-sky-50/40 px-4 py-3 dark:border-sky-800/40 dark:bg-sky-950/20"
@@ -39,8 +44,9 @@ export function CategoryTrendCard() {
         <TrendingUp className="h-4 w-4" strokeWidth={2.2} />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="text-[11px] font-bold uppercase tracking-widest text-sky-700 dark:text-sky-300">
-          {t('eyebrow')}
+        <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-sky-700 dark:text-sky-300">
+          <span>{t('eyebrow')}</span>
+          <WowPill direction={direction} delta={delta} t={t} />
         </div>
         <h2 id="trend-heading" className="mt-0.5 text-[16px] font-extrabold tracking-tight md:text-[18px]">
           {t('title', {
@@ -57,5 +63,40 @@ export function CategoryTrendCard() {
         ) : null}
       </div>
     </section>
+  );
+}
+
+function WowPill({
+  direction,
+  delta,
+  t,
+}: {
+  direction: 'up' | 'down' | 'flat' | 'new';
+  delta: number;
+  t: ReturnType<typeof useTranslations<'dashboard.trend'>>;
+}) {
+  if (direction === 'new') {
+    // First-week signal — show a neutral "NEW" so the user isn't confused
+    // by a missing direction indicator on a category they just started
+    // exploring.
+    return (
+      <span className="inline-flex items-center gap-0.5 rounded bg-ink-100 px-1.5 py-0.5 text-[9.5px] font-bold tracking-widest text-ink-600 dark:bg-ink-800 dark:text-ink-300">
+        {t('wowNew')}
+      </span>
+    );
+  }
+  const Icon = direction === 'up' ? TrendingUp : direction === 'down' ? TrendingDown : Minus;
+  const cls =
+    direction === 'up'
+      ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
+      : direction === 'down'
+        ? 'bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-300'
+        : 'bg-ink-100 text-ink-600 dark:bg-ink-800 dark:text-ink-300';
+  const sign = delta > 0 ? '+' : '';
+  return (
+    <span className={`inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[9.5px] font-bold tabular-nums ${cls}`}>
+      <Icon className="h-2.5 w-2.5" strokeWidth={2.6} />
+      {sign}{delta}
+    </span>
   );
 }
