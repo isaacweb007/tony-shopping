@@ -128,6 +128,14 @@
     "support6": "Cài đặt bộ chuyển đổi",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "quickFab": {
+    "open": "Mở menu tìm nhanh",
+    "close": "Đóng menu",
+    "photo": "Ảnh",
+    "link": "Liên kết",
+    "search": "Tìm kiếm",
+    "linkPrompt": "Dán liên kết mạng xã hội hoặc cửa hàng"
+  },
   "keyboard": {
     "title": "Phím tắt",
     "subtitle": "Di chuyển nhanh hơn trong Tony.",

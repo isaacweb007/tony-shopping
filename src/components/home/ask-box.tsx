@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { ImageIcon, Link2, AlignLeft, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -40,6 +41,61 @@ export function AskBox() {
       if (textareaRef.current) autoGrow(textareaRef.current);
     }
   }, [speech.listening, speech.transcript]);
+
+  // Mobile quick-search FAB handoff (round-h40) — pick up either:
+  //   * sessionStorage("tony.quickfab.image") with a JSON {name, dataUrl},
+  //     drop it into attachments + trigger the extract pipeline
+  //   * ?focus=ask, autofocus the textarea so the user can type right away
+  const searchParams = useSearchParams();
+  const focusParam = searchParams?.get('focus');
+  React.useEffect(() => {
+    if (focusParam === 'ask') {
+      requestAnimationFrame(() => textareaRef.current?.focus());
+    }
+    try {
+      const raw = sessionStorage.getItem('tony.quickfab.image');
+      if (!raw) return;
+      sessionStorage.removeItem('tony.quickfab.image');
+      const parsed = JSON.parse(raw) as { name: string; dataUrl: string };
+      if (!parsed?.dataUrl?.startsWith('data:image/')) return;
+      setAttachments((prev) => [
+        ...prev,
+        { id: nanoid(6), type: 'image', value: parsed.dataUrl, label: parsed.name ?? 'image' },
+      ]);
+      // Fire the same extract pipeline the upload button uses.
+      void (async () => {
+        setExtracting(true);
+        try {
+          const res = await fetch('/api/extract', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageDataUrl: parsed.dataUrl, filename: parsed.name }),
+          });
+          if (res.ok) {
+            const data = (await res.json()) as ExtractResult & { source: ExtractResult['source'] };
+            if (data.suggestedQuery) {
+              setExtractResult({
+                suggestedQuery: data.suggestedQuery,
+                source: data.source ?? 'fallback',
+                hint: data.hint,
+                tags: data.tags,
+                image: data.image,
+              });
+              setText(data.suggestedQuery);
+            }
+          }
+        } catch {
+          /* silent */
+        } finally {
+          setExtracting(false);
+        }
+      })();
+    } catch {
+      /* parse failure — drop silently */
+    }
+    // Run once on mount; subsequent re-fires would re-process stale storage.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // When the user stops speaking and we have a final transcript, auto-submit.
   const lastSubmittedRef = React.useRef('');

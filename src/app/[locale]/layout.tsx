@@ -13,6 +13,7 @@ import { ChatPanel } from '@/components/chat/chat-panel';
 import { CheckoutGuideModal } from '@/components/checkout/checkout-guide-modal';
 import { KeyboardHelp } from '@/components/site/keyboard-help';
 import { SwRegister } from '@/components/providers/sw-register';
+import { QuickSearchFab } from '@/components/site/quick-search-fab';
 import { JsonLd } from '@/components/site/json-ld';
 import { ToastViewport } from '@/components/ui/toast-viewport';
 import { FxPreloader } from '@/components/providers/fx-preloader';
@@ -131,6 +132,7 @@ export default async function LocaleLayout({
               <CheckoutGuideModal />
               <KeyboardHelp />
               <SwRegister />
+              <QuickSearchFab />
               <ToastViewport />
               <FxPreloader />
               <AuthBridge />

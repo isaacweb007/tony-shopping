@@ -128,6 +128,14 @@
     "support6": "어댑터 설정",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
+  "quickFab": {
+    "open": "빠른 검색 메뉴 열기",
+    "close": "메뉴 닫기",
+    "photo": "사진",
+    "link": "링크",
+    "search": "검색",
+    "linkPrompt": "SNS·쇼핑몰 링크를 붙여넣으세요"
+  },
   "keyboard": {
     "title": "키보드 단축키",
     "subtitle": "토니에서 더 빠르게 움직이는 방법.",
