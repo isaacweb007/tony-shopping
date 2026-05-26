@@ -584,7 +584,8 @@
       "cheaper": "Find cheaper",
       "genuine": "Only authentic",
       "fast": "Fastest shipping",
-      "review": "Most reviews"
+      "review": "Most reviews",
+      "summary": "Summarise these"
     },
     "intent": {
       "cheap": "Sorted by lowest final price. Starting from {min} incl. shipping.",
@@ -592,6 +593,7 @@
       "authentic": "Showing items with the highest authenticity score first.",
       "review": "Sorted by most reviews. The top item has {n} reviews.",
       "vn": "Filtered to items available in Vietnam — Shopee and Lazada dominate.",
+      "summary": "{n} results right now: {min} to {max}, average {avg}. {store} leads with {storeN} listings.",
       "fallback": "Could you be more specific? e.g., \"under $80 in black\", \"fast shipping in Korea\", \"most reviews\"."
     }
   },

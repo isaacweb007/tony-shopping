@@ -131,6 +131,20 @@ export function ChatPanel() {
       setStore(intent.store);
       return t('intent.vn');
     }
+    if (intent.kind === 'summary') {
+      const v = intent.vars;
+      const min = formatMoney({ amount: v.minPrice, currency: v.currency as Money['currency'] }, locale);
+      const max = formatMoney({ amount: v.maxPrice, currency: v.currency as Money['currency'] }, locale);
+      const avg = formatMoney({ amount: v.avgPrice, currency: v.currency as Money['currency'] }, locale);
+      return t('intent.summary', {
+        n: v.n,
+        min,
+        max,
+        avg,
+        store: v.topStore,
+        storeN: v.topStoreCount,
+      });
+    }
     return t('intent.fallback');
   }
 
@@ -212,6 +226,7 @@ export function ChatPanel() {
           <QuickChip onClick={() => send(t('quick.genuine'))}>{t('quick.genuine')}</QuickChip>
           <QuickChip onClick={() => send(t('quick.fast'))}>{t('quick.fast')}</QuickChip>
           <QuickChip onClick={() => send(t('quick.review'))}>{t('quick.review')}</QuickChip>
+          <QuickChip onClick={() => send(t('quick.summary'))}>{t('quick.summary')}</QuickChip>
         </div>
 
         <form

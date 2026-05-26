@@ -584,7 +584,8 @@
       "cheaper": "Rẻ hơn nữa",
       "genuine": "Chỉ chính hãng",
       "fast": "Giao nhanh nhất",
-      "review": "Nhiều đánh giá nhất"
+      "review": "Nhiều đánh giá nhất",
+      "summary": "Tóm tắt giúp mình"
     },
     "intent": {
       "cheap": "Đã sắp theo giá thấp nhất, từ {min} gồm phí ship.",
@@ -592,6 +593,7 @@
       "authentic": "Ưu tiên các sản phẩm chính hãng nhất.",
       "review": "Đã sắp theo nhiều đánh giá nhất. Sản phẩm cao nhất có {n} đánh giá.",
       "vn": "Đã lọc sản phẩm mua được tại Việt Nam — chủ yếu Shopee, Lazada.",
+      "summary": "{n} kết quả hiện tại: {min}–{max}, trung bình {avg}. {store} dẫn đầu với {storeN} mục.",
       "fallback": "Bạn nói cụ thể hơn nhé. Vd: \"dưới 2 triệu màu đen\", \"giao nhanh ở Hàn\", \"nhiều đánh giá nhất\"."
     }
   },
