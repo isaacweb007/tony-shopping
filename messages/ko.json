@@ -497,6 +497,17 @@
     "emptyAction": "필터 초기화",
     "loadMore": "{n}개 더 보기",
     "loadMoreHint": "{shown}개 / {total}개",
+    "categories": {
+      "label": "카테고리",
+      "aria": "카테고리 필터",
+      "all": "전체 {n}",
+      "names": {
+        "shoes": "신발", "bag": "가방", "lighting": "조명", "clothes": "옷",
+        "beauty": "화장품", "electronics": "전자", "furniture": "가구",
+        "kitchen": "주방", "food": "식품", "sports": "스포츠", "toy": "장난감",
+        "pet": "반려동물", "jewelry": "주얼리", "baby": "유아"
+      }
+    },
     "statusBadge": {
       "live": "{stores}에서 실시간",
       "liveTitle": "{stores} 실 API 결과를 받고 있어요",

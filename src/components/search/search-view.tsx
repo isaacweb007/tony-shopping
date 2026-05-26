@@ -16,6 +16,8 @@ import { Clusters } from './clusters';
 import { ProductCard } from './product-card';
 import { StickyFilterBar } from './sticky-filter-bar';
 import { ResultsBadge } from './results-badge';
+import { CategoryChips } from './category-chips';
+import { categorize, type Category } from '@/lib/categorize';
 import { ProductDetailDialog } from './product-detail-dialog';
 import { WarningList } from './warning-list';
 import { SearchSkeleton } from './search-skeleton';
@@ -51,14 +53,21 @@ export function SearchView() {
   }, [products, sort, store]);
 
   const [detail, setDetail] = React.useState<Product | null>(null);
+  const [categoryFilter, setCategoryFilter] = React.useState<Category | null>(null);
+
+  // Apply the category facet on top of the store-filtered `visible` set.
+  const categoryFiltered = React.useMemo<Product[]>(() => {
+    if (categoryFilter === null) return visible;
+    return visible.filter((p) => categorize(p.name).includes(categoryFilter));
+  }, [visible, categoryFilter]);
 
   // Progressive disclosure — render 12 results, extend on scroll. Re-sorts /
-  // store changes reset the cursor so the user always sees the *new* result
-  // set from the top.
+  // store / category changes reset the cursor so the user always sees the
+  // *new* result set from the top.
   const paginated = useProgressiveList({
-    items: visible,
+    items: categoryFiltered,
     batchSize: 12,
-    resetKey: `${q}|${store}|${sort}`,
+    resetKey: `${q}|${store}|${sort}|${categoryFilter ?? 'all'}`,
   });
 
   // Grid keyboard nav. Cols mirror the Tailwind grid breakpoints below: 1 / 2 /
@@ -202,6 +211,11 @@ export function SearchView() {
         <div className="mt-3">
           <StickyFilterBar />
         </div>
+        <CategoryChips
+          products={visible}
+          selected={categoryFilter}
+          onSelect={setCategoryFilter}
+        />
         <div
           ref={grid.containerRef}
           className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-4"

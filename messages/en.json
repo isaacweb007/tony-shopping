@@ -497,6 +497,17 @@
     "emptyAction": "Reset filters",
     "loadMore": "Show {n} more",
     "loadMoreHint": "{shown} of {total}",
+    "categories": {
+      "label": "Category",
+      "aria": "Category filter",
+      "all": "All {n}",
+      "names": {
+        "shoes": "Shoes", "bag": "Bags", "lighting": "Lighting", "clothes": "Clothes",
+        "beauty": "Beauty", "electronics": "Electronics", "furniture": "Furniture",
+        "kitchen": "Kitchen", "food": "Food", "sports": "Sports", "toy": "Toys",
+        "pet": "Pet", "jewelry": "Jewelry", "baby": "Baby"
+      }
+    },
     "statusBadge": {
       "live": "Live · {stores}",
       "liveTitle": "Pulling real results from {stores}",

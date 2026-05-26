@@ -497,6 +497,17 @@
     "emptyAction": "Xoá bộ lọc",
     "loadMore": "Hiển thị thêm {n}",
     "loadMoreHint": "{shown} / {total}",
+    "categories": {
+      "label": "Danh mục",
+      "aria": "Bộ lọc danh mục",
+      "all": "Tất cả {n}",
+      "names": {
+        "shoes": "Giày", "bag": "Túi", "lighting": "Đèn", "clothes": "Quần áo",
+        "beauty": "Mỹ phẩm", "electronics": "Điện tử", "furniture": "Nội thất",
+        "kitchen": "Nhà bếp", "food": "Thực phẩm", "sports": "Thể thao", "toy": "Đồ chơi",
+        "pet": "Thú cưng", "jewelry": "Trang sức", "baby": "Em bé"
+      }
+    },
     "statusBadge": {
       "live": "Trực tiếp · {stores}",
       "liveTitle": "Đang lấy kết quả thật từ {stores}",
