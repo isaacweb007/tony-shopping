@@ -616,7 +616,8 @@
     "shortlistHint": "Bấm icon bookmark trên thẻ để thêm.",
     "remove": "Xoá",
     "clearAll": "Xoá tất cả",
-    "close": "Đóng"
+    "close": "Đóng",
+    "notePlaceholder": "Vì sao chọn — ghi chú cá nhân, 280 ký tự"
   },
   "toast": {
     "shortlistAdded": "Đã thêm vào so sánh",

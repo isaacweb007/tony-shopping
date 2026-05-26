@@ -23,4 +23,6 @@ export interface ShortlistSnap {
   score?: TonyScore;
   /** ms since epoch. */
   addedAt: number;
+  /** Free-text note the user left themselves about why they shortlisted this. */
+  note?: string;
 }

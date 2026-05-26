@@ -27,6 +27,7 @@ export function ShortlistDrawer() {
 
   const items = useShortlistStore((s) => s.items);
   const remove = useShortlistStore((s) => s.remove);
+  const setNote = useShortlistStore((s) => s.setNote);
   const clearAll = useShortlistStore((s) => s.clear);
   const delta = usePriceWatchStore((s) => s.delta);
 
@@ -129,8 +130,9 @@ export function ShortlistDrawer() {
                 {list.map((p) => (
                   <li
                     key={p.id}
-                    className="flex items-center gap-3 rounded-2xl border border-ink-200 p-2.5 dark:border-ink-800"
+                    className="flex flex-col gap-2 rounded-2xl border border-ink-200 p-2.5 dark:border-ink-800"
                   >
+                    <div className="flex items-center gap-3">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={p.imageUrl ?? '/icon.svg'}
@@ -176,6 +178,12 @@ export function ShortlistDrawer() {
                         {td('remove')}
                       </button>
                     </div>
+                    </div>
+                    <NoteInput
+                      defaultValue={p.note ?? ''}
+                      onSave={(v) => setNote(p.id, v)}
+                      placeholder={td('notePlaceholder')}
+                    />
                   </li>
                 ))}
               </ul>
@@ -184,6 +192,43 @@ export function ShortlistDrawer() {
         </div>
       </SheetContent>
     </Sheet>
+  );
+}
+
+function NoteInput({
+  defaultValue,
+  onSave,
+  placeholder,
+}: {
+  defaultValue: string;
+  onSave: (next: string) => void;
+  placeholder: string;
+}) {
+  // Uncontrolled — we only commit to the store on blur (or Enter) to avoid
+  // a write per keystroke. defaultValue resets whenever the parent's key
+  // changes (each shortlist row is keyed by snap id).
+  const ref = React.useRef<HTMLTextAreaElement>(null);
+  const initial = defaultValue;
+  function commit() {
+    const v = (ref.current?.value ?? '').trim();
+    if (v !== initial.trim()) onSave(v);
+  }
+  return (
+    <textarea
+      ref={ref}
+      defaultValue={initial}
+      onBlur={commit}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          ref.current?.blur();
+        }
+      }}
+      placeholder={placeholder}
+      rows={1}
+      maxLength={280}
+      className="w-full resize-none rounded-lg border border-ink-200 bg-ink-50/40 px-2 py-1.5 text-[12px] leading-snug text-ink-700 placeholder:text-ink-400 focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/15 dark:border-ink-700 dark:bg-ink-800/40 dark:text-ink-200 dark:placeholder:text-ink-500"
+    />
   );
 }
 

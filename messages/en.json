@@ -616,7 +616,8 @@
     "shortlistHint": "Tap the bookmark icon on a card to add.",
     "remove": "Remove",
     "clearAll": "Clear all",
-    "close": "Close"
+    "close": "Close",
+    "notePlaceholder": "Why this one — note to self, 280 chars"
   },
   "toast": {
     "shortlistAdded": "Added to compare",

@@ -17,6 +17,8 @@ interface ShortlistState {
   remove: (id: string) => void;
   has: (id: string) => boolean;
   list: () => ShortlistSnap[];
+  /** Persist a free-text note for an existing snap. No-op if id missing. */
+  setNote: (id: string, note: string) => void;
   clear: () => void;
 }
 
@@ -78,6 +80,20 @@ export const useShortlistStore = create<ShortlistState>()(
       has: (id) => id in get().items,
       list: () =>
         Object.values(get().items).sort((a, b) => b.addedAt - a.addedAt),
+      setNote: (id, note) =>
+        set((s) => {
+          const existing = s.items[id];
+          if (!existing) return s;
+          const trimmed = note.trim().slice(0, 280);
+          // Strip the note entirely when empty so the persist payload stays lean.
+          const updated: ShortlistSnap = trimmed
+            ? { ...existing, note: trimmed }
+            : (() => {
+                const { note: _drop, ...rest } = existing;
+                return rest;
+              })();
+          return { items: { ...s.items, [id]: updated } };
+        }),
       clear: () => set({ items: {} }),
     }),
     {
