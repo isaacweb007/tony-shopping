@@ -35,16 +35,21 @@ export interface NarrativeInput {
 }
 
 export interface NarrativeResult {
-  /** 2–3 sentences in the user's locale. Plain text, no markdown. */
+  /** 3–4 sentences in the user's locale. Plain text, no markdown. */
   narrative: string;
   source: 'anthropic' | 'openai' | 'fallback';
 }
 
-const SYSTEM_PROMPT = `You are Tony, an AI meta-shopping concierge. The user already has 2–5 shortlisted listings and just asked: "out of these, which one and why?". The cohort scoring engine already picked a winner using the user's stated priority. Your job is to write a calm, decisive 2–3 sentence verdict in the user's locale that (1) names the winning listing, (2) cites at most two concrete reasons grounded ONLY in the data we give you (price, ship days, rating/review count, authenticity %, official flag), and (3) optionally acknowledges the runner-up in one short clause if relevant.
+const SYSTEM_PROMPT = `You are Tony, an AI meta-shopping concierge. The user already has 2–5 shortlisted listings and just asked: "out of these, which one and why?". The cohort scoring engine already picked a winner using the user's stated priority. Your job is to write a calm, decisive 3–4 sentence verdict in the user's locale that:
+  1. Names the winning listing.
+  2. Cites two concrete reasons grounded ONLY in the data we give you (price comparison, ship days, rating, review count, authenticity %, official flag).
+  3. Calls out one specific tradeoff or thing to watch (e.g., "ships slower than the runner-up" / "review count is small enough that the rating is shakier than it looks").
+  4. Optionally names the runner-up in one short clause.
 
 Rules:
 - Never invent numbers or features not present in the data.
 - Don't use the words "AI", "algorithm", or "score".
+- Be specific — quote the exact price, days, or %, not vague adjectives.
 - No emoji. No markdown. No bullet points. No headings.
 - Treat the priority preset as the user's framing: value = cheapest decent, fast = fastest arrival, genuine = safest authenticity, balanced = best overall.
 - Return ONLY the narrative text (no JSON wrapper, no quotes).`;
@@ -98,7 +103,7 @@ async function callAnthropic(input: NarrativeInput, key: string): Promise<Narrat
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5',
-        max_tokens: 240,
+        max_tokens: 380,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: buildUserPrompt(input) }],
       }),
@@ -125,7 +130,7 @@ async function callOpenAI(input: NarrativeInput, key: string): Promise<Narrative
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         temperature: 0.3,
-        max_tokens: 240,
+        max_tokens: 380,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: buildUserPrompt(input) },
@@ -152,11 +157,50 @@ function cleanup(raw: string): string {
     .slice(0, 600);
 }
 
+/**
+ * Pick the weakest concrete axis for the winner so the fallback can name a
+ * specific tradeoff (deeper than "this one wins" — also says "but watch out
+ * for X"). Returns null when nothing notable.
+ */
+function pickTradeoff(
+  w: NarrativeCandidate,
+  cohort: NarrativeCandidate[],
+  locale: NarrativeLocale,
+): string | null {
+  const others = cohort.filter((c) => c.id !== w.id);
+  // Ship: winner slower than any runner-up by ≥ 2 days
+  if (w.shipDays != null) {
+    const fastest = others
+      .map((c) => c.shipDays)
+      .filter((d): d is number => d != null)
+      .sort((a, b) => a - b)[0];
+    if (fastest != null && w.shipDays - fastest >= 2) {
+      if (locale === 'ko') return ` 배송은 ${w.shipDays}일로, 가장 빠른 ${fastest}일 옵션보다 ${w.shipDays - fastest}일 더 걸려요.`;
+      if (locale === 'vi') return ` Giao hàng ${w.shipDays} ngày, chậm hơn ${w.shipDays - fastest} ngày so với mức nhanh nhất ${fastest}.`;
+      return ` Ships in ${w.shipDays}d — ${w.shipDays - fastest}d slower than the fastest option (${fastest}d).`;
+    }
+  }
+  // Authenticity: winner < 75 and unofficial
+  if (w.authenticityPct != null && w.authenticityPct < 75 && !w.official) {
+    if (locale === 'ko') return ` 다만 정품 안심도는 ${w.authenticityPct}% 수준이라, 정품 보장이 필요하면 한 번 더 확인하세요.`;
+    if (locale === 'vi') return ` Lưu ý: niềm tin chính hãng ở mức ${w.authenticityPct}% — kiểm tra lại nếu bạn cần bảo hành.`;
+    return ` Heads-up: authenticity confidence sits at ${w.authenticityPct}% — double-check if you need a warranty.`;
+  }
+  // Reviews: very small sample
+  if (w.reviewCount != null && w.reviewCount < 50) {
+    if (locale === 'ko') return ` 리뷰가 ${w.reviewCount}개로 적어서 평점은 통계적으로 흔들릴 수 있어요.`;
+    if (locale === 'vi') return ` Chỉ ${w.reviewCount} đánh giá — điểm số có thể chưa thật ổn định.`;
+    return ` Only ${w.reviewCount} reviews — the rating is statistically a bit shaky.`;
+  }
+  return null;
+}
+
 /** Deterministic fallback so the UI always renders something useful. */
 function fallback(input: NarrativeInput): NarrativeResult {
   const winner = input.candidates.find((c) => c.isWinner);
   const rest = input.candidates.filter((c) => !c.isWinner);
   const runnerUp = rest[0];
+  const tradeoff = winner ? pickTradeoff(winner, input.candidates, input.locale) : null;
   const TEMPLATES: Record<NarrativeLocale, (w: NarrativeCandidate | undefined, r: NarrativeCandidate | undefined, priority: NarrativePriority) => string> = {
     ko: (w, r, p) => {
       if (!w) return '후보들이 비슷해서 한 곳을 고르기 어려워요. 우선순위를 다시 골라보면 결과가 달라질 수 있어요.';
@@ -168,7 +212,7 @@ function fallback(input: NarrativeInput): NarrativeResult {
             ? `정품 안전을 우선했을 때, ${w.store}의 "${w.name}" 가 ${w.authenticityPct ?? '?'}% 정품 가능성으로 가장 안전해요.`
             : `종합적으로 ${w.store}의 "${w.name}" 가 가격·배송·신뢰도 균형이 가장 좋아요.`;
       const tail = r ? ` 차순위는 ${r.store}예요 — 우선순위를 바꾸면 이쪽이 올라올 수 있어요.` : '';
-      return lead + tail;
+      return lead + (tradeoff ?? '') + tail;
     },
     en: (w, r, p) => {
       if (!w) return "These candidates are too close to call. Pick a priority to break the tie.";
@@ -180,7 +224,7 @@ function fallback(input: NarrativeInput): NarrativeResult {
             ? `For authenticity, ${w.store}'s "${w.name}" sits at ${w.authenticityPct ?? '?'}% trusted-source confidence, the safest in your shortlist.`
             : `On balance, ${w.store}'s "${w.name}" offers the best combination of price, shipping, and trust.`;
       const tail = r ? ` Runner-up: ${r.store} — change the priority and it can leapfrog.` : '';
-      return lead + tail;
+      return lead + (tradeoff ?? '') + tail;
     },
     vi: (w, r, p) => {
       if (!w) return 'Các ứng viên quá cân bằng. Chọn một ưu tiên để phân định.';
@@ -192,7 +236,7 @@ function fallback(input: NarrativeInput): NarrativeResult {
             ? `Về độ tin cậy, "${w.name}" tại ${w.store} đạt ${w.authenticityPct ?? '?'}% niềm tin chính hãng, an toàn nhất.`
             : `Tổng thể, "${w.name}" tại ${w.store} cân bằng giá, giao hàng và uy tín tốt nhất.`;
       const tail = r ? ` Á quân: ${r.store} — đổi ưu tiên có thể đảo vị trí.` : '';
-      return lead + tail;
+      return lead + (tradeoff ?? '') + tail;
     },
   };
   return {
