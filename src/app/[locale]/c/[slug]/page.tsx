@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { CompareView } from '@/components/compare/compare-view';
+import { CohortReactions } from '@/components/compare/cohort-reactions';
 import { SITE_URL } from '@/lib/site';
 import type { ShortlistSnap } from '@/types/shortlist';
 import type { ComparePriority } from '@/lib/compare/verdict';
@@ -82,10 +83,15 @@ export default async function SharedCompare({
     notFound();
   }
   return (
-    <CompareView
-      seedSnaps={cohort.snaps}
-      initialPriority={cohort.priority}
-      readOnly
-    />
+    <>
+      <CompareView
+        seedSnaps={cohort.snaps}
+        initialPriority={cohort.priority}
+        readOnly
+      />
+      <div className="container max-w-6xl">
+        <CohortReactions slug={cohort.slug} />
+      </div>
+    </>
   );
 }

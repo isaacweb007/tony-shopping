@@ -370,6 +370,12 @@
       }
     }
   },
+  "cohortReactions": {
+    "label": "공감",
+    "aria": "공유된 비교에 대한 반응",
+    "up": "좋아요",
+    "down": "별로예요"
+  },
   "compare": {
     "title": "비교 분석 · Tony Shopping",
     "ogTitleWithWinner": "토니 비교 결론: {winner}",
