@@ -15,6 +15,7 @@ interface SharedCohort {
   priority: ComparePriority;
   locale: string;
   createdAt: string;
+  clones: number;
 }
 
 async function fetchCohort(slug: string): Promise<SharedCohort | null> {
@@ -92,7 +93,7 @@ export default async function SharedCompare({
       />
       <div className="container max-w-6xl">
         <CohortReactions slug={cohort.slug} />
-        <CohortCloneButton snaps={cohort.snaps} />
+        <CohortCloneButton snaps={cohort.snaps} slug={cohort.slug} initialClones={cohort.clones} />
       </div>
     </>
   );

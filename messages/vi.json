@@ -428,13 +428,19 @@
       "empty": "Chưa có bộ so sánh nào công khai.",
       "supabaseOff": "Supabase chưa được cấu hình nên thư viện không tải được. Kiểm tra biến môi trường tại /setup.",
       "filterLabel": "Lọc theo tiêu chí",
-      "filterAll": "Tất cả"
+      "filterAll": "Tất cả",
+      "sortLabel": "Sắp xếp",
+      "sortNewest": "Mới nhất",
+      "sortPopular": "Nhiều 👍",
+      "sortBiggest": "Lớn nhất"
     },
     "clone": {
       "button": "Sao chép vào so sánh của tôi",
       "added": "Đã thêm {n} mục vào so sánh của bạn",
       "allAlreadyIn": "Tất cả đã có trong so sánh của bạn",
-      "openMine": "Mở so sánh của tôi"
+      "openMine": "Mở so sánh của tôi",
+      "cloneCount": "{n} lượt sao chép",
+      "cloneCountTitle": "Đã có {n} người sao chép bộ này vào danh sách của họ"
     },
     "eyebrow": "Tony so sánh",
     "heading": "Danh sách của bạn, đặt cạnh nhau",
@@ -465,6 +471,9 @@
     "narrativeCopy": "Sao chép",
     "narrativeCopied": "Đã sao chép",
     "narrativeCopyFailed": "Sao chép thất bại",
+    "narrativeSpeak": "Nghe",
+    "narrativeSpeaking": "Đang phát…",
+    "narrativeStop": "Dừng",
     "auto": {
       "recommendedAria": "Tony gợi ý",
       "basedOn": "Tony thấy bạn nghiêng về \"{signal}\" trong {n} lựa chọn gần đây.",

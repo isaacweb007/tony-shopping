@@ -3,11 +3,12 @@
 import * as React from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import { Bookmark, Check, Copy, ExternalLink, GitCompare, Share2, Sparkles, Star, X } from 'lucide-react';
+import { Bookmark, Check, Copy, ExternalLink, GitCompare, Share2, Sparkles, Square, Star, Volume2, X } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { Button } from '@/components/ui/button';
 import { useShortlistStore } from '@/stores/shortlist-store';
 import { useMySharesStore } from '@/stores/my-shares-store';
+import { useSpeechSynthesis } from '@/hooks/use-speech-synthesis';
 import { deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { buildCompare, type ComparePriority } from '@/lib/compare/verdict';
 import { formatMoneyLocale, formatCount, shipLabel } from '@/lib/format';
@@ -341,6 +342,8 @@ function NarrativeBlock({
   winnerStore: string;
 }) {
   const t = useTranslations('compare');
+  const locale = useLocale() as AppLocale;
+  const tts = useSpeechSynthesis(locale);
   const [copied, setCopied] = React.useState(false);
 
   if (loading && !text) {
@@ -409,6 +412,29 @@ function NarrativeBlock({
             </>
           )}
         </button>
+        {tts.supported && (
+          <button
+            type="button"
+            onClick={() => {
+              if (tts.speaking) tts.cancel();
+              else tts.speak(text);
+            }}
+            aria-label={tts.speaking ? t('narrativeStop') : t('narrativeSpeak')}
+            className="inline-flex items-center gap-1 rounded-full border border-ink-200 bg-white px-2.5 py-1 text-[11px] font-bold tracking-tight text-ink-700 transition hover:border-accent-400 hover:text-accent-700 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200 dark:hover:border-accent-500 dark:hover:text-accent-300"
+          >
+            {tts.speaking ? (
+              <>
+                <Square className="h-3 w-3 fill-current" strokeWidth={2.4} />
+                {t('narrativeSpeaking')}
+              </>
+            ) : (
+              <>
+                <Volume2 className="h-3 w-3" strokeWidth={2} />
+                {t('narrativeSpeak')}
+              </>
+            )}
+          </button>
+        )}
         {source === 'fallback' && (
           <span className="text-[10px] uppercase tracking-widest text-ink-400 dark:text-ink-500">
             {t('narrativeFallback')}

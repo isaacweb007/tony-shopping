@@ -28,7 +28,7 @@ export async function GET(
 
   const { data, error } = await supabase
     .from('cohort_shares')
-    .select('slug, snaps, winner_id, priority, locale, created_at')
+    .select('slug, snaps, winner_id, priority, locale, created_at, clones')
     .eq('slug', slug)
     .maybeSingle();
 
@@ -43,6 +43,9 @@ export async function GET(
       priority: data.priority,
       locale: data.locale,
       createdAt: data.created_at,
+      // 0 fallback for pre-migration rows (older shares that haven't been
+      // touched since the 0004 migration shipped).
+      clones: typeof data.clones === 'number' ? data.clones : 0,
     },
     { headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' } },
   );

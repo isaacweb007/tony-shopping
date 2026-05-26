@@ -428,13 +428,19 @@
       "empty": "No public cohorts yet.",
       "supabaseOff": "Supabase isn't configured, so the gallery can't load. Check env vars on /setup.",
       "filterLabel": "Filter by intent",
-      "filterAll": "All"
+      "filterAll": "All",
+      "sortLabel": "Sort",
+      "sortNewest": "Newest",
+      "sortPopular": "Most 👍",
+      "sortBiggest": "Largest"
     },
     "clone": {
       "button": "Copy to my compare",
       "added": "Added {n} item(s) to your compare",
       "allAlreadyIn": "All of these are already in your compare",
-      "openMine": "Open my compare"
+      "openMine": "Open my compare",
+      "cloneCount": "{n} cloned",
+      "cloneCountTitle": "{n} visitor(s) have copied this cohort into their own compare"
     },
     "eyebrow": "Tony's compare",
     "heading": "Your shortlist, side by side",
@@ -465,6 +471,9 @@
     "narrativeCopy": "Copy",
     "narrativeCopied": "Copied",
     "narrativeCopyFailed": "Copy failed",
+    "narrativeSpeak": "Listen",
+    "narrativeSpeaking": "Playing…",
+    "narrativeStop": "Stop",
     "auto": {
       "recommendedAria": "Tony's pick",
       "basedOn": "Tony noticed you've leaned toward \"{signal}\" across your last {n} picks.",

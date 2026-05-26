@@ -15,9 +15,17 @@ import { useGridKeyboardNav } from '@/hooks/use-grid-keyboard-nav';
 type PriorityFilter = 'all' | 'balanced' | 'value' | 'fast' | 'genuine';
 const FILTERS: readonly PriorityFilter[] = ['all', 'balanced', 'value', 'fast', 'genuine'];
 
+type SortMode = 'newest' | 'popular' | 'biggest';
+const SORT_MODES: readonly SortMode[] = ['newest', 'popular', 'biggest'];
+
 function parsePriority(raw: string | null): PriorityFilter {
   if (!raw) return 'all';
   return (FILTERS as readonly string[]).includes(raw) ? (raw as PriorityFilter) : 'all';
+}
+
+function parseSort(raw: string | null): SortMode {
+  if (!raw) return 'newest';
+  return (SORT_MODES as readonly string[]).includes(raw) ? (raw as SortMode) : 'newest';
 }
 
 interface Item {
@@ -57,36 +65,47 @@ export function CohortsGallery() {
   const tp = useTranslations('compare.priority');
   const locale = useLocale() as AppLocale;
 
-  // Filter lives in the URL so users can deep-link a filtered view
-  // ("here's all the 'fast shipping' cohorts"). Reads on mount, writes
-  // via router.replace so the chip click doesn't push history entries.
+  // Filter + sort live in the URL so users can deep-link the exact view.
+  // Reads on mount, writes via router.replace so chip clicks don't push
+  // history entries (back button still works to leave the gallery).
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
   const filter = parsePriority(params.get('priority'));
+  const sort = parseSort(params.get('sort'));
 
-  const setFilter = React.useCallback(
-    (next: PriorityFilter) => {
+  const setUrlParam = React.useCallback(
+    (key: string, value: string, defaultValue: string) => {
       const u = new URLSearchParams(params.toString());
-      if (next === 'all') u.delete('priority');
-      else u.set('priority', next);
+      if (value === defaultValue) u.delete(key);
+      else u.set(key, value);
       const qs = u.toString();
       router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     },
     [params, router, pathname],
   );
 
+  const setFilter = React.useCallback(
+    (next: PriorityFilter) => setUrlParam('priority', next, 'all'),
+    [setUrlParam],
+  );
+  const setSort = React.useCallback(
+    (next: SortMode) => setUrlParam('sort', next, 'newest'),
+    [setUrlParam],
+  );
+
   const query = useInfiniteQuery({
-    queryKey: ['cohorts-gallery', filter],
+    queryKey: ['cohorts-gallery', filter, sort],
     initialPageParam: 0,
     staleTime: 60_000,
     queryFn: async ({ pageParam }): Promise<ApiResponse> => {
-      const params = new URLSearchParams({
+      const qp = new URLSearchParams({
         limit: String(PAGE_SIZE),
         offset: String(pageParam as number),
       });
-      if (filter !== 'all') params.set('priority', filter);
-      const res = await fetch(`/api/cohort/recent?${params.toString()}`, { cache: 'no-store' });
+      if (filter !== 'all') qp.set('priority', filter);
+      if (sort !== 'newest') qp.set('sort', sort);
+      const res = await fetch(`/api/cohort/recent?${qp.toString()}`, { cache: 'no-store' });
       if (res.status === 503) {
         // Surface the unconfigured state up to the UI so we can render
         // the soft message instead of treating it as a network error.
@@ -163,6 +182,25 @@ export function CohortsGallery() {
             </button>
           );
         })}
+      </div>
+
+      <div className="mt-2 flex flex-wrap items-center gap-2 text-[12px]">
+        <label
+          htmlFor="cohort-sort"
+          className="text-[11px] font-bold uppercase tracking-widest text-ink-500 dark:text-ink-400"
+        >
+          {t('sortLabel')}
+        </label>
+        <select
+          id="cohort-sort"
+          value={sort}
+          onChange={(e) => setSort(e.target.value as SortMode)}
+          className="rounded-md border border-ink-200 bg-white px-2 py-1 text-[12px] font-semibold text-ink-700 focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/15 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200"
+        >
+          <option value="newest">{t('sortNewest')}</option>
+          <option value="popular">{t('sortPopular')}</option>
+          <option value="biggest">{t('sortBiggest')}</option>
+        </select>
       </div>
 
       {supabaseOff ? (
