@@ -220,6 +220,8 @@
     "acknowledge": "Đã xem",
     "acknowledgeAria": "Đặt giá hiện tại làm mốc mới",
     "snoozeAria": "Tạm ẩn thông báo này trong 24 giờ",
+    "drops24h": "{n} đợt giảm giá trong 24 giờ qua",
+    "drops24hZero": "Không có giảm giá trong 24 giờ qua",
     "emptyTab": "Chưa có gì trong nhóm này.",
     "emptyTitle": "Chưa theo dõi sản phẩm nào",
     "emptyHint": "Đánh dấu kết quả tìm kiếm để Tony theo dõi giá — biến động sẽ xuất hiện ở đây.",
@@ -279,7 +281,10 @@
     "myShares": {
       "eyebrow": "Bộ so sánh bạn đã chia sẻ",
       "title": "Bạn đã công khai {n} bộ so sánh trên Tony.",
-      "cta": "Mở thư viện"
+      "cta": "Mở thư viện",
+      "popularEyebrow": "Bộ phổ biến nhất của bạn",
+      "popularEmpty": "Chưa có ai sao chép — hãy gửi liên kết.",
+      "popularRow": "{store} · {n} mục"
     },
     "insights": {
       "heading": "Tony nhận thấy gì trong tuần",

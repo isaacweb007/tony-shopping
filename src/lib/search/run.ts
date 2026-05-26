@@ -37,11 +37,18 @@ export async function runServerSearch(
         });
         return products;
       } catch (err) {
+        const message =
+          err instanceof Error
+            ? `${err.name}: ${err.message}`
+            : typeof err === 'string'
+              ? err
+              : 'unknown error';
         recordAdapterCall(a.id, {
           lastAt: Date.now(),
           lastDurationMs: Date.now() - t0,
           lastOk: false,
           lastResultCount: 0,
+          lastError: message,
         });
         throw err;
       }

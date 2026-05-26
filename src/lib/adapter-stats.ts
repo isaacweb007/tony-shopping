@@ -33,6 +33,8 @@ export interface AdapterCallStat {
   lastResultCount: number;
   /** Oldest → newest; capped at MAX_HISTORY. */
   history: AdapterHistoryPoint[];
+  /** First 200 chars of the most recent failure message — surfaced on /setup. */
+  lastError: string | null;
 }
 
 /**
@@ -52,7 +54,11 @@ interface RecordInput {
   lastDurationMs: number;
   lastOk: boolean;
   lastResultCount: number;
+  /** Optional failure message — only set when lastOk = false. */
+  lastError?: string | null;
 }
+
+const MAX_ERR_LEN = 200;
 
 export function recordAdapterCall(store: StoreId, stat: RecordInput): void {
   const prev = stats.get(store);
@@ -60,7 +66,21 @@ export function recordAdapterCall(store: StoreId, stat: RecordInput): void {
     ...(prev?.history ?? []),
     { at: stat.lastAt, durationMs: stat.lastDurationMs, ok: stat.lastOk },
   ].slice(-MAX_HISTORY);
-  stats.set(store, { ...stat, history: nextHistory });
+  // Successful calls clear the prior error so a transient failure
+  // doesn't haunt the card forever. Failed calls overwrite it.
+  const lastError = stat.lastOk
+    ? null
+    : typeof stat.lastError === 'string'
+      ? stat.lastError.slice(0, MAX_ERR_LEN)
+      : (prev?.lastError ?? null);
+  stats.set(store, {
+    lastAt: stat.lastAt,
+    lastDurationMs: stat.lastDurationMs,
+    lastOk: stat.lastOk,
+    lastResultCount: stat.lastResultCount,
+    history: nextHistory,
+    lastError,
+  });
 }
 
 export function getAdapterStats(): Record<string, AdapterCallStat> {

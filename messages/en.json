@@ -220,6 +220,8 @@
     "acknowledge": "Mark seen",
     "acknowledgeAria": "Mark current price as the new baseline",
     "snoozeAria": "Snooze this alert for 24 hours",
+    "drops24h": "{n} price drop(s) in the last 24 h",
+    "drops24hZero": "No price drops in the last 24 h",
     "emptyTab": "Nothing in this bucket yet.",
     "emptyTitle": "Nothing on watch yet",
     "emptyHint": "Bookmark anything from a search result and Tony will watch its price — moves land here.",
@@ -279,7 +281,10 @@
     "myShares": {
       "eyebrow": "Cohorts you've shared",
       "title": "You've made {n} compare(s) public on Tony.",
-      "cta": "Open the gallery"
+      "cta": "Open the gallery",
+      "popularEyebrow": "Your most-cloned",
+      "popularEmpty": "No clones yet — share the link with someone.",
+      "popularRow": "{store} · {n} items"
     },
     "insights": {
       "heading": "What Tony noticed this week",

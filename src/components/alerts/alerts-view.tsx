@@ -70,6 +70,19 @@ export function AlertsView() {
     () => pickBuyNow({ rows, threshold }),
     [rows, threshold],
   );
+  // Count price-drop rows whose latest observation was in the past 24h.
+  // Walks the visible (snooze-filtered) rows so snoozed drops don't
+  // inflate the pill — that matches the user's "I've handled this" intent.
+  const drops24h = React.useMemo(() => {
+    const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+    let n = 0;
+    for (const r of rows) {
+      if (r.status !== 'drop') continue;
+      const last = r.watch?.entries[r.watch.entries.length - 1];
+      if (last && last.at >= cutoff) n += 1;
+    }
+    return n;
+  }, [rows]);
 
   const visible = React.useMemo(() => {
     if (tab === 'all') return rows;
@@ -117,6 +130,17 @@ export function AlertsView() {
             })}
           </p>
         </div>
+        <span
+          className={cn(
+            'inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold tracking-tight',
+            drops24h > 0
+              ? 'border-emerald-300/70 bg-emerald-50 text-emerald-700 dark:border-emerald-800/60 dark:bg-emerald-950/40 dark:text-emerald-300'
+              : 'border-ink-200 bg-ink-50 text-ink-500 dark:border-ink-700 dark:bg-ink-800 dark:text-ink-400',
+          )}
+        >
+          <TrendingDown className="h-3 w-3" strokeWidth={2.4} />
+          {drops24h > 0 ? t('drops24h', { n: drops24h }) : t('drops24hZero')}
+        </span>
       </div>
 
       {buyNow && <BuyNowBanner pick={buyNow} locale={locale} t={t} />}

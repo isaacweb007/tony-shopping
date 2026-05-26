@@ -137,24 +137,31 @@ export default async function SetupPage({
                       ? `${Math.floor(ageSec / 60)}m ago`
                       : `${Math.floor(ageSec / 3600)}h ago`;
                 return (
-                  <div className="mt-2 flex flex-wrap items-center gap-2">
-                    <div
-                      className={
-                        'inline-flex flex-wrap items-center gap-1.5 rounded-md border px-2 py-1 text-[10.5px] font-semibold ' +
-                        (stat.lastOk
-                          ? 'border-emerald-200 bg-emerald-50/60 text-emerald-700 dark:border-emerald-800/60 dark:bg-emerald-950/30 dark:text-emerald-300'
-                          : 'border-red-200 bg-red-50/60 text-red-700 dark:border-red-800/60 dark:bg-red-950/30 dark:text-red-300')
-                      }
-                      title={`${stat.lastResultCount} results · ${ageLabel}`}
-                    >
-                      <span className="font-mono">{stat.lastDurationMs}ms</span>
-                      <span className="opacity-60">·</span>
-                      <span>{stat.lastResultCount} results</span>
-                      <span className="opacity-60">·</span>
-                      <span>{ageLabel}</span>
+                  <>
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <div
+                        className={
+                          'inline-flex flex-wrap items-center gap-1.5 rounded-md border px-2 py-1 text-[10.5px] font-semibold ' +
+                          (stat.lastOk
+                            ? 'border-emerald-200 bg-emerald-50/60 text-emerald-700 dark:border-emerald-800/60 dark:bg-emerald-950/30 dark:text-emerald-300'
+                            : 'border-red-200 bg-red-50/60 text-red-700 dark:border-red-800/60 dark:bg-red-950/30 dark:text-red-300')
+                        }
+                        title={`${stat.lastResultCount} results · ${ageLabel}`}
+                      >
+                        <span className="font-mono">{stat.lastDurationMs}ms</span>
+                        <span className="opacity-60">·</span>
+                        <span>{stat.lastResultCount} results</span>
+                        <span className="opacity-60">·</span>
+                        <span>{ageLabel}</span>
+                      </div>
+                      <LatencySparkline points={stat.history ?? []} />
                     </div>
-                    <LatencySparkline points={stat.history ?? []} />
-                  </div>
+                    {stat.lastError ? (
+                      <div className="mt-2 rounded-md border border-red-200 bg-red-50/60 px-2.5 py-1.5 font-mono text-[10.5px] leading-snug text-red-700 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-300">
+                        {stat.lastError}
+                      </div>
+                    ) : null}
+                  </>
                 );
               })()}
 

@@ -220,6 +220,8 @@
     "acknowledge": "확인",
     "acknowledgeAria": "현재 가격을 새 기준으로 등록",
     "snoozeAria": "24시간 동안 이 알림 잠시 숨기기",
+    "drops24h": "최근 24시간 가격 인하 {n}건",
+    "drops24hZero": "최근 24시간 가격 인하 없음",
     "emptyTab": "이 카테고리에는 아직 변동이 없어요.",
     "emptyTitle": "추적 중인 상품이 없어요",
     "emptyHint": "검색 결과에서 북마크하면 토니가 가격을 지켜보고, 변동을 여기에 모아 보여줘요.",
@@ -279,7 +281,10 @@
     "myShares": {
       "eyebrow": "내가 공유한 비교",
       "title": "{n}건을 토니에서 공개로 공유했어요.",
-      "cta": "공유 갤러리 열기"
+      "cta": "공유 갤러리 열기",
+      "popularEyebrow": "내 비교 중 인기",
+      "popularEmpty": "아직 복사가 없어요 — 공유 링크를 다른 사람들과 나눠보세요.",
+      "popularRow": "{store} · {n}개"
     },
     "insights": {
       "heading": "이번 주 토니가 본 패턴",
