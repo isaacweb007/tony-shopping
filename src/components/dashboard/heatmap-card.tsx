@@ -40,6 +40,14 @@ export function HeatmapCard() {
     (_, i) => t(`dayLabels.${i}` as 'dayLabels.0'),
   );
 
+  // "Right now" marker — current weekday + hour highlighted with a thin
+  // outline so the user can see where they are on the grid without
+  // obscuring the count tone underneath. Computed once on mount (no
+  // ticker — heatmap data only refreshes per-hour anyway).
+  const nowDate = new Date();
+  const nowDay = nowDate.getDay();
+  const nowHour = nowDate.getHours();
+
   return (
     <section className="mt-6 rounded-2xl border border-ink-200 bg-white p-4 dark:border-ink-800 dark:bg-ink-900">
       <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-ink-500 dark:text-ink-400">
@@ -70,7 +78,14 @@ export function HeatmapCard() {
             {/* 7 rows */}
             {heat.grid.map((row, day) => (
               <React.Fragment key={day}>
-                <div className="pr-1 text-right text-[10px] font-semibold leading-[10px]">
+                <div
+                  className={
+                    'pr-1 text-right text-[10px] font-semibold leading-[10px] ' +
+                    (day === nowDay
+                      ? 'text-accent-700 dark:text-accent-300'
+                      : '')
+                  }
+                >
                   {dayLabels[day]}
                 </div>
                 {row.map((n, hour) => (
@@ -78,6 +93,7 @@ export function HeatmapCard() {
                     key={hour}
                     n={n}
                     peak={heat.peak}
+                    isNow={day === nowDay && hour === nowHour}
                     title={t('a11y', {
                       day: dayLabels[day] ?? String(day),
                       hour,
@@ -97,9 +113,20 @@ export function HeatmapCard() {
 /**
  * Single cell. We map count/peak into 5 buckets so the heat reads in
  * discrete steps rather than a noisy gradient. Empty cells get a faint
- * tint so the grid stays visible at rest.
+ * tint so the grid stays visible at rest. The cell at (today, current
+ * hour) gets a thin ring so the user can find "right now" on the chart.
  */
-function HeatCell({ n, peak, title }: { n: number; peak: number; title: string }) {
+function HeatCell({
+  n,
+  peak,
+  title,
+  isNow,
+}: {
+  n: number;
+  peak: number;
+  title: string;
+  isNow?: boolean;
+}) {
   const ratio = peak > 0 ? n / peak : 0;
   // 0 → ink-100; 1..0.2 → accent-200; 0.2..0.4 → accent-400; …
   const tone =
@@ -114,5 +141,14 @@ function HeatCell({ n, peak, title }: { n: number; peak: number; title: string }
             : ratio < 0.8
               ? 'bg-accent-500 dark:bg-accent-600/80'
               : 'bg-accent-600 dark:bg-accent-500';
-  return <div className={'aspect-square rounded-sm ' + tone} title={title} role="gridcell" />;
+  const ring = isNow
+    ? 'ring-1 ring-ink-900 dark:ring-white'
+    : '';
+  return (
+    <div
+      className={`aspect-square rounded-sm ${tone} ${ring}`}
+      title={title}
+      role="gridcell"
+    />
+  );
 }

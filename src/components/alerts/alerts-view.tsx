@@ -41,6 +41,7 @@ export function AlertsView() {
   const dismissWatch = usePriceWatchStore((s) => s.dismiss);
   const acknowledgeWatch = usePriceWatchStore((s) => s.acknowledge);
   const snoozeWatch = usePriceWatchStore((s) => s.snooze);
+  const clearSnoozes = usePriceWatchStore((s) => s.clearSnoozes);
 
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
@@ -94,6 +95,35 @@ export function AlertsView() {
   }
 
   if (rows.length === 0) {
+    // Distinguish "no shortlist at all" vs "everything snoozed" — the
+    // first wants a "go search" CTA, the second wants a "clear snoozes"
+    // button. We detect the latter by comparing shortlist size to the
+    // (snooze-filtered) row count.
+    const totalSnaps = Object.keys(items).length;
+    const allSnoozed = totalSnaps > 0;
+    if (allSnoozed) {
+      return (
+        <div className="container max-w-3xl pb-32 pt-10 md:pt-16">
+          <h1 className="text-[26px] font-extrabold tracking-tighter2 md:text-[34px]">
+            {t('heading')}
+          </h1>
+          <div className="mt-8 rounded-3xl border border-dashed border-ink-200 bg-white p-10 text-center dark:border-ink-700 dark:bg-ink-900">
+            <Clock className="mx-auto h-9 w-9 text-ink-300 dark:text-ink-600" strokeWidth={1.4} />
+            <p className="mt-4 text-[15px] font-semibold">{t('allSnoozedTitle')}</p>
+            <p className="mt-1 text-[13px] text-ink-500 dark:text-ink-400">
+              {t('allSnoozedHint', { n: totalSnaps })}
+            </p>
+            <Button
+              variant="primary"
+              className="mt-6 h-11 rounded-xl px-5"
+              onClick={clearSnoozes}
+            >
+              {t('allSnoozedAction')}
+            </Button>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="container max-w-3xl pb-32 pt-10 md:pt-16">
         <h1 className="text-[26px] font-extrabold tracking-tighter2 md:text-[34px]">

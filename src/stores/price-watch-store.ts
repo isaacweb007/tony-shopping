@@ -60,6 +60,8 @@ interface PriceWatchState {
   snooze: (productId: string, untilMs: number) => void;
   /** Read the unexpired snooze timestamp; null when not snoozed or already past. */
   snoozeUntil: (productId: string, now?: number) => number | null;
+  /** Clear every active snooze in one shot — used by "전체 해제" on /alerts. */
+  clearSnoozes: () => void;
   reset: () => void;
 }
 
@@ -172,6 +174,7 @@ export const usePriceWatchStore = create<PriceWatchState>()(
         if (!t || t <= now) return null;
         return t;
       },
+      clearSnoozes: () => set({ snoozes: {} }),
       reset: () => set({ snapshots: {}, snoozes: {} }),
     }),
     {

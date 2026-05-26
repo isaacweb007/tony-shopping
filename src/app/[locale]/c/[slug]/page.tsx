@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { CompareView } from '@/components/compare/compare-view';
 import { CohortReactions } from '@/components/compare/cohort-reactions';
 import { CohortCloneButton } from '@/components/cohort/clone-button';
+import { CohortLocaleHint } from '@/components/cohort/locale-hint';
 import { SITE_URL } from '@/lib/site';
 import type { ShortlistSnap } from '@/types/shortlist';
 import type { ComparePriority } from '@/lib/compare/verdict';
@@ -92,6 +93,7 @@ export default async function SharedCompare({
         readOnly
       />
       <div className="container max-w-6xl">
+        <CohortLocaleHint cohortLocale={cohort.locale} />
         <CohortReactions slug={cohort.slug} />
         <CohortCloneButton snaps={cohort.snaps} slug={cohort.slug} initialClones={cohort.clones} />
       </div>

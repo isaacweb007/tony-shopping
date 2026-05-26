@@ -237,6 +237,9 @@
     "emptyTitle": "Nothing on watch yet",
     "emptyHint": "Bookmark anything from a search result and Tony will watch its price — moves land here.",
     "goSearch": "Start a search",
+    "allSnoozedTitle": "Every alert is snoozed right now",
+    "allSnoozedHint": "{n} item(s) are quiet for the next 24 h. Lift snoozes to see moves immediately.",
+    "allSnoozedAction": "Lift all snoozes",
     "buyNow": {
       "label": "Tony's pick: a good time to buy",
       "reason": {
@@ -458,6 +461,9 @@
       "sortBiggest": "Largest",
       "mineToggle": "Mine only",
       "mineNone": "None of your shared compares match this filter."
+    },
+    "localeHint": {
+      "label": "Originally compared in {lang}"
     },
     "clone": {
       "button": "Copy to my compare",

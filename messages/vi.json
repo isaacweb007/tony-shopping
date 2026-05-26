@@ -237,6 +237,9 @@
     "emptyTitle": "Chưa theo dõi sản phẩm nào",
     "emptyHint": "Đánh dấu kết quả tìm kiếm để Tony theo dõi giá — biến động sẽ xuất hiện ở đây.",
     "goSearch": "Bắt đầu tìm kiếm",
+    "allSnoozedTitle": "Tất cả thông báo đang được tạm ẩn",
+    "allSnoozedHint": "{n} sản phẩm đang im lặng trong 24 giờ. Bỏ tạm ẩn để xem biến động ngay.",
+    "allSnoozedAction": "Bỏ tất cả tạm ẩn",
     "buyNow": {
       "label": "Tony gợi ý: thời điểm tốt để mua",
       "reason": {
@@ -458,6 +461,9 @@
       "sortBiggest": "Lớn nhất",
       "mineToggle": "Chỉ của tôi",
       "mineNone": "Không có bộ so sánh nào của bạn khớp với bộ lọc này."
+    },
+    "localeHint": {
+      "label": "Bộ so sánh gốc bằng {lang}"
     },
     "clone": {
       "button": "Sao chép vào so sánh của tôi",

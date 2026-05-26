@@ -237,6 +237,9 @@
     "emptyTitle": "추적 중인 상품이 없어요",
     "emptyHint": "검색 결과에서 북마크하면 토니가 가격을 지켜보고, 변동을 여기에 모아 보여줘요.",
     "goSearch": "검색하러 가기",
+    "allSnoozedTitle": "모든 알림을 잠시 숨겨두셨네요",
+    "allSnoozedHint": "{n}개 상품이 24시간 동안 조용해요. 지금 다시 켜시면 변동을 바로 보여드려요.",
+    "allSnoozedAction": "전체 잠시 숨김 해제",
     "buyNow": {
       "label": "토니가 추천: 지금 살 만해요",
       "reason": {
@@ -458,6 +461,9 @@
       "sortBiggest": "비교 규모순",
       "mineToggle": "내 비교만",
       "mineNone": "내가 공유한 비교 중 이 필터/정렬에 해당하는 게 없어요."
+    },
+    "localeHint": {
+      "label": "{lang}로 작성된 비교예요"
     },
     "clone": {
       "button": "내 비교함에 복사",
