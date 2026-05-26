@@ -9,6 +9,7 @@ import type { AppLocale } from '@/i18n/routing';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { formatRelativeTime } from '@/lib/format';
+import { useGridKeyboardNav } from '@/hooks/use-grid-keyboard-nav';
 
 type PriorityFilter = 'all' | 'balanced' | 'value' | 'fast' | 'genuine';
 const FILTERS: readonly PriorityFilter[] = ['all', 'balanced', 'value', 'fast', 'genuine'];
@@ -83,6 +84,22 @@ export function CohortsGallery() {
   const total = pages[0]?.total ?? 0;
   const supabaseOff = pages[0]?.error === 'supabase_unconfigured';
 
+  // Same arrow/h/j/k/l/Home/End grid nav as /search. cols=3 matches the
+  // widest grid breakpoint (lg:grid-cols-3); on narrower viewports the
+  // hook still works — arrow keys just wrap visually a little oddly.
+  // Enter clicks the active anchor — letting <Link> handle the navigation.
+  const grid = useGridKeyboardNav({
+    count: items.length,
+    cols: 3,
+    cellSelector: '[data-cohort-cell]',
+    onEnter: (i) => {
+      const cell = document.querySelector<HTMLAnchorElement>(
+        `[data-cohort-cell][data-grid-item="${i}"]`,
+      );
+      cell?.click();
+    },
+  });
+
   return (
     <div className="container max-w-5xl pb-32 pt-10 md:pt-16">
       <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-ink-500 dark:text-ink-400">
@@ -140,12 +157,15 @@ export function CohortsGallery() {
           <div className="mt-4 text-[12px] font-bold uppercase tracking-widest text-ink-500 dark:text-ink-400">
             {t('totalLabel', { n: total })}
           </div>
+          <div ref={grid.containerRef}>
           <ul className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((it) => (
+            {items.map((it, i) => (
               <li key={it.slug}>
                 <Link
                   href={`/c/${it.slug}`}
-                  className="block rounded-2xl border border-ink-200 bg-white p-4 transition hover:border-accent-300 hover:bg-accent-50/40 dark:border-ink-800 dark:bg-ink-900 dark:hover:border-accent-700 dark:hover:bg-accent-950/30"
+                  data-cohort-cell=""
+                  {...grid.getCellProps(i)}
+                  className="block rounded-2xl border border-ink-200 bg-white p-4 transition hover:border-accent-300 hover:bg-accent-50/40 focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-none dark:border-ink-800 dark:bg-ink-900 dark:hover:border-accent-700 dark:hover:bg-accent-950/30"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="text-[10.5px] font-bold uppercase tracking-widest text-accent-700 dark:text-accent-300">
@@ -163,6 +183,7 @@ export function CohortsGallery() {
               </li>
             ))}
           </ul>
+          </div>
 
           {query.hasNextPage && (
             <div className="mt-8 flex justify-center">

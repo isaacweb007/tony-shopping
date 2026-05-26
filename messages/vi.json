@@ -428,6 +428,12 @@
       "filterLabel": "Lọc theo tiêu chí",
       "filterAll": "Tất cả"
     },
+    "clone": {
+      "button": "Sao chép vào so sánh của tôi",
+      "added": "Đã thêm {n} mục vào so sánh của bạn",
+      "allAlreadyIn": "Tất cả đã có trong so sánh của bạn",
+      "openMine": "Mở so sánh của tôi"
+    },
     "eyebrow": "Tony so sánh",
     "heading": "Danh sách của bạn, đặt cạnh nhau",
     "subtitle": "Đang so sánh {n} ứng viên theo từng tiêu chí",

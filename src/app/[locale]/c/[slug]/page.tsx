@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { CompareView } from '@/components/compare/compare-view';
 import { CohortReactions } from '@/components/compare/cohort-reactions';
+import { CohortCloneButton } from '@/components/cohort/clone-button';
 import { SITE_URL } from '@/lib/site';
 import type { ShortlistSnap } from '@/types/shortlist';
 import type { ComparePriority } from '@/lib/compare/verdict';
@@ -91,6 +92,7 @@ export default async function SharedCompare({
       />
       <div className="container max-w-6xl">
         <CohortReactions slug={cohort.slug} />
+        <CohortCloneButton snaps={cohort.snaps} />
       </div>
     </>
   );

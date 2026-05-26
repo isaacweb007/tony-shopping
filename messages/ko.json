@@ -428,6 +428,12 @@
       "filterLabel": "기준 필터",
       "filterAll": "전체"
     },
+    "clone": {
+      "button": "내 비교함에 복사",
+      "added": "{n}개를 내 비교함에 담았어요",
+      "allAlreadyIn": "이미 전부 비교함에 있어요",
+      "openMine": "내 비교함 열기"
+    },
     "eyebrow": "토니 비교 분석",
     "heading": "내 비교함, 한눈에",
     "subtitle": "{n}개 상품을 항목별로 비교하고 있어요",

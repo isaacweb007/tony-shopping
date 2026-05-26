@@ -5,6 +5,7 @@ import { ADAPTER_META, getAdapterStatuses, getOverallStatus } from '@/lib/adapte
 import { getAdapterStats } from '@/lib/adapter-stats';
 import { RunProbeButton } from '@/components/setup/run-probe-button';
 import { LatencySparkline } from '@/components/setup/latency-sparkline';
+import { EnvVarChip } from '@/components/setup/env-var-chip';
 
 export async function generateMetadata({
   params,
@@ -159,12 +160,7 @@ export default async function SetupPage({
 
               <div className="mt-3 flex flex-wrap items-center gap-1.5">
                 {meta.envVars.map((env) => (
-                  <code
-                    key={env}
-                    className="rounded-md border border-ink-200 bg-ink-50 px-1.5 py-0.5 font-mono text-[10.5px] text-ink-700 dark:border-ink-700 dark:bg-ink-800 dark:text-ink-200"
-                  >
-                    {env}
-                  </code>
+                  <EnvVarChip key={env} name={env} />
                 ))}
               </div>
 
