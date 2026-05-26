@@ -16,6 +16,7 @@ import { Clusters } from './clusters';
 import { ProductCard } from './product-card';
 import { StickyFilterBar } from './sticky-filter-bar';
 import { ResultsBadge } from './results-badge';
+import { MockStoresNote } from './mock-stores-note';
 import { CategoryChips } from './category-chips';
 import { categorize, type Category } from '@/lib/categorize';
 import { ProductDetailDialog } from './product-detail-dialog';
@@ -220,6 +221,7 @@ export function SearchView() {
         <div className="mt-3">
           <StickyFilterBar />
         </div>
+        <MockStoresNote />
         <CategoryChips
           products={visible}
           selected={categoryFilter}

@@ -544,6 +544,10 @@
         "pet": "Pet", "jewelry": "Jewelry", "baby": "Baby"
       }
     },
+    "mockStores": {
+      "label": "Demo-mode stores: {stores} · wire keys to include them.",
+      "cta": "Set up keys →"
+    },
     "statusBadge": {
       "live": "Live · {stores}",
       "liveTitle": "Pulling real results from {stores}",

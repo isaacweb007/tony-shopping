@@ -544,6 +544,10 @@
         "pet": "Thú cưng", "jewelry": "Trang sức", "baby": "Em bé"
       }
     },
+    "mockStores": {
+      "label": "Cửa hàng đang ở chế độ mẫu: {stores} · thêm khoá để so sánh cùng.",
+      "cta": "Cài khoá →"
+    },
     "statusBadge": {
       "live": "Trực tiếp · {stores}",
       "liveTitle": "Đang lấy kết quả thật từ {stores}",

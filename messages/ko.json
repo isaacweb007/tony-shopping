@@ -544,6 +544,10 @@
         "pet": "반려동물", "jewelry": "주얼리", "baby": "유아"
       }
     },
+    "mockStores": {
+      "label": "데모 모드 매장: {stores} · 키 등록하면 함께 비교됩니다.",
+      "cta": "/setup에서 등록"
+    },
     "statusBadge": {
       "live": "{stores}에서 실시간",
       "liveTitle": "{stores} 실 API 결과를 받고 있어요",
