@@ -160,23 +160,36 @@ export function ProductDetailView({ product, q }: Props) {
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              if (watched) dismissPrice(product.id);
-              else trackPrice(product);
-            }}
-            aria-pressed={watched}
-            className={
-              'mt-4 inline-flex items-center gap-2 self-start rounded-full border px-3 py-1.5 text-[12px] font-bold tracking-tight transition ' +
-              (watched
-                ? 'border-emerald-400 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
-                : 'border-ink-200 bg-white text-ink-700 hover:border-ink-300 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200')
-            }
-          >
-            <span className={'h-1.5 w-1.5 rounded-full ' + (watched ? 'bg-emerald-500' : 'bg-ink-400')} />
-            {watched ? td('watching') : td('watchPrice')}
-          </button>
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                if (watched) dismissPrice(product.id);
+                else trackPrice(product);
+              }}
+              aria-pressed={watched}
+              className={
+                'inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[12px] font-bold tracking-tight transition ' +
+                (watched
+                  ? 'border-emerald-400 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
+                  : 'border-ink-200 bg-white text-ink-700 hover:border-ink-300 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200')
+              }
+            >
+              <span className={'h-1.5 w-1.5 rounded-full ' + (watched ? 'bg-emerald-500' : 'bg-ink-400')} />
+              {watched ? td('watching') : td('watchPrice')}
+            </button>
+            {/*
+              Deep-link "more from this store" — opens /search with the
+              same query but biased by &store=. SearchView reads the
+              param and applies the store filter on mount.
+            */}
+            <a
+              href={`/search?q=${encodeURIComponent(q)}&store=${encodeURIComponent(product.store)}`}
+              className="inline-flex items-center gap-1.5 rounded-full border border-ink-200 bg-white px-3 py-1.5 text-[12px] font-bold tracking-tight text-ink-700 transition hover:border-accent-300 hover:text-accent-700 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200 dark:hover:border-accent-500 dark:hover:text-accent-300"
+            >
+              {td('moreFromStore', { store: product.store })}
+            </a>
+          </div>
 
           <div className="mt-auto grid grid-cols-2 gap-2 pt-6">
             <Button variant="outline" className="h-12 rounded-xl" onClick={toggle}>

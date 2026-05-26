@@ -83,6 +83,15 @@ export function KeyboardHelp() {
         }
         return;
       }
+
+      // Shift+G — open the public shared-cohort gallery. No precondition
+      // (the gallery has its own empty state) so this works for cold
+      // visitors poking around.
+      if (e.key === 'G' && e.shiftKey && !inEditable()) {
+        e.preventDefault();
+        router.push('/cohorts');
+        return;
+      }
     }
 
     window.addEventListener('keydown', onKey);
@@ -95,6 +104,7 @@ export function KeyboardHelp() {
     { keys: ['Enter'], key: 'open' },
     { keys: ['/'], key: 'focus' },
     { keys: ['Shift', 'C'], key: 'compare' },
+    { keys: ['Shift', 'G'], key: 'gallery' },
     { keys: ['?'], key: 'help' },
     { keys: ['Esc'], key: 'esc' },
   ];

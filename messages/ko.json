@@ -138,6 +138,7 @@
     "support4": "개인정보처리방침",
     "support5": "광고/제휴 안내",
     "support6": "어댑터 설정",
+    "support7": "공개 비교 갤러리",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
   "quickFab": {
@@ -158,7 +159,8 @@
       "focus": "검색창에 포커스",
       "help": "이 단축키 도움말 열기·닫기",
       "esc": "열린 다이얼로그 닫기",
-      "compare": "비교 페이지 열기 (담은 상품 2개 이상)"
+      "compare": "비교 페이지 열기 (담은 상품 2개 이상)",
+      "gallery": "공유 비교 갤러리 열기"
     }
   },
   "checkout": {
@@ -649,7 +651,8 @@
     "verdictOk": "무난한 선택",
     "verdictWeak": "보완이 필요한 선택",
     "watchPrice": "이 가격 알림",
-    "watching": "가격 추적 중"
+    "watching": "가격 추적 중",
+    "moreFromStore": "{store} 상품 더 보기"
   },
   "chat": {
     "fabLong": "토니에게 더 물어보기",

@@ -138,6 +138,7 @@
     "support4": "Quyền riêng tư",
     "support5": "Thông báo liên kết tiếp thị",
     "support6": "Cài đặt bộ chuyển đổi",
+    "support7": "Thư viện so sánh công khai",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
   "quickFab": {
@@ -158,7 +159,8 @@
       "focus": "Đưa con trỏ vào ô tìm kiếm",
       "help": "Mở/đóng bảng phím tắt này",
       "esc": "Đóng hộp thoại đang mở",
-      "compare": "Mở trang so sánh (≥ 2 mục)"
+      "compare": "Mở trang so sánh (≥ 2 mục)",
+      "gallery": "Mở thư viện so sánh chia sẻ"
     }
   },
   "checkout": {
@@ -649,7 +651,8 @@
     "verdictOk": "lựa chọn ổn",
     "verdictWeak": "cần cân nhắc",
     "watchPrice": "Theo dõi giá",
-    "watching": "Đang theo dõi"
+    "watching": "Đang theo dõi",
+    "moreFromStore": "Xem thêm từ {store}"
   },
   "chat": {
     "fabLong": "Hỏi Tony thêm",

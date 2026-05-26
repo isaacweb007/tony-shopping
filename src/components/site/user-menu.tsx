@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useTranslations } from 'next-intl';
-import { Bell, GitCompare, LayoutDashboard, LogOut, User as UserIcon } from 'lucide-react';
+import { Bell, GitCompare, LayoutDashboard, LogOut, Sparkles, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -20,6 +20,7 @@ export function UserMenu({ compact = false }: { compact?: boolean }) {
   const tDash = useTranslations('dashboard');
   const tHead = useTranslations('header');
   const tCmp = useTranslations('compare');
+  const tGallery = useTranslations('compare.gallery');
   const tAlerts = useTranslations('alerts');
   const user = useAuthStore((s) => s.user);
   const router = useRouter();
@@ -76,6 +77,12 @@ export function UserMenu({ compact = false }: { compact?: boolean }) {
           <Link href="/alerts" className="flex w-full items-center gap-2">
             <Bell className="h-4 w-4" strokeWidth={1.7} />
             {tAlerts('menu')}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/cohorts" className="flex w-full items-center gap-2">
+            <Sparkles className="h-4 w-4" strokeWidth={1.7} />
+            {tGallery('title')}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem disabled>

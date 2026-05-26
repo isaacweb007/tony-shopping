@@ -138,6 +138,7 @@
     "support4": "Privacy",
     "support5": "Affiliate disclosure",
     "support6": "Adapter setup",
+    "support7": "Public cohort gallery",
     "copyright": "© 2026 Tony Shopping · AI Meta Shopping Agent"
   },
   "quickFab": {
@@ -158,7 +159,8 @@
       "focus": "Focus the search input",
       "help": "Toggle this shortcut sheet",
       "esc": "Close the open dialog",
-      "compare": "Open compare (≥ 2 shortlisted)"
+      "compare": "Open compare (≥ 2 shortlisted)",
+      "gallery": "Open shared cohort gallery"
     }
   },
   "checkout": {
@@ -649,7 +651,8 @@
     "verdictOk": "a solid choice",
     "verdictWeak": "worth reconsidering",
     "watchPrice": "Watch price",
-    "watching": "Watching"
+    "watching": "Watching",
+    "moreFromStore": "More from {store}"
   },
   "chat": {
     "fabLong": "Ask Tony more",

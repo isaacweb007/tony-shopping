@@ -33,11 +33,22 @@ export function SearchView() {
   const tShare = useTranslations('share');
 
   const q = params.get('q') ?? '';
+  const storeParam = params.get('store');
   const { data: result, isFetching, isError, refetch } = useSearch(q);
   const products = useSearchStore((s) => s.result?.products);
   const sort = useSearchStore((s) => s.sort);
   const store = useSearchStore((s) => s.store);
   const setStore = useSearchStore((s) => s.setStore);
+
+  // Allow deep-link store filter via /search?q=…&store=Coupang. We sync
+  // once per (q, storeParam) change so we don't fight the user's manual
+  // FilterBar pick after the first hydration.
+  React.useEffect(() => {
+    if (storeParam && storeParam !== store) {
+      setStore(storeParam as typeof store);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storeParam, q]);
 
   const visible = React.useMemo<Product[]>(() => {
     if (!products) return [];
