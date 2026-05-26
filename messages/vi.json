@@ -243,6 +243,17 @@
     },
     "other": "Khác",
     "menu": "Bảng điều khiển",
+    "trend": {
+      "eyebrow": "Danh mục nổi bật tuần này",
+      "title": "{n} tín hiệu hướng đến {cat}.",
+      "runnerUp": "Á quân: {cat}.",
+      "categoryNames": {
+        "shoes": "Giày", "bag": "Túi", "lighting": "Đèn", "clothes": "Quần áo",
+        "beauty": "Mỹ phẩm", "electronics": "Điện tử", "furniture": "Nội thất",
+        "kitchen": "Nhà bếp", "food": "Thực phẩm", "sports": "Thể thao", "toy": "Đồ chơi",
+        "pet": "Thú cưng", "jewelry": "Trang sức", "baby": "Em bé"
+      }
+    },
     "revenue": {
       "eyebrow": "Giá trị giới thiệu ước tính tháng này",
       "caption": "Dựa trên {clicks} lượt click trong 30 ngày qua · tỉ lệ hoa hồng × tỉ lệ chuyển đổi giả định.",

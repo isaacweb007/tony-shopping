@@ -7,6 +7,7 @@ import { DonutChart } from './donut-chart';
 import { CategoryBars } from './category-bars';
 import { InsightsRow } from './insights-row';
 import { RevenueCard } from './revenue-card';
+import { CategoryTrendCard } from './category-trend-card';
 import { useDashboardStats } from '@/hooks/use-dashboard-stats';
 import { formatCount } from '@/lib/format';
 import type { AppLocale } from '@/i18n/routing';
@@ -57,6 +58,8 @@ export function DashboardView() {
       </div>
 
       <InsightsRow />
+
+      <CategoryTrendCard />
 
       <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
         <StatCard

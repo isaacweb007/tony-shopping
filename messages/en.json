@@ -243,6 +243,17 @@
     },
     "other": "Other",
     "menu": "My dashboard",
+    "trend": {
+      "eyebrow": "This week's category",
+      "title": "{n} signals pointing to {cat}.",
+      "runnerUp": "Runner-up: {cat}.",
+      "categoryNames": {
+        "shoes": "Shoes", "bag": "Bags", "lighting": "Lighting", "clothes": "Clothes",
+        "beauty": "Beauty", "electronics": "Electronics", "furniture": "Furniture",
+        "kitchen": "Kitchen", "food": "Food", "sports": "Sports", "toy": "Toys",
+        "pet": "Pet", "jewelry": "Jewelry", "baby": "Baby"
+      }
+    },
     "revenue": {
       "eyebrow": "Estimated referral value this month",
       "caption": "Based on the last 30 days of {clicks} clicks · per-store rates × assumed conversion.",
