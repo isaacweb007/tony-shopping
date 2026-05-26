@@ -296,6 +296,10 @@
     }
   },
   "product": {
+    "related": {
+      "title": "Tony còn thích những món này",
+      "subtitle": "Top 4 lựa chọn gần đó theo điểm Tony."
+    },
     "history": {
       "title": "Lịch sử giá",
       "low": "Thấp",

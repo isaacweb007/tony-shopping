@@ -296,6 +296,10 @@
     }
   },
   "product": {
+    "related": {
+      "title": "Tony also likes these",
+      "subtitle": "Top 4 nearby picks ranked by Tony score."
+    },
     "history": {
       "title": "Price history",
       "low": "Low",

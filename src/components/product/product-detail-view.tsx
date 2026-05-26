@@ -14,6 +14,7 @@ import { haptic } from '@/lib/haptic';
 import { ReviewAnalysis } from '@/components/search/review-analysis';
 import { PriceSparkline } from '@/components/product/price-sparkline';
 import { FloatingCompareBar } from '@/components/product/floating-compare-bar';
+import { RelatedProducts } from '@/components/product/related-products';
 import { usePriceWatchStore } from '@/stores/price-watch-store';
 import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { useRouter } from '@/i18n/routing';
@@ -180,6 +181,8 @@ export function ProductDetailView({ product, q }: Props) {
       <PriceSparkline snapshot={priceWatch} className="mt-8" />
 
       <ReviewAnalysis product={product} />
+
+      <RelatedProducts product={product} />
 
       <FloatingCompareBar />
     </div>
