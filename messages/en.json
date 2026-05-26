@@ -632,6 +632,9 @@
     "emptyAction": "Reset filters",
     "categoryEmpty": "No items match this category.",
     "categoryEmptyAction": "Show all categories",
+    "filterBar": {
+      "favoriteHint": "Your most-used store"
+    },
     "priceBuckets": {
       "label": "Price",
       "all": "All",

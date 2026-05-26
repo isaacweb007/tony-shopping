@@ -632,6 +632,9 @@
     "emptyAction": "Xoá bộ lọc",
     "categoryEmpty": "Không có sản phẩm trong danh mục này.",
     "categoryEmptyAction": "Hiện tất cả danh mục",
+    "filterBar": {
+      "favoriteHint": "Cửa hàng bạn dùng nhiều nhất"
+    },
     "priceBuckets": {
       "label": "Giá",
       "all": "Tất cả",

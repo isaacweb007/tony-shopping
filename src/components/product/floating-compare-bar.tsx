@@ -35,7 +35,7 @@ export function FloatingCompareBar() {
 
   return (
     <div
-      className="fixed bottom-[88px] right-4 z-30 animate-fade-in md:right-6"
+      className="print-hide fixed bottom-[88px] right-4 z-30 animate-fade-in md:right-6"
       role="region"
       aria-label={t('floatingCta')}
     >

@@ -1,7 +1,10 @@
 'use client';
 
+import * as React from 'react';
 import { useTranslations } from 'next-intl';
+import { Star } from 'lucide-react';
 import { useSearchStore } from '@/stores/search-store';
+import { useUserProfileStore } from '@/stores/user-profile-store';
 import type { SortKey, StoreFilter } from '@/types/search';
 import type { StoreId } from '@/types/product';
 import { cn } from '@/lib/utils';
@@ -48,10 +51,20 @@ interface FilterBarProps {
 export function FilterBar({ storeCounts, totalCount }: FilterBarProps = {}) {
   const t = useTranslations('sort');
   const ts = useTranslations('store');
+  const tFav = useTranslations('search.filterBar');
   const sort = useSearchStore((s) => s.sort);
   const store = useSearchStore((s) => s.store);
   const setSort = useSearchStore((s) => s.setSort);
   const setStore = useSearchStore((s) => s.setStore);
+
+  // Top store from the user profile — used to star the user's go-to chip.
+  // Hydration-safe: profile lives in localStorage, so wait for client mount
+  // before checking it. topStores() is memoised inside the store so calling
+  // it on every render is cheap.
+  const topStores = useUserProfileStore((s) => s.topStores);
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+  const favoriteStore = mounted ? topStores(1)[0] ?? null : null;
 
   return (
     <>
@@ -81,10 +94,12 @@ export function FilterBar({ storeCounts, totalCount }: FilterBarProps = {}) {
           // less noise. Keep "all" always visible.
           if (k !== 'all' && count !== null && count === 0) return null;
           const active = store === k;
+          const isFavorite = k !== 'all' && favoriteStore === k;
           return (
             <button
               key={k}
               onClick={() => setStore(k)}
+              title={isFavorite ? tFav('favoriteHint') : undefined}
               className={cn(
                 'inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12px] font-medium transition',
                 active
@@ -92,6 +107,19 @@ export function FilterBar({ storeCounts, totalCount }: FilterBarProps = {}) {
                   : 'border-ink-200 bg-white text-ink-600 hover:bg-ink-50 dark:border-ink-800 dark:bg-ink-900 dark:text-ink-300 dark:hover:bg-ink-800',
               )}
             >
+              {isFavorite && (
+                <Star
+                  className={cn(
+                    'h-3 w-3',
+                    active
+                      ? 'text-accent-700 dark:text-accent-300'
+                      : 'text-amber-500 dark:text-amber-400',
+                  )}
+                  strokeWidth={2.2}
+                  fill="currentColor"
+                  aria-label={tFav('favoriteHint')}
+                />
+              )}
               <span>{k === 'all' ? ts('all') : STORE_LABEL[k]}</span>
               {count !== null && count > 0 ? (
                 <span

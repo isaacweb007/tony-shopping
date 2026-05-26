@@ -5,6 +5,7 @@ import { CompareView } from '@/components/compare/compare-view';
 import { CohortReactions } from '@/components/compare/cohort-reactions';
 import { CohortCloneButton } from '@/components/cohort/clone-button';
 import { CohortLocaleHint } from '@/components/cohort/locale-hint';
+import { CohortVisitMarker } from '@/components/cohort/visit-marker';
 import { SITE_URL } from '@/lib/site';
 import type { ShortlistSnap } from '@/types/shortlist';
 import type { ComparePriority } from '@/lib/compare/verdict';
@@ -92,6 +93,7 @@ export default async function SharedCompare({
         initialPriority={cohort.priority}
         readOnly
       />
+      <CohortVisitMarker slug={cohort.slug} />
       <div className="container max-w-6xl">
         <CohortLocaleHint cohortLocale={cohort.locale} />
         <CohortReactions slug={cohort.slug} />

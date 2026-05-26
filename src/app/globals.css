@@ -128,3 +128,44 @@
     padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
   }
 }
+
+/*
+ * Print mode — Cmd+P / Print on /compare should produce a clean
+ * spec sheet a user can hand to a buyer or pin to a Notion doc.
+ * We hide every interactive surface (nav, drawers, footer, FABs,
+ * floating bars, chat panel, mobile nav) and leave just the
+ * verdict card + spec table. The .print-hide utility lets
+ * specific components opt out individually.
+ */
+@media print {
+  /* Belt-and-braces: kill anything explicitly marked or known to be chrome. */
+  header,
+  footer,
+  nav,
+  aside,
+  [role='dialog'],
+  [data-radix-popper-content-wrapper],
+  [aria-hidden='true'][role='presentation'],
+  .print-hide {
+    display: none !important;
+  }
+  /* Compare gradients / shadows reproduce poorly on paper. */
+  .shadow-card,
+  .shadow-card-hover {
+    box-shadow: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  main {
+    padding: 0 !important;
+  }
+  /* Force tables to flatten without horizontal scroll. */
+  .overflow-x-auto {
+    overflow: visible !important;
+  }
+  table {
+    min-width: 0 !important;
+  }
+}

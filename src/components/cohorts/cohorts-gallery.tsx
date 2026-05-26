@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { formatRelativeTime } from '@/lib/format';
 import { useGridKeyboardNav } from '@/hooks/use-grid-keyboard-nav';
 import { useMySharesStore } from '@/stores/my-shares-store';
+import { useVisitedCohortsStore } from '@/stores/visited-cohorts-store';
 
 type PriorityFilter = 'all' | 'balanced' | 'value' | 'fast' | 'genuine';
 const FILTERS: readonly PriorityFilter[] = ['all', 'balanced', 'value', 'fast', 'genuine'];
@@ -80,10 +81,15 @@ export function CohortsGallery() {
   // before deciding whether to show the toggle. Server pass renders without
   // it; client upgrades in place.
   const mySlugs = useMySharesStore((s) => s.slugs);
+  const visitedSlugs = useVisitedCohortsStore((s) => s.slugs);
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
   const canFilterMine = mounted && mySlugs.length > 0;
   const mySlugSet = React.useMemo(() => new Set(mySlugs), [mySlugs]);
+  const visitedSet = React.useMemo(
+    () => (mounted ? new Set(visitedSlugs) : new Set<string>()),
+    [mounted, visitedSlugs],
+  );
 
   const setUrlParam = React.useCallback(
     (key: string, value: string, defaultValue: string) => {
@@ -273,13 +279,20 @@ export function CohortsGallery() {
           </div>
           <div ref={grid.containerRef}>
           <ul className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((it, i) => (
+            {items.map((it, i) => {
+              const visited = visitedSet.has(it.slug);
+              return (
               <li key={it.slug}>
                 <Link
                   href={`/c/${it.slug}`}
                   data-cohort-cell=""
                   {...grid.getCellProps(i)}
-                  className="block rounded-2xl border border-ink-200 bg-white p-4 transition hover:border-accent-300 hover:bg-accent-50/40 focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-none dark:border-ink-800 dark:bg-ink-900 dark:hover:border-accent-700 dark:hover:bg-accent-950/30"
+                  className={cn(
+                    'block rounded-2xl border p-4 transition focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-none',
+                    visited
+                      ? 'border-ink-200/60 bg-ink-50/40 text-ink-500 hover:border-accent-300 hover:bg-accent-50/40 hover:text-ink-700 dark:border-ink-800/60 dark:bg-ink-900/40 dark:text-ink-400 dark:hover:border-accent-700 dark:hover:bg-accent-950/30 dark:hover:text-ink-200'
+                      : 'border-ink-200 bg-white hover:border-accent-300 hover:bg-accent-50/40 dark:border-ink-800 dark:bg-ink-900 dark:hover:border-accent-700 dark:hover:bg-accent-950/30',
+                  )}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="text-[10.5px] font-bold uppercase tracking-widest text-accent-700 dark:text-accent-300">
@@ -295,7 +308,8 @@ export function CohortsGallery() {
                   </div>
                 </Link>
               </li>
-            ))}
+              );
+            })}
           </ul>
           </div>
 
