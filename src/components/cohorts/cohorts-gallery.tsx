@@ -141,6 +141,28 @@ export function CohortsGallery() {
   const items = mineOnly
     ? allItems.filter((it) => mySlugSet.has(it.slug))
     : allItems;
+
+  // IntersectionObserver sentinel — when it scrolls into view we auto-call
+  // fetchNextPage. The visible "Load more" button stays mounted as a
+  // fallback (some users prefer the explicit click; non-IO browsers get
+  // it for free). rootMargin 200px primes the next page just before the
+  // user reaches the end.
+  const sentinelRef = React.useRef<HTMLDivElement | null>(null);
+  React.useEffect(() => {
+    if (!query.hasNextPage || query.isFetchingNextPage) return;
+    const node = sentinelRef.current;
+    if (!node || typeof IntersectionObserver === 'undefined') return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          void query.fetchNextPage();
+        }
+      },
+      { rootMargin: '200px' },
+    );
+    obs.observe(node);
+    return () => obs.disconnect();
+  }, [query.hasNextPage, query.isFetchingNextPage, query.fetchNextPage, query]);
   const total = mineOnly
     ? items.length
     : pages[0]?.total ?? 0;
@@ -278,24 +300,38 @@ export function CohortsGallery() {
           </div>
 
           {query.hasNextPage && (
-            <div className="mt-8 flex justify-center">
-              <Button
-                variant="outline"
-                size="md"
-                onClick={() => query.fetchNextPage()}
-                disabled={query.isFetchingNextPage}
-                className="h-11 rounded-xl px-6 font-semibold"
-              >
-                {query.isFetchingNextPage ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2.2} />
-                    {t('loading')}
-                  </>
-                ) : (
-                  t('loadMore')
-                )}
-              </Button>
-            </div>
+            <>
+              <div ref={sentinelRef} aria-hidden className="h-px w-full" />
+              <div className="mt-8 flex justify-center">
+                <Button
+                  variant="outline"
+                  size="md"
+                  onClick={() => query.fetchNextPage()}
+                  disabled={query.isFetchingNextPage}
+                  className="h-11 rounded-xl px-6 font-semibold"
+                >
+                  {query.isFetchingNextPage ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2.2} />
+                      {t('loading')}
+                    </>
+                  ) : (
+                    t('loadMore')
+                  )}
+                </Button>
+              </div>
+              {query.isFetchingNextPage && (
+                <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <li
+                      key={i}
+                      className="h-20 animate-pulse rounded-2xl bg-ink-100/70 dark:bg-ink-800/50"
+                      aria-hidden
+                    />
+                  ))}
+                </ul>
+              )}
+            </>
           )}
         </>
       )}

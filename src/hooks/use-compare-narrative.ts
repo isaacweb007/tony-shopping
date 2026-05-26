@@ -18,6 +18,12 @@ interface Args {
   /** Pre-rendered price strings keyed by snap id (locale-aware). */
   priceLabels: Record<string, string>;
   locale: 'ko' | 'en' | 'vi';
+  /**
+   * Manual cache-bust — incrementing this forces a fresh /api/compare-narrative
+   * call even when all other inputs are identical. Wire to a "다시 쓰기"
+   * button so the user can ask for a different phrasing.
+   */
+  revision?: number;
 }
 
 /**
@@ -33,12 +39,13 @@ export function useCompareNarrative({
   reasonKeys,
   priceLabels,
   locale,
+  revision = 0,
 }: Args) {
   const enabled = snaps.length >= 2;
   const cohortKey = snaps.map((s) => s.id).join(',');
 
   return useQuery({
-    queryKey: ['compare-narrative', cohortKey, priority, winnerId, locale],
+    queryKey: ['compare-narrative', cohortKey, priority, winnerId, locale, revision],
     enabled,
     staleTime: 60_000,
     queryFn: async ({ signal }): Promise<NarrativeResponse> => {

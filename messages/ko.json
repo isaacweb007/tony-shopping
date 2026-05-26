@@ -499,6 +499,7 @@
     "narrativeSpeak": "듣기",
     "narrativeSpeaking": "재생 중…",
     "narrativeStop": "정지",
+    "narrativeRefetch": "다시 쓰기",
     "auto": {
       "recommendedAria": "토니 추천",
       "basedOn": "토니가 최근 {n}번의 선택에서 \"{signal}\"을(를) 자주 고른 걸 보고 골라봤어요.",
@@ -619,6 +620,13 @@
     "emptyAction": "필터 초기화",
     "categoryEmpty": "이 카테고리에는 매칭되는 상품이 없어요.",
     "categoryEmptyAction": "전체 카테고리 보기",
+    "priceBuckets": {
+      "label": "가격대",
+      "all": "전체",
+      "low": "저가",
+      "mid": "중가",
+      "high": "고가"
+    },
     "loadMore": "{n}개 더 보기",
     "loadMoreHint": "{shown}개 / {total}개",
     "categories": {

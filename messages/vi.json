@@ -499,6 +499,7 @@
     "narrativeSpeak": "Nghe",
     "narrativeSpeaking": "Đang phát…",
     "narrativeStop": "Dừng",
+    "narrativeRefetch": "Viết lại",
     "auto": {
       "recommendedAria": "Tony gợi ý",
       "basedOn": "Tony thấy bạn nghiêng về \"{signal}\" trong {n} lựa chọn gần đây.",
@@ -619,6 +620,13 @@
     "emptyAction": "Xoá bộ lọc",
     "categoryEmpty": "Không có sản phẩm trong danh mục này.",
     "categoryEmptyAction": "Hiện tất cả danh mục",
+    "priceBuckets": {
+      "label": "Giá",
+      "all": "Tất cả",
+      "low": "Thấp",
+      "mid": "Vừa",
+      "high": "Cao"
+    },
     "loadMore": "Hiển thị thêm {n}",
     "loadMoreHint": "{shown} / {total}",
     "categories": {

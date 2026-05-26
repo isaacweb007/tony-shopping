@@ -499,6 +499,7 @@
     "narrativeSpeak": "Listen",
     "narrativeSpeaking": "Playing…",
     "narrativeStop": "Stop",
+    "narrativeRefetch": "Rewrite",
     "auto": {
       "recommendedAria": "Tony's pick",
       "basedOn": "Tony noticed you've leaned toward \"{signal}\" across your last {n} picks.",
@@ -619,6 +620,13 @@
     "emptyAction": "Reset filters",
     "categoryEmpty": "No items match this category.",
     "categoryEmptyAction": "Show all categories",
+    "priceBuckets": {
+      "label": "Price",
+      "all": "All",
+      "low": "Low",
+      "mid": "Mid",
+      "high": "High"
+    },
     "loadMore": "Show {n} more",
     "loadMoreHint": "{shown} of {total}",
     "categories": {

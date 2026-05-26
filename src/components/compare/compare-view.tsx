@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import { Bookmark, Check, Copy, ExternalLink, GitCompare, Share2, Sparkles, Square, Star, Volume2, X } from 'lucide-react';
+import { Bookmark, Check, Copy, ExternalLink, GitCompare, RefreshCw, Share2, Sparkles, Square, Star, Volume2, X } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { Button } from '@/components/ui/button';
 import { useShortlistStore } from '@/stores/shortlist-store';
@@ -92,6 +92,9 @@ export function CompareView({ seedSnaps, initialPriority, readOnly }: Props = {}
     return out;
   }, [snaps, locale]);
 
+  // narrativeRevision bumps on "다시 쓰기" so React Query treats the call as
+  // a fresh request rather than hitting the cached entry.
+  const [narrativeRevision, setNarrativeRevision] = React.useState(0);
   const narrative = useCompareNarrative({
     snaps,
     priority,
@@ -99,6 +102,7 @@ export function CompareView({ seedSnaps, initialPriority, readOnly }: Props = {}
     reasonKeys: compare.verdict.reasonKeys,
     priceLabels,
     locale,
+    revision: narrativeRevision,
   });
 
   async function shareSet() {
@@ -227,6 +231,7 @@ export function CompareView({ seedSnaps, initialPriority, readOnly }: Props = {}
           narrativeSource={narrative.data?.source ?? null}
           narrativeLoading={narrative.isFetching}
           narrativeError={narrative.isError}
+          onNarrativeRefetch={() => setNarrativeRevision((r) => r + 1)}
         />
       ) : (
         <div className="mt-6 rounded-2xl border border-dashed border-ink-200 bg-ink-50/40 p-5 text-[13px] text-ink-500 dark:border-ink-700 dark:bg-ink-800/30 dark:text-ink-400">
@@ -264,6 +269,7 @@ function CohortVerdictCard({
   narrativeSource,
   narrativeLoading,
   narrativeError,
+  onNarrativeRefetch,
 }: {
   winner: ShortlistSnap;
   score: number;
@@ -273,6 +279,7 @@ function CohortVerdictCard({
   narrativeSource: 'anthropic' | 'openai' | 'fallback' | null;
   narrativeLoading: boolean;
   narrativeError: boolean;
+  onNarrativeRefetch?: () => void;
 }) {
   const t = useTranslations('compare');
   return (
@@ -304,6 +311,7 @@ function CohortVerdictCard({
         source={narrativeSource}
         winnerName={winner.name}
         winnerStore={winner.store}
+        onRefetch={onNarrativeRefetch}
       />
 
       {reasonKeys.length > 0 && (
@@ -333,6 +341,7 @@ function NarrativeBlock({
   source,
   winnerName,
   winnerStore,
+  onRefetch,
 }: {
   text: string | null;
   loading: boolean;
@@ -340,6 +349,7 @@ function NarrativeBlock({
   source: 'anthropic' | 'openai' | 'fallback' | null;
   winnerName: string;
   winnerStore: string;
+  onRefetch?: () => void;
 }) {
   const t = useTranslations('compare');
   const locale = useLocale() as AppLocale;
@@ -433,6 +443,18 @@ function NarrativeBlock({
                 {t('narrativeSpeak')}
               </>
             )}
+          </button>
+        )}
+        {onRefetch && (
+          <button
+            type="button"
+            onClick={onRefetch}
+            aria-label={t('narrativeRefetch')}
+            title={t('narrativeRefetch')}
+            className="inline-flex items-center gap-1 rounded-full border border-ink-200 bg-white px-2.5 py-1 text-[11px] font-bold tracking-tight text-ink-700 transition hover:border-accent-400 hover:text-accent-700 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200 dark:hover:border-accent-500 dark:hover:text-accent-300"
+          >
+            <RefreshCw className="h-3 w-3" strokeWidth={2} />
+            {t('narrativeRefetch')}
           </button>
         )}
         {source === 'fallback' && (

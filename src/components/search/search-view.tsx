@@ -20,6 +20,8 @@ import { ResultsBadge } from './results-badge';
 import { MockStoresNote } from './mock-stores-note';
 import { CategoryChips } from './category-chips';
 import { categorize, type Category } from '@/lib/categorize';
+import { computePriceBuckets, bucketOf, type PriceBucket } from '@/lib/price-buckets';
+import { PriceBucketChips } from './price-bucket-chips';
 import { ProductDetailDialog } from './product-detail-dialog';
 import { WarningList } from './warning-list';
 import { SearchSkeleton } from './search-skeleton';
@@ -116,12 +118,27 @@ export function SearchView() {
 
   const [detail, setDetail] = React.useState<Product | null>(null);
   const [categoryFilter, setCategoryFilter] = React.useState<Category | null>(null);
+  const [priceBucket, setPriceBucket] = React.useState<PriceBucket | null>(null);
 
-  // Apply the category facet on top of the store-filtered `visible` set.
+  // Quantile-based price-range thresholds across the store-filtered visible
+  // set. Null when there isn't enough variation to make 3 buckets useful.
+  const priceThresholds = React.useMemo(
+    () => computePriceBuckets(visible.map((p) => p.finalPrice.amount)),
+    [visible],
+  );
+
+  // Apply the category + price-bucket facets on top of `visible`. Price is
+  // applied after category so the chips reflect the categorically-relevant
+  // set rather than the whole store-filtered grid.
   const categoryFiltered = React.useMemo<Product[]>(() => {
-    if (categoryFilter === null) return visible;
-    return visible.filter((p) => categorize(p.name).includes(categoryFilter));
-  }, [visible, categoryFilter]);
+    let arr = categoryFilter === null
+      ? visible
+      : visible.filter((p) => categorize(p.name).includes(categoryFilter));
+    if (priceBucket !== null && priceThresholds) {
+      arr = arr.filter((p) => bucketOf(p.finalPrice.amount, priceThresholds) === priceBucket);
+    }
+    return arr;
+  }, [visible, categoryFilter, priceBucket, priceThresholds]);
 
   // Progressive disclosure — render 12 results, extend on scroll. Re-sorts /
   // store / category changes reset the cursor so the user always sees the
@@ -129,7 +146,7 @@ export function SearchView() {
   const paginated = useProgressiveList({
     items: categoryFiltered,
     batchSize: 12,
-    resetKey: `${q}|${store}|${sort}|${categoryFilter ?? 'all'}`,
+    resetKey: `${q}|${store}|${sort}|${categoryFilter ?? 'all'}|${priceBucket ?? 'all'}`,
   });
 
   // Grid keyboard nav. Cols mirror the Tailwind grid breakpoints below: 1 / 2 /
@@ -275,6 +292,11 @@ export function SearchView() {
           products={visible}
           selected={categoryFilter}
           onSelect={setCategoryFilter}
+        />
+        <PriceBucketChips
+          selected={priceBucket}
+          onSelect={setPriceBucket}
+          visible={priceThresholds !== null}
         />
         <div
           ref={grid.containerRef}
