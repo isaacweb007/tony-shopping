@@ -39,8 +39,8 @@ function clampInt(raw: string | null, min: number, max: number, fallback: number
 }
 
 const PRIORITY_VALUES = new Set(['balanced', 'value', 'fast', 'genuine']);
-type SortMode = 'newest' | 'popular' | 'biggest';
-const SORT_VALUES = new Set<SortMode>(['newest', 'popular', 'biggest']);
+type SortMode = 'newest' | 'popular' | 'biggest' | 'clones';
+const SORT_VALUES = new Set<SortMode>(['newest', 'popular', 'biggest', 'clones']);
 
 export async function GET(req: NextRequest) {
   const limit = clampInt(req.nextUrl.searchParams.get('limit'), 1, 20, 5);
@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
 
   let q = supabase
     .from('cohort_shares')
-    .select('slug, snaps, winner_id, priority, locale, created_at', { count: 'exact' })
+    .select('slug, snaps, winner_id, priority, locale, created_at, clones', { count: 'exact' })
     .order('created_at', { ascending: false });
   if (priority) q = q.eq('priority', priority);
   const { data, error, count } = await q.range(baseOffset, baseOffset + baseLimit - 1);
@@ -110,6 +110,7 @@ export async function GET(req: NextRequest) {
       createdAt: row.created_at,
       up: tally.up,
       down: tally.down,
+      clones: typeof row.clones === 'number' ? row.clones : 0,
     };
   });
 
@@ -124,6 +125,11 @@ export async function GET(req: NextRequest) {
   } else if (sort === 'biggest') {
     items = [...allItems].sort((a, b) => {
       if (a.n !== b.n) return b.n - a.n;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  } else if (sort === 'clones') {
+    items = [...allItems].sort((a, b) => {
+      if (a.clones !== b.clones) return b.clones - a.clones;
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
   }

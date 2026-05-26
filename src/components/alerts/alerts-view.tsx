@@ -344,6 +344,10 @@ function AlertCard({
       ? formatMoneyLocale({ amount: prevAmount, currency: watch.currency }, locale)
       : null;
 
+  // /product/[id] needs ?q to re-run the server search. We use snap.name as
+  // the q — if the product re-surfaces by id, the detail page renders; if
+  // not, the user falls through to the "Open store" external link.
+  const detailHref = `/product/${encodeURIComponent(snap.id)}?q=${encodeURIComponent(snap.name)}`;
   return (
     <li
       className={cn(
@@ -355,12 +359,18 @@ function AlertCard({
             : 'border-ink-200 dark:border-ink-800',
       )}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={snap.imageUrl ?? '/icon.svg'}
-        alt=""
-        className="h-20 w-20 shrink-0 rounded-xl bg-ink-50 object-cover dark:bg-ink-800"
-      />
+      <Link
+        href={detailHref}
+        aria-label={snap.name}
+        className="shrink-0 rounded-xl focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-none"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={snap.imageUrl ?? '/icon.svg'}
+          alt=""
+          className="h-20 w-20 shrink-0 rounded-xl bg-ink-50 object-cover dark:bg-ink-800"
+        />
+      </Link>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-semibold text-ink-500 dark:text-ink-400">
           <span className="text-ink-800 dark:text-ink-100">{snap.store}</span>
@@ -371,9 +381,12 @@ function AlertCard({
             </span>
           )}
         </div>
-        <div className="mt-0.5 line-clamp-2 text-[13.5px] font-semibold leading-tight tracking-tight">
+        <Link
+          href={detailHref}
+          className="mt-0.5 block line-clamp-2 text-[13.5px] font-semibold leading-tight tracking-tight transition hover:text-accent-700 dark:hover:text-accent-300"
+        >
           {snap.name}
-        </div>
+        </Link>
         <div className="mt-1.5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <DualMoney money={snap.finalPrice} size="md" layout="inline" locale={locale} />
           {prevMoney && delta !== null && (

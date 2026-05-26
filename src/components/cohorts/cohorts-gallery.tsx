@@ -17,8 +17,8 @@ import { useVisitedCohortsStore } from '@/stores/visited-cohorts-store';
 type PriorityFilter = 'all' | 'balanced' | 'value' | 'fast' | 'genuine';
 const FILTERS: readonly PriorityFilter[] = ['all', 'balanced', 'value', 'fast', 'genuine'];
 
-type SortMode = 'newest' | 'popular' | 'biggest';
-const SORT_MODES: readonly SortMode[] = ['newest', 'popular', 'biggest'];
+type SortMode = 'newest' | 'popular' | 'biggest' | 'clones';
+const SORT_MODES: readonly SortMode[] = ['newest', 'popular', 'biggest', 'clones'];
 
 function parsePriority(raw: string | null): PriorityFilter {
   if (!raw) return 'all';
@@ -248,6 +248,7 @@ export function CohortsGallery() {
           <option value="newest">{t('sortNewest')}</option>
           <option value="popular">{t('sortPopular')}</option>
           <option value="biggest">{t('sortBiggest')}</option>
+          <option value="clones">{t('sortClones')}</option>
         </select>
         {canFilterMine && (
           <label className="ml-1 inline-flex items-center gap-1.5 text-[12px] font-semibold text-ink-700 dark:text-ink-200">

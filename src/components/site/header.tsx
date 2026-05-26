@@ -68,8 +68,10 @@ export function Header() {
               {unreadBadge > 0 && (
                 <span
                   aria-label={t('alertsUnread', { n: unreadBadge })}
-                  className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-ink-950"
-                />
+                  className="ml-0.5 rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white"
+                >
+                  {unreadBadge > 9 ? '9+' : unreadBadge}
+                </span>
               )}
             </Link>
           </Button>
@@ -92,7 +94,9 @@ export function Header() {
             >
               <Bell className="h-[18px] w-[18px]" strokeWidth={1.6} />
               {unreadBadge > 0 && (
-                <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-ink-950" />
+                <span className="absolute -right-0.5 -top-0.5 rounded-full bg-red-500 px-1.5 py-0.5 text-[9px] font-bold leading-none text-white">
+                  {unreadBadge > 9 ? '9+' : unreadBadge}
+                </span>
               )}
             </Link>
           </Button>
