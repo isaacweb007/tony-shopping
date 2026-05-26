@@ -107,6 +107,9 @@ pnpm dev
 
 ## Vercel 환경변수 등록 (배포)
 
+> **전체 GO-LIVE 체크리스트는 [`GO-LIVE.md`](./GO-LIVE.md) 에 정리되어 있습니다.**
+> Supabase 마이그레이션 4개, 어댑터 키 발급 우선순위, 배포 후 검증 절차, 모니터링 첫 주 점검 항목까지 한 문서에 다 있습니다.
+
 ### 방법 A: Dashboard (1분)
 1. https://vercel.com/dashboard → `tony-shopping` → **Settings → Environment Variables**
 2. 위 어댑터 표의 env 이름을 그대로 복사 + 발급받은 값 붙여넣기
