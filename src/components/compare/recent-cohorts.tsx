@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 
 interface Item {
@@ -14,6 +14,8 @@ interface Item {
   priority: string;
   locale: string;
   createdAt: string;
+  up?: number;
+  down?: number;
 }
 
 interface ApiResponse {
@@ -25,6 +27,10 @@ interface ApiResponse {
  * cohorts surfaced as small linked chips so a visitor can dip into a public
  * compare without leaving Tony. PII-free (just the winner name + store).
  * Renders nothing when Supabase isn't configured or no shares exist.
+ *
+ * Each chip also shows the anonymous 👍/👎 tally so visitors see signal
+ * before they click — no need to open the cohort to learn it's well-loved
+ * (or contested).
  */
 export function RecentCohorts() {
   const t = useTranslations('compare.recent');
@@ -58,8 +64,11 @@ export function RecentCohorts() {
               href={`/c/${it.slug}`}
               className="block rounded-2xl border border-ink-200 bg-white p-3 transition hover:border-accent-300 hover:bg-accent-50/40 dark:border-ink-800 dark:bg-ink-900 dark:hover:border-accent-700 dark:hover:bg-accent-950/30"
             >
-              <div className="text-[10.5px] font-bold uppercase tracking-widest text-accent-700 dark:text-accent-300">
-                {it.winnerStore ?? '—'} · {it.n}{t('countSuffix')}
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-[10.5px] font-bold uppercase tracking-widest text-accent-700 dark:text-accent-300">
+                  {it.winnerStore ?? '—'} · {it.n}{t('countSuffix')}
+                </div>
+                <ReactionPills up={it.up ?? 0} down={it.down ?? 0} />
               </div>
               <div className="mt-0.5 line-clamp-1 text-[13.5px] font-semibold tracking-tight">
                 {it.winnerName ?? t('noWinner')}
@@ -69,5 +78,25 @@ export function RecentCohorts() {
         ))}
       </ul>
     </section>
+  );
+}
+
+function ReactionPills({ up, down }: { up: number; down: number }) {
+  if (up === 0 && down === 0) return null;
+  return (
+    <span className="flex shrink-0 items-center gap-1.5 text-[10.5px] font-bold tabular-nums">
+      {up > 0 ? (
+        <span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-100 px-1.5 py-0.5 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">
+          <ThumbsUp className="h-2.5 w-2.5" strokeWidth={2.4} />
+          {up}
+        </span>
+      ) : null}
+      {down > 0 ? (
+        <span className="inline-flex items-center gap-0.5 rounded-full bg-red-100 px-1.5 py-0.5 text-red-700 dark:bg-red-950/50 dark:text-red-300">
+          <ThumbsDown className="h-2.5 w-2.5" strokeWidth={2.4} />
+          {down}
+        </span>
+      ) : null}
+    </span>
   );
 }
