@@ -381,6 +381,12 @@
     "ogTitleWithWinner": "Tony's pick: {winner}",
     "ogDescriptionWithCohort": "Tony's pick from {n} candidates. Open the side-by-side compare.",
     "sharedBadge": "Shared compare",
+    "recent": {
+      "eyebrow": "What others are comparing",
+      "title": "Recent public cohorts",
+      "countSuffix": " items",
+      "noWinner": "(no clear winner)"
+    },
     "eyebrow": "Tony's compare",
     "heading": "Your shortlist, side by side",
     "subtitle": "Comparing {n} candidates across every criterion",

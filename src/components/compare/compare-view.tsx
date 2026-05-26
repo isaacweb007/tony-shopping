@@ -15,6 +15,7 @@ import { shareOrCopy } from '@/lib/share';
 import { affiliateUrl } from '@/lib/affiliate';
 import { useCompareNarrative } from '@/hooks/use-compare-narrative';
 import { useAutoPriority } from '@/hooks/use-auto-priority';
+import { RecentCohorts } from './recent-cohorts';
 import type { AutoPriorityResult } from '@/lib/compare/auto-priority';
 import { cn } from '@/lib/utils';
 import type { AppLocale } from '@/i18n/routing';
@@ -242,6 +243,10 @@ export function CompareView({ seedSnaps, initialPriority, readOnly }: Props = {}
               }
         }
       />
+
+      {/* Recent shared cohorts — only on the user's own /compare, not on
+          read-only public cohort pages. */}
+      {!readOnly && <RecentCohorts />}
     </div>
   );
 }

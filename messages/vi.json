@@ -381,6 +381,12 @@
     "ogTitleWithWinner": "Tony chọn: {winner}",
     "ogDescriptionWithCohort": "Lựa chọn của Tony từ {n} ứng viên. Mở bảng so sánh chi tiết.",
     "sharedBadge": "So sánh đã chia sẻ",
+    "recent": {
+      "eyebrow": "Người khác đang so sánh gì",
+      "title": "Các cohort công khai gần đây",
+      "countSuffix": " mục",
+      "noWinner": "(chưa có người thắng)"
+    },
     "eyebrow": "Tony so sánh",
     "heading": "Danh sách của bạn, đặt cạnh nhau",
     "subtitle": "Đang so sánh {n} ứng viên theo từng tiêu chí",
