@@ -36,6 +36,7 @@ export function useAlertsUnread(): number {
   const items = useShortlistStore((s) => s.items);
   const snapshots = usePriceWatchStore((s) => s.snapshots);
   const threshold = usePriceWatchStore((s) => s.threshold);
+  const snoozes = usePriceWatchStore((s) => s.snoozes);
 
   const [lastSeen, setLastSeen] = React.useState<number>(0);
   React.useEffect(() => {
@@ -52,6 +53,7 @@ export function useAlertsUnread(): number {
       snaps: Object.values(items),
       snapshots,
       threshold,
+      snoozes,
     });
     let count = 0;
     for (const r of rows) {
@@ -61,7 +63,7 @@ export function useAlertsUnread(): number {
       if (last.at > lastSeen) count += 1;
     }
     return count;
-  }, [items, snapshots, threshold, lastSeen]);
+  }, [items, snapshots, threshold, snoozes, lastSeen]);
 }
 
 /**

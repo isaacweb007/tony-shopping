@@ -219,6 +219,7 @@
     "open": "Open",
     "acknowledge": "Mark seen",
     "acknowledgeAria": "Mark current price as the new baseline",
+    "snoozeAria": "Snooze this alert for 24 hours",
     "emptyTab": "Nothing in this bucket yet.",
     "emptyTitle": "Nothing on watch yet",
     "emptyHint": "Bookmark anything from a search result and Tony will watch its price — moves land here.",
@@ -644,7 +645,8 @@
     "viewReport": "View AI report",
     "buyNow": "Go to store",
     "report": "AI report",
-    "buy": "Buy"
+    "buy": "Buy",
+    "recentViewed": "Seen"
   },
   "detail": {
     "title": "Product details",

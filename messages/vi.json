@@ -219,6 +219,7 @@
     "open": "Mở",
     "acknowledge": "Đã xem",
     "acknowledgeAria": "Đặt giá hiện tại làm mốc mới",
+    "snoozeAria": "Tạm ẩn thông báo này trong 24 giờ",
     "emptyTab": "Chưa có gì trong nhóm này.",
     "emptyTitle": "Chưa theo dõi sản phẩm nào",
     "emptyHint": "Đánh dấu kết quả tìm kiếm để Tony theo dõi giá — biến động sẽ xuất hiện ở đây.",
@@ -644,7 +645,8 @@
     "viewReport": "Xem báo cáo AI",
     "buyNow": "Đến cửa hàng",
     "report": "Báo cáo AI",
-    "buy": "Mua"
+    "buy": "Mua",
+    "recentViewed": "Đã xem"
   },
   "detail": {
     "title": "Chi tiết sản phẩm",

@@ -52,7 +52,31 @@ Rules:
 - Be specific — quote the exact price, days, or %, not vague adjectives.
 - No emoji. No markdown. No bullet points. No headings.
 - Treat the priority preset as the user's framing: value = cheapest decent, fast = fastest arrival, genuine = safest authenticity, balanced = best overall.
-- Return ONLY the narrative text (no JSON wrapper, no quotes).`;
+- Return ONLY the narrative text (no JSON wrapper, no quotes).
+- LANGUAGE: Write your entire reply in the user's locale language. If the locale is "ko" write Korean (한국어); "vi" write Vietnamese (Tiếng Việt); "en" write English. Do not mix languages. The product name may stay in its original script.`;
+
+function localeName(l: NarrativeLocale): string {
+  return l === 'ko' ? 'Korean (한국어)' : l === 'vi' ? 'Vietnamese (Tiếng Việt)' : 'English';
+}
+
+/**
+ * Cheap heuristic to detect when the LLM ignored the language instruction —
+ * common failure mode when the cohort is mostly Latin-script product names.
+ * Returns true when the reply *clearly* doesn't match the expected locale.
+ * Conservative: we'd rather render a slightly off response than nuke a good
+ * one for a false positive.
+ *
+ *   ko: should contain at least one Hangul codepoint
+ *   vi: should contain at least one Vietnamese-only diacritic
+ *   en: skip the check (English is the lowest-risk default)
+ */
+function localeMismatch(text: string, locale: NarrativeLocale): boolean {
+  if (locale === 'en') return false;
+  if (locale === 'ko') return !/[가-힯]/.test(text);
+  // VN-only diacritics that don't appear in plain English
+  if (locale === 'vi') return !/[ăâđêôơưĂÂĐÊÔƠƯạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳýỵỷỹ]/i.test(text);
+  return false;
+}
 
 function priorityLabel(p: NarrativePriority): string {
   switch (p) {
@@ -69,7 +93,10 @@ function priorityLabel(p: NarrativePriority): string {
 
 function buildUserPrompt(input: NarrativeInput): string {
   const lines: string[] = [
-    `User locale: ${input.locale}`,
+    // Lead with the language directive — repeated from the system prompt
+    // because LLMs follow the *last* salient instruction more reliably.
+    `Reply in ${localeName(input.locale)}. The whole narrative must be in that language.`,
+    `User locale code: ${input.locale}`,
     `User priority: ${input.priority} (${priorityLabel(input.priority)})`,
     `Engine reasons for the pick: ${input.reasonKeys.join(', ') || '(none — too close to call)'}`,
     '',
@@ -113,7 +140,9 @@ async function callAnthropic(input: NarrativeInput, key: string): Promise<Narrat
     const data = (await res.json()) as { content?: Array<{ type: string; text?: string }> };
     const text = (data.content ?? []).find((c) => c.type === 'text')?.text;
     if (!text) return null;
-    return { narrative: cleanup(text), source: 'anthropic' };
+    const cleaned = cleanup(text);
+    if (localeMismatch(cleaned, input.locale)) return null;
+    return { narrative: cleaned, source: 'anthropic' };
   } catch {
     return null;
   }
@@ -144,7 +173,9 @@ async function callOpenAI(input: NarrativeInput, key: string): Promise<Narrative
     };
     const text = data.choices?.[0]?.message?.content ?? '';
     if (!text) return null;
-    return { narrative: cleanup(text), source: 'openai' };
+    const cleaned = cleanup(text);
+    if (localeMismatch(cleaned, input.locale)) return null;
+    return { narrative: cleaned, source: 'openai' };
   } catch {
     return null;
   }

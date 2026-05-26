@@ -38,6 +38,8 @@ export interface PriceSnapshot {
 interface PriceWatchState {
   snapshots: Record<string, PriceSnapshot>;
   threshold: number;
+  /** productId → ms-since-epoch when the snooze expires. Cleared automatically when reading. */
+  snoozes: Record<string, number>;
   /** Signed ratio between the two most recent entries (newest vs previous). */
   delta: (productId: string) => number | null;
   /**
@@ -54,6 +56,10 @@ interface PriceWatchState {
   dismiss: (productId: string) => void;
   /** Collapse the series to the latest entry — baseline reset. */
   acknowledge: (productId: string) => void;
+  /** Hide alerts for this product until `untilMs`. Passing 0 clears the snooze. */
+  snooze: (productId: string, untilMs: number) => void;
+  /** Read the unexpired snooze timestamp; null when not snoozed or already past. */
+  snoozeUntil: (productId: string, now?: number) => number | null;
   reset: () => void;
 }
 
@@ -70,6 +76,7 @@ export const usePriceWatchStore = create<PriceWatchState>()(
     (set, get) => ({
       snapshots: {},
       threshold: DEFAULT_THRESHOLD,
+      snoozes: {},
 
       delta: (productId) => {
         const snap = get().snapshots[productId];
@@ -153,7 +160,19 @@ export const usePriceWatchStore = create<PriceWatchState>()(
             },
           };
         }),
-      reset: () => set({ snapshots: {} }),
+      snooze: (productId, untilMs) =>
+        set((s) => {
+          const next = { ...s.snoozes };
+          if (untilMs <= Date.now()) delete next[productId];
+          else next[productId] = untilMs;
+          return { snoozes: next };
+        }),
+      snoozeUntil: (productId, now = Date.now()) => {
+        const t = get().snoozes[productId];
+        if (!t || t <= now) return null;
+        return t;
+      },
+      reset: () => set({ snapshots: {}, snoozes: {} }),
     }),
     {
       name: 'tony.price-watch',

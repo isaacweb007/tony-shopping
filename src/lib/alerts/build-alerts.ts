@@ -23,6 +23,10 @@ interface BuildArgs {
   snapshots: Record<string, PriceSnapshot>;
   /** Drop threshold ratio: a delta <= -threshold is classified as "drop". */
   threshold: number;
+  /** Optional productId → snoozeUntil(ms). Rows still snoozed are skipped. */
+  snoozes?: Record<string, number>;
+  /** Override for tests. */
+  now?: number;
 }
 
 function classify(delta: number | null, threshold: number): AlertStatus {
@@ -32,8 +36,20 @@ function classify(delta: number | null, threshold: number): AlertStatus {
   return 'flat';
 }
 
-export function buildAlerts({ snaps, snapshots, threshold }: BuildArgs): AlertRow[] {
-  const rows: AlertRow[] = snaps.map((snap) => {
+export function buildAlerts({
+  snaps,
+  snapshots,
+  threshold,
+  snoozes,
+  now = Date.now(),
+}: BuildArgs): AlertRow[] {
+  const visible = snoozes
+    ? snaps.filter((s) => {
+        const until = snoozes[s.id];
+        return !until || until <= now;
+      })
+    : snaps;
+  const rows: AlertRow[] = visible.map((snap) => {
     const watch = snapshots[snap.id] ?? null;
     let delta: number | null = null;
     if (watch) {

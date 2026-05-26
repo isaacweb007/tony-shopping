@@ -77,6 +77,34 @@ describe('buildAlerts', () => {
     expect(rows.map((r) => r.snap.id)).toEqual(['b', 'a', 'c']);
   });
 
+  it('skips snoozed snaps whose untilMs is still in the future', () => {
+    const now = Date.now();
+    const rows = buildAlerts({
+      snaps: [snap('a', 1), snap('b', 2)],
+      snapshots: {
+        a: ts(100_000, 80_000),
+        b: ts(100_000, 90_000),
+      },
+      threshold: 0.05,
+      snoozes: { a: now + 60 * 60 * 1000 },
+      now,
+    });
+    expect(rows.map((r) => r.snap.id)).toEqual(['b']);
+  });
+
+  it('treats expired snoozes as not snoozed', () => {
+    const now = Date.now();
+    const rows = buildAlerts({
+      snaps: [snap('a', 1)],
+      snapshots: { a: ts(100_000, 80_000) },
+      threshold: 0.05,
+      snoozes: { a: now - 1000 }, // expired
+      now,
+    });
+    expect(rows).toHaveLength(1);
+    expect(rows[0]!.status).toBe('drop');
+  });
+
   it('countByStatus tallies correctly', () => {
     const rows = buildAlerts({
       snaps: [snap('a', 1), snap('b', 2), snap('c', 3), snap('d', 4)],

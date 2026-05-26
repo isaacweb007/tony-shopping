@@ -6,6 +6,7 @@ import {
   BellOff,
   Bookmark,
   Check,
+  Clock,
   ExternalLink,
   Minus,
   Sparkles,
@@ -36,8 +37,10 @@ export function AlertsView() {
   const items = useShortlistStore((s) => s.items);
   const snapshots = usePriceWatchStore((s) => s.snapshots);
   const threshold = usePriceWatchStore((s) => s.threshold);
+  const snoozes = usePriceWatchStore((s) => s.snoozes);
   const dismissWatch = usePriceWatchStore((s) => s.dismiss);
   const acknowledgeWatch = usePriceWatchStore((s) => s.acknowledge);
+  const snoozeWatch = usePriceWatchStore((s) => s.snooze);
 
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
@@ -58,8 +61,9 @@ export function AlertsView() {
       snaps: Object.values(items),
       snapshots,
       threshold,
+      snoozes,
     });
-  }, [mounted, items, snapshots, threshold]);
+  }, [mounted, items, snapshots, threshold, snoozes]);
 
   const counts = React.useMemo(() => countByStatus(rows), [rows]);
   const buyNow = React.useMemo(
@@ -169,6 +173,7 @@ export function AlertsView() {
               t={t}
               onDismiss={() => dismissWatch(row.snap.id)}
               onAcknowledge={() => acknowledgeWatch(row.snap.id)}
+              onSnooze={() => snoozeWatch(row.snap.id, Date.now() + 24 * 60 * 60 * 1000)}
             />
           ))}
         </ul>
@@ -240,6 +245,7 @@ function AlertCard({
   tg,
   onDismiss,
   onAcknowledge,
+  onSnooze,
 }: {
   row: AlertRow;
   locale: AppLocale;
@@ -247,6 +253,7 @@ function AlertCard({
   tg: ReturnType<typeof useTranslations>;
   onDismiss: () => void;
   onAcknowledge: () => void;
+  onSnooze: () => void;
 }) {
   const { snap, watch, delta, status } = row;
   const buyHref = snap.buyUrl
@@ -323,6 +330,16 @@ function AlertCard({
             >
               <Check className="h-3.5 w-3.5" strokeWidth={1.9} />
               {t('acknowledge')}
+            </button>
+          )}
+          {watch && (
+            <button
+              onClick={onSnooze}
+              aria-label={t('snoozeAria')}
+              title={t('snoozeAria')}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-ink-200 text-ink-500 hover:bg-ink-50 hover:text-ink-700 dark:border-ink-700 dark:text-ink-300 dark:hover:bg-ink-800 dark:hover:text-ink-100"
+            >
+              <Clock className="h-3.5 w-3.5" strokeWidth={1.8} />
             </button>
           )}
           {watch && (

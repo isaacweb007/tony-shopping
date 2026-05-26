@@ -219,6 +219,7 @@
     "open": "쇼핑몰",
     "acknowledge": "확인",
     "acknowledgeAria": "현재 가격을 새 기준으로 등록",
+    "snoozeAria": "24시간 동안 이 알림 잠시 숨기기",
     "emptyTab": "이 카테고리에는 아직 변동이 없어요.",
     "emptyTitle": "추적 중인 상품이 없어요",
     "emptyHint": "검색 결과에서 북마크하면 토니가 가격을 지켜보고, 변동을 여기에 모아 보여줘요.",
@@ -644,7 +645,8 @@
     "viewReport": "AI 분석 보기",
     "buyNow": "구매하러 가기",
     "report": "AI 분석",
-    "buy": "구매"
+    "buy": "구매",
+    "recentViewed": "최근 본"
   },
   "detail": {
     "title": "상품 상세",

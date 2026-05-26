@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { TagBadge } from './tag-badge';
 import { TonyBar } from './tony-bar';
 import { useShortlistStore } from '@/stores/shortlist-store';
+import { useRecentProductsStore } from '@/stores/recent-products-store';
 import { toast } from '@/stores/toast-store';
 import { recordProductClick } from '@/stores/click-store';
 import { affiliateUrl } from '@/lib/affiliate';
@@ -34,6 +35,12 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
   const q = params?.get('q') ?? '';
   const inShortlist = useShortlistStore((s) => product.id in s.items);
   const toggleRaw = useShortlistStore((s) => s.toggle);
+  // If the user already opened this product in the past, surface a small
+  // "Seen" pill so they recognise it in the grid. Hydration-safe — the
+  // store returns [] on the server pass.
+  const recentSeen = useRecentProductsStore(
+    (s) => s.items.findIndex((it) => it.id === product.id) >= 0,
+  );
   const buyHref = affiliateUrl({ store: product.store, url: product.buyUrl });
   const { guard } = useCheckoutGuide();
 
@@ -105,6 +112,11 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
               onClick={toggle}
               floating
             />
+            {recentSeen && (
+              <div className="absolute bottom-2 right-2 rounded-md bg-ink-900/75 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur dark:bg-white/80 dark:text-ink-900">
+                {tc('recentViewed')}
+              </div>
+            )}
             {product.discountPct > 0 && (
               <div className="absolute bottom-2 left-2 rounded-md bg-red-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
                 -{product.discountPct}%
