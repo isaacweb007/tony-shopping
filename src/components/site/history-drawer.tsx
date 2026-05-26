@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { Trash2, Search } from 'lucide-react';
+import { Trash2, Search, X } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { useHistoryStore } from '@/stores/history-store';
@@ -10,7 +10,7 @@ import { useUIStore } from '@/stores/ui-store';
 import { useSearchStore } from '@/stores/search-store';
 import { useRouter } from '@/i18n/routing';
 import type { AppLocale } from '@/i18n/routing';
-import { intlLocale } from '@/lib/format';
+import { formatRelativeTime } from '@/lib/format';
 
 export function HistoryDrawer() {
   const t = useTranslations('header');
@@ -61,13 +61,16 @@ export function HistoryDrawer() {
           ) : (
             <ul className="space-y-2">
               {visibleEntries.map((e) => (
-                <li key={e.id}>
+                <li
+                  key={e.id}
+                  className="group flex items-start gap-2 rounded-2xl border border-ink-200 p-3 transition hover:bg-ink-50 dark:border-ink-800 dark:hover:bg-ink-800"
+                >
                   <button
                     onClick={() => replay(e.id)}
-                    className="block w-full rounded-2xl border border-ink-200 p-3 text-left transition hover:bg-ink-50 dark:border-ink-800 dark:hover:bg-ink-800"
+                    className="min-w-0 flex-1 text-left"
                   >
                     <div className="text-[11px] text-ink-400 dark:text-ink-500">
-                      {new Date(e.createdAt).toLocaleString(intlLocale(locale))}
+                      {formatRelativeTime(e.createdAt, locale)}
                     </div>
                     <div className="mt-0.5 line-clamp-2 text-[14px] font-semibold tracking-tight">
                       {e.q}
@@ -77,6 +80,18 @@ export function HistoryDrawer() {
                         {e.attachmentLabels.join(', ')}
                       </div>
                     )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      remove(e.id);
+                    }}
+                    aria-label={td('remove')}
+                    title={td('remove')}
+                    className="shrink-0 rounded-md p-1 text-ink-400 transition hover:bg-ink-100 hover:text-ink-700 dark:text-ink-500 dark:hover:bg-ink-700 dark:hover:text-ink-200"
+                  >
+                    <X className="h-3.5 w-3.5" strokeWidth={2} />
                   </button>
                 </li>
               ))}

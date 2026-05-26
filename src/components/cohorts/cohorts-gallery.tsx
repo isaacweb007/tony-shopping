@@ -2,11 +2,13 @@
 
 import * as React from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Sparkles, ThumbsDown, ThumbsUp, Loader2 } from 'lucide-react';
 import { Link } from '@/i18n/routing';
+import type { AppLocale } from '@/i18n/routing';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { formatRelativeTime } from '@/lib/format';
 
 type PriorityFilter = 'all' | 'balanced' | 'value' | 'fast' | 'genuine';
 const FILTERS: readonly PriorityFilter[] = ['all', 'balanced', 'value', 'fast', 'genuine'];
@@ -46,6 +48,7 @@ export function CohortsGallery() {
   // Reuse the existing priority chip labels from /compare so the
   // gallery doesn't need its own translations for "value/fast/genuine".
   const tp = useTranslations('compare.priority');
+  const locale = useLocale() as AppLocale;
 
   const [filter, setFilter] = React.useState<PriorityFilter>('all');
 
@@ -152,6 +155,9 @@ export function CohortsGallery() {
                   </div>
                   <div className="mt-1 line-clamp-2 text-[14.5px] font-semibold leading-snug tracking-tight">
                     {it.winnerName ?? tr('noWinner')}
+                  </div>
+                  <div className="mt-1 text-[10.5px] text-ink-400 dark:text-ink-500">
+                    {formatRelativeTime(new Date(it.createdAt).getTime(), locale)}
                   </div>
                 </Link>
               </li>

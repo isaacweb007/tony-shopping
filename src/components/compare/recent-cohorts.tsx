@@ -2,9 +2,11 @@
 
 import * as React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Sparkles, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { Link } from '@/i18n/routing';
+import type { AppLocale } from '@/i18n/routing';
+import { formatRelativeTime } from '@/lib/format';
 
 interface Item {
   slug: string;
@@ -34,6 +36,7 @@ interface ApiResponse {
  */
 export function RecentCohorts() {
   const t = useTranslations('compare.recent');
+  const locale = useLocale() as AppLocale;
 
   const { data } = useQuery({
     queryKey: ['recent-cohorts'],
@@ -80,6 +83,9 @@ export function RecentCohorts() {
               </div>
               <div className="mt-0.5 line-clamp-1 text-[13.5px] font-semibold tracking-tight">
                 {it.winnerName ?? t('noWinner')}
+              </div>
+              <div className="mt-0.5 text-[10.5px] text-ink-400 dark:text-ink-500">
+                {formatRelativeTime(new Date(it.createdAt).getTime(), locale)}
               </div>
             </Link>
           </li>

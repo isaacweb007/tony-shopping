@@ -34,21 +34,42 @@ export function SearchView() {
 
   const q = params.get('q') ?? '';
   const storeParam = params.get('store');
+  const sortParam = params.get('sort');
   const { data: result, isFetching, isError, refetch } = useSearch(q);
   const products = useSearchStore((s) => s.result?.products);
   const sort = useSearchStore((s) => s.sort);
   const store = useSearchStore((s) => s.store);
   const setStore = useSearchStore((s) => s.setStore);
+  const setSort = useSearchStore((s) => s.setSort);
 
-  // Allow deep-link store filter via /search?q=…&store=Coupang. We sync
-  // once per (q, storeParam) change so we don't fight the user's manual
-  // FilterBar pick after the first hydration.
+  // Deep-link filters via /search?q=…&store=Coupang&sort=price. We sync
+  // once per (q, param) change so manual FilterBar picks after first
+  // hydration stick. Both store + sort apply the same rule.
   React.useEffect(() => {
     if (storeParam && storeParam !== store) {
       setStore(storeParam as typeof store);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeParam, q]);
+  React.useEffect(() => {
+    if (sortParam && sortParam !== sort) {
+      setSort(sortParam as typeof sort);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortParam, q]);
+
+  // Share URL bakes in the current filter state so anyone who opens
+  // the link sees the same product set + ordering. We omit the
+  // defaults ('all' / 'tony') to keep the URL tidy.
+  const shareUrl = React.useMemo(() => {
+    if (typeof window === 'undefined') return '';
+    const u = new URL(window.location.href);
+    if (store !== 'all') u.searchParams.set('store', store);
+    else u.searchParams.delete('store');
+    if (sort !== 'tony') u.searchParams.set('sort', sort);
+    else u.searchParams.delete('sort');
+    return u.toString();
+  }, [store, sort]);
 
   const visible = React.useMemo<Product[]>(() => {
     if (!products) return [];
@@ -171,7 +192,7 @@ export function SearchView() {
             <ShareButton
             title={tShare('titleSearch')}
             text={q}
-            url={typeof window === 'undefined' ? '' : window.location.href}
+            url={shareUrl}
             size="sm"
             variant="outline"
           />
