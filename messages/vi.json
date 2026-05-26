@@ -162,6 +162,12 @@
   "keyboard": {
     "title": "Phím tắt",
     "subtitle": "Di chuyển nhanh hơn trong Tony.",
+    "sections": {
+      "navigate": "Điều hướng",
+      "grid": "Lưới kết quả",
+      "compare": "So sánh",
+      "misc": "Khác"
+    },
     "actions": {
       "arrows": "Di chuyển giữa các thẻ kết quả",
       "vim": "Phong cách Vim (h/j/k/l)",

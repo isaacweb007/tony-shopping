@@ -162,6 +162,12 @@
   "keyboard": {
     "title": "Keyboard shortcuts",
     "subtitle": "Move faster around Tony.",
+    "sections": {
+      "navigate": "Navigate",
+      "grid": "Search grid",
+      "compare": "Compare",
+      "misc": "Misc"
+    },
     "actions": {
       "arrows": "Move between search-result cards",
       "vim": "Vim-style movement (h/j/k/l)",

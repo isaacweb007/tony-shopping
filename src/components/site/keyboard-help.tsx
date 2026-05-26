@@ -104,16 +104,37 @@ export function KeyboardHelp() {
     return () => window.removeEventListener('keydown', onKey);
   }, [router]);
 
-  const SHORTCUTS: Array<{ keys: string[]; key: string }> = [
-    { keys: ['↑', '↓', '←', '→'], key: 'arrows' },
-    { keys: ['h', 'j', 'k', 'l'], key: 'vim' },
-    { keys: ['Enter'], key: 'open' },
-    { keys: ['/'], key: 'focus' },
-    { keys: ['Shift', 'C'], key: 'compare' },
-    { keys: ['Shift', 'G'], key: 'gallery' },
-    { keys: [',', '.'], key: 'sortCycle' },
-    { keys: ['?'], key: 'help' },
-    { keys: ['Esc'], key: 'esc' },
+  // Grouped layout — the flat list got hard to scan once we crossed 8
+  // shortcuts. Each section is a small header + its own row list. Keys
+  // map to the same translation namespace, so no new locale strings.
+  const SECTIONS: Array<{
+    sectionKey: 'navigate' | 'grid' | 'compare' | 'misc';
+    items: Array<{ keys: string[]; key: string }>;
+  }> = [
+    {
+      sectionKey: 'navigate',
+      items: [
+        { keys: ['/'], key: 'focus' },
+        { keys: ['Shift', 'C'], key: 'compare' },
+        { keys: ['Shift', 'G'], key: 'gallery' },
+      ],
+    },
+    {
+      sectionKey: 'grid',
+      items: [
+        { keys: ['↑', '↓', '←', '→'], key: 'arrows' },
+        { keys: ['h', 'j', 'k', 'l'], key: 'vim' },
+        { keys: ['Enter'], key: 'open' },
+        { keys: [',', '.'], key: 'sortCycle' },
+      ],
+    },
+    {
+      sectionKey: 'misc',
+      items: [
+        { keys: ['?'], key: 'help' },
+        { keys: ['Esc'], key: 'esc' },
+      ],
+    },
   ];
 
   return (
@@ -125,28 +146,37 @@ export function KeyboardHelp() {
         <DialogDescription className="mt-1 text-[13px] text-ink-500 dark:text-ink-400">
           {t('subtitle')}
         </DialogDescription>
-        <ul className="mt-5 space-y-2">
-          {SHORTCUTS.map(({ keys, key }) => (
-            <li
-              key={key}
-              className="flex items-center justify-between gap-3 rounded-xl border border-ink-200 bg-ink-50/40 px-3 py-2.5 dark:border-ink-800 dark:bg-ink-800/30"
-            >
-              <span className="text-[13px] text-ink-700 dark:text-ink-200">
-                {t(`actions.${key}` as 'actions.arrows')}
-              </span>
-              <span className="flex items-center gap-1">
-                {keys.map((k) => (
-                  <kbd
-                    key={k}
-                    className="inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-ink-300 bg-white px-1.5 font-mono text-[11px] font-bold text-ink-700 shadow-sm dark:border-ink-600 dark:bg-ink-900 dark:text-ink-200"
+        <div className="mt-5 space-y-4">
+          {SECTIONS.map(({ sectionKey, items }) => (
+            <div key={sectionKey}>
+              <div className="mb-1.5 text-[10.5px] font-bold uppercase tracking-widest text-ink-500 dark:text-ink-400">
+                {t(`sections.${sectionKey}` as 'sections.navigate')}
+              </div>
+              <ul className="space-y-2">
+                {items.map(({ keys, key }) => (
+                  <li
+                    key={key}
+                    className="flex items-center justify-between gap-3 rounded-xl border border-ink-200 bg-ink-50/40 px-3 py-2.5 dark:border-ink-800 dark:bg-ink-800/30"
                   >
-                    {k}
-                  </kbd>
+                    <span className="text-[13px] text-ink-700 dark:text-ink-200">
+                      {t(`actions.${key}` as 'actions.arrows')}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      {keys.map((k) => (
+                        <kbd
+                          key={k}
+                          className="inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-ink-300 bg-white px-1.5 font-mono text-[11px] font-bold text-ink-700 shadow-sm dark:border-ink-600 dark:bg-ink-900 dark:text-ink-200"
+                        >
+                          {k}
+                        </kbd>
+                      ))}
+                    </span>
+                  </li>
                 ))}
-              </span>
-            </li>
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -17,6 +17,27 @@ export interface MergedStats {
   verdictClicks: number;
   storeBreakdown: Array<{ store: StoreId | string; count: number }>;
   tagBreakdown: Array<{ tag: TonyTag | string; count: number }>;
+  /**
+   * Signed week-over-week deltas (this-week-count − prev-week-count).
+   * Computed from local stores only — server hasn't shipped weekly slices
+   * yet. null when both windows are empty (no signal worth showing).
+   */
+  searchesWoW: number | null;
+  clicksWoW: number | null;
+}
+
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+function bucketByWeek<T extends { at: number }>(events: ReadonlyArray<T>, now: number): { thisWeek: number; prevWeek: number } {
+  let thisWeek = 0;
+  let prevWeek = 0;
+  const thisSince = now - WEEK_MS;
+  const prevSince = now - 2 * WEEK_MS;
+  for (const e of events) {
+    if (e.at >= thisSince) thisWeek += 1;
+    else if (e.at >= prevSince) prevWeek += 1;
+  }
+  return { thisWeek, prevWeek };
 }
 
 /**
@@ -50,6 +71,24 @@ export function useDashboardStats(): MergedStats {
       if (ev.fromVerdict) verdict += 1;
     }
 
+    // WoW deltas — pure local windows. We don't have server-side weekly
+    // slices yet, so this only reflects this device's recent activity. Null
+    // when both windows are empty (nothing meaningful to compare).
+    const now = Date.now();
+    const searchWow = bucketByWeek(
+      localHistory.map((h) => ({ at: h.createdAt })),
+      now,
+    );
+    const clickWow = bucketByWeek(localClicks, now);
+    const searchesWoW =
+      searchWow.thisWeek === 0 && searchWow.prevWeek === 0
+        ? null
+        : searchWow.thisWeek - searchWow.prevWeek;
+    const clicksWoW =
+      clickWow.thisWeek === 0 && clickWow.prevWeek === 0
+        ? null
+        : clickWow.thisWeek - clickWow.prevWeek;
+
     if (!server.data || !server.data.signedIn) {
       return {
         signedIn: false,
@@ -63,6 +102,8 @@ export function useDashboardStats(): MergedStats {
         tagBreakdown: [...localTagMap.entries()]
           .sort((a, b) => b[1] - a[1])
           .map(([tag, count]) => ({ tag, count })),
+        searchesWoW,
+        clicksWoW,
       };
     }
 
@@ -87,7 +128,9 @@ export function useDashboardStats(): MergedStats {
           : [...localTagMap.entries()]
               .sort((a, b) => b[1] - a[1])
               .map(([tag, count]) => ({ tag, count })),
+      searchesWoW,
+      clicksWoW,
     };
     return stats;
-  }, [server.data, localClicks, localHistory.length, localShortlistCount]);
+  }, [server.data, localClicks, localHistory, localShortlistCount]);
 }

@@ -69,6 +69,7 @@ export function DashboardView() {
           label={t('searches')}
           value={formatCount(stats.searches, locale)}
           tone="accent"
+          delta={stats.searchesWoW}
         />
         <StatCard
           icon={Bookmark}
@@ -79,6 +80,7 @@ export function DashboardView() {
           icon={MousePointer2}
           label={t('clicks')}
           value={formatCount(stats.clicks, locale)}
+          delta={stats.clicksWoW}
         />
         <StatCard
           icon={Sparkles}

@@ -22,6 +22,14 @@ export interface AdapterHistoryPoint {
   ok: boolean;
 }
 
+export interface AdapterSample {
+  /** First product's name (trimmed to 80 chars). */
+  name: string;
+  /** First product's final price + currency. */
+  priceAmount: number;
+  priceCurrency: 'KRW' | 'USD' | 'VND' | 'JPY';
+}
+
 export interface AdapterCallStat {
   /** ms since epoch when the last call completed. */
   lastAt: number;
@@ -35,6 +43,8 @@ export interface AdapterCallStat {
   history: AdapterHistoryPoint[];
   /** First 200 chars of the most recent failure message — surfaced on /setup. */
   lastError: string | null;
+  /** A peek at the most recent successful response — operator gut-check. */
+  lastSample: AdapterSample | null;
 }
 
 /**
@@ -56,9 +66,16 @@ interface RecordInput {
   lastResultCount: number;
   /** Optional failure message — only set when lastOk = false. */
   lastError?: string | null;
+  /**
+   * Optional first-product sample from a successful call — pass it so
+   * /setup can show "Tony just saw 'Sony WH-1000XM5' at ₩410,000" as
+   * a sanity check that the adapter is wired up correctly.
+   */
+  lastSample?: AdapterSample | null;
 }
 
 const MAX_ERR_LEN = 200;
+const MAX_SAMPLE_NAME = 80;
 
 export function recordAdapterCall(store: StoreId, stat: RecordInput): void {
   const prev = stats.get(store);
@@ -73,6 +90,17 @@ export function recordAdapterCall(store: StoreId, stat: RecordInput): void {
     : typeof stat.lastError === 'string'
       ? stat.lastError.slice(0, MAX_ERR_LEN)
       : (prev?.lastError ?? null);
+  // Sample updates only on success. Failures preserve the prior sample
+  // so the operator still sees the last known good response.
+  const lastSample = stat.lastOk
+    ? stat.lastSample
+      ? {
+          name: stat.lastSample.name.slice(0, MAX_SAMPLE_NAME),
+          priceAmount: stat.lastSample.priceAmount,
+          priceCurrency: stat.lastSample.priceCurrency,
+        }
+      : (prev?.lastSample ?? null)
+    : (prev?.lastSample ?? null);
   stats.set(store, {
     lastAt: stat.lastAt,
     lastDurationMs: stat.lastDurationMs,
@@ -80,6 +108,7 @@ export function recordAdapterCall(store: StoreId, stat: RecordInput): void {
     lastResultCount: stat.lastResultCount,
     history: nextHistory,
     lastError,
+    lastSample,
   });
 }
 

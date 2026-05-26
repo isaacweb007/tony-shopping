@@ -162,6 +162,23 @@ export default async function SetupPage({
                         {stat.lastError}
                       </div>
                     ) : null}
+                    {stat.lastSample ? (
+                      <div className="mt-2 truncate rounded-md border border-ink-200 bg-ink-50/60 px-2.5 py-1.5 text-[11px] text-ink-700 dark:border-ink-700 dark:bg-ink-800/40 dark:text-ink-300">
+                        <span className="font-semibold">{stat.lastSample.name}</span>
+                        <span className="ml-1.5 text-ink-500 dark:text-ink-400 tabular-nums">
+                          {new Intl.NumberFormat(undefined, {
+                            style: 'currency',
+                            currency: stat.lastSample.priceCurrency,
+                            maximumFractionDigits:
+                              stat.lastSample.priceCurrency === 'KRW' ||
+                              stat.lastSample.priceCurrency === 'JPY' ||
+                              stat.lastSample.priceCurrency === 'VND'
+                                ? 0
+                                : 2,
+                          }).format(stat.lastSample.priceAmount)}
+                        </span>
+                      </div>
+                    ) : null}
                   </>
                 );
               })()}

@@ -37,11 +37,19 @@ export async function runServerSearch(
           locale: opts.locale,
           signal: withTimeout(opts.signal, ADAPTER_TIMEOUT_MS),
         });
+        const first = products[0];
         recordAdapterCall(a.id, {
           lastAt: Date.now(),
           lastDurationMs: Date.now() - t0,
           lastOk: true,
           lastResultCount: products.length,
+          lastSample: first
+            ? {
+                name: first.name,
+                priceAmount: first.finalPrice.amount,
+                priceCurrency: first.finalPrice.currency,
+              }
+            : null,
         });
         return products;
       } catch (err) {
