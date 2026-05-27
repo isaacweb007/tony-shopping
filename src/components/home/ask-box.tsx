@@ -264,12 +264,58 @@ export function AskBox() {
     setAttachments((prev) => prev.filter((_, idx) => idx !== i));
   }
 
-  function submit(override?: string) {
-    const q = (override ?? text).trim() || (attachments.length ? '(attachments)' : '');
+  /**
+   * Detect whether a raw input string is just a URL (with no human-typed
+   * product description around it). True positives go through /api/extract
+   * before hitting the shopping search — using a raw TikTok/Instagram URL
+   * as the search query returns garbage.
+   */
+  function isUrlLikeQuery(s: string): boolean {
+    const trimmed = s.trim();
+    if (!/^https?:\/\/\S+$/i.test(trimmed)) return false;
+    // single-token URL — no extra description
+    return !/\s/.test(trimmed);
+  }
+
+  async function submit(override?: string) {
+    const raw = (override ?? text).trim();
+    let q = raw || (attachments.length ? '(attachments)' : '');
     if (!q) {
       textareaRef.current?.focus();
       return;
     }
+
+    // URL-only input: run /api/extract first so the upstream search gets a
+    // real product-name query instead of "https://...". Skip if the caller
+    // already supplied an override (means extract has run upstream).
+    if (!override && isUrlLikeQuery(raw)) {
+      setExtracting(true);
+      try {
+        const res = await fetch('/api/extract', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ link: raw }),
+        });
+        if (res.ok) {
+          const data = (await res.json()) as ExtractResult & { source: ExtractResult['source'] };
+          if (data.suggestedQuery && data.suggestedQuery.trim().length > 0) {
+            setExtractResult({
+              suggestedQuery: data.suggestedQuery,
+              source: data.source ?? 'fallback',
+              hint: data.hint,
+              tags: data.tags,
+              image: data.image,
+            });
+            q = data.suggestedQuery;
+          }
+        }
+      } catch {
+        /* keep raw URL — /search page will show empty state */
+      } finally {
+        setExtracting(false);
+      }
+    }
+
     const query = { q, attachments };
     addHistory(query);
     recordSearch({ q, categories: categorize(q) });

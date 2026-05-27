@@ -234,14 +234,18 @@ export const serpapiAdapter: SearchAdapter = {
   async search({ q, limit = 6, locale = 'ko', signal }: SearchInput) {
     const mode = ADAPTER_MODE.serpapi();
     if (mode.real) {
+      // Real mode: return what SerpAPI actually gives us — even if it's empty.
+      // Fabricating mock products with the raw query embedded in the name
+      // (e.g. "Minimal https://www.tiktok Edition") is worse than honest 0
+      // results, because the UI then shows fake products as real.
       try {
-        const real = await searchReal(q, limit, locale, signal);
-        if (real.length > 0) return real;
-      } catch {
-        /* fall through */
+        return await searchReal(q, limit, locale, signal);
+      } catch (e) {
+        console.error('[SerpAPI] searchReal threw:', e instanceof Error ? e.message : e);
+        return [];
       }
     }
-    // Mock fallback uses a generic profile; UI badge will show GoogleShopping.
+    // No real key configured → deterministic mock for demo deployments.
     return generateMockProducts(
       { store: 'GoogleShopping', priceMul: 0.9, latencyMs: 200, country: 'US', officialRate: 0.5, shipBase: 0 },
       q,
