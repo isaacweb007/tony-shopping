@@ -254,6 +254,7 @@
         "qualityAndDrop": "A strong Tony score, now down {pct}%.",
         "genuineAndDrop": "A high-authenticity seller, now down {pct}%."
       },
+      "dropLabel": "off",
       "cta": "Open on {store}"
     }
   },

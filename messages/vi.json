@@ -254,6 +254,7 @@
         "qualityAndDrop": "Điểm Tony cao, lại đang giảm {pct}%.",
         "genuineAndDrop": "Người bán độ tin cậy cao đang giảm {pct}%."
       },
+      "dropLabel": "giảm",
       "cta": "Mở trên {store}"
     }
   },

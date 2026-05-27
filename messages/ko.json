@@ -254,6 +254,7 @@
         "qualityAndDrop": "토니 점수도 높은데 {pct}%까지 떨어졌어요.",
         "genuineAndDrop": "정품 안심도 높은 셀러가 {pct}%까지 떨어졌어요."
       },
+      "dropLabel": "내림",
       "cta": "{store}에서 구매"
     }
   },

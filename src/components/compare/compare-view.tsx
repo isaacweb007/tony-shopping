@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import { Bookmark, Check, Copy, ExternalLink, GitCompare, RefreshCw, Share2, Sparkles, Square, Star, Volume2, X } from 'lucide-react';
+import { ArrowRight, Bookmark, Check, Copy, ExternalLink, GitCompare, RefreshCw, Share2, Sparkles, Square, Star, TrendingDown, Volume2, X } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { Button } from '@/components/ui/button';
 import { useShortlistStore } from '@/stores/shortlist-store';
@@ -247,6 +247,7 @@ export function CompareView({ seedSnaps, initialPriority, readOnly }: Props = {}
       {winner ? (
         <CohortVerdictCard
           winner={winner}
+          peers={snaps}
           score={compare.verdict.scores[winner.id] ?? 0}
           reasonKeys={compare.verdict.reasonKeys}
           totalCount={snaps.length}
@@ -300,6 +301,7 @@ export function CompareView({ seedSnaps, initialPriority, readOnly }: Props = {}
 
 function CohortVerdictCard({
   winner,
+  peers,
   score,
   reasonKeys,
   totalCount,
@@ -310,6 +312,7 @@ function CohortVerdictCard({
   onNarrativeRefetch,
 }: {
   winner: ShortlistSnap;
+  peers: ShortlistSnap[];
   score: number;
   reasonKeys: string[];
   totalCount: number;
@@ -319,55 +322,177 @@ function CohortVerdictCard({
   narrativeError: boolean;
   onNarrativeRefetch?: () => void;
 }) {
-  const t = useTranslations('compare');
-  return (
-    <div className="relative mt-6 overflow-hidden rounded-3xl border border-accent-300/70 bg-gradient-to-br from-accent-50 via-white to-sky-50 p-5 shadow-card dark:border-accent-700/50 dark:from-accent-950/40 dark:via-ink-900 dark:to-sky-950/30 md:p-7">
-      <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-accent-400/30 blur-3xl" />
-      <div className="relative inline-flex items-center gap-1.5 rounded-full bg-ink-900 px-2.5 py-1 text-[11px] font-bold tracking-wider text-white dark:bg-white dark:text-ink-900">
-        <Sparkles className="h-3.5 w-3.5" strokeWidth={2} />
-        {t('cohortLabel')}
-      </div>
-      <p className="relative mt-3 text-[14px] font-semibold text-accent-700 dark:text-accent-300">
-        {t('cohortTagline', { count: totalCount })}
-      </p>
-      <h2 className="relative mt-1 text-[22px] font-extrabold leading-tight tracking-tighter2 md:text-[28px]">
-        {winner.name}
-      </h2>
-      <div className="relative mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <span className="text-[12px] font-semibold text-ink-600 dark:text-ink-300">
-          {winner.store}
-        </span>
-        <span className="text-[14px] font-bold text-accent-700 dark:text-accent-300">
-          {t('cohortScore', { score })}
-        </span>
-      </div>
+  const tc = useTranslations('compare');
+  const tv = useTranslations('verdict');
+  const tg = useTranslations();
+  const buyHref = winner.buyUrl ?? '#';
+  const hasBuyUrl = !!winner.buyUrl;
 
-      <NarrativeBlock
-        text={narrative}
-        loading={narrativeLoading}
-        errored={narrativeError}
-        source={narrativeSource}
-        winnerName={winner.name}
-        winnerStore={winner.store}
-        onRefetch={onNarrativeRefetch}
+  // Same confidence buckets as the search VerdictCard so the visual
+  // language between /search and /compare is identical.
+  const confidence: 'strong' | 'recommended' | 'consider' =
+    score >= 85 ? 'strong' : score >= 70 ? 'recommended' : 'consider';
+  const confidencePct = Math.min(99, Math.max(50, score + 6));
+
+  // Savings versus the other shortlist items — frames the winner against
+  // its actual peers (this cohort's median), which is what makes the
+  // "won the compare" pill meaningful.
+  const savingsPct = React.useMemo(() => {
+    if (peers.length < 3) return 0;
+    const amounts = peers
+      .map((p) => p.finalPrice.amount)
+      .filter((a) => a > 0)
+      .sort((a, b) => a - b);
+    if (amounts.length < 3) return 0;
+    const mid = Math.floor(amounts.length / 2);
+    const median =
+      amounts.length % 2 === 0 ? (amounts[mid - 1]! + amounts[mid]!) / 2 : amounts[mid]!;
+    if (winner.finalPrice.amount >= median) return 0;
+    const pct = Math.round(((median - winner.finalPrice.amount) / median) * 100);
+    return pct >= 5 ? pct : 0;
+  }, [peers, winner.finalPrice.amount]);
+
+  return (
+    <div className="relative mt-6 overflow-hidden rounded-3xl border border-accent-300/70 bg-gradient-to-br from-accent-50 via-white to-sky-50 shadow-card dark:border-accent-700/50 dark:from-accent-950/40 dark:via-ink-900 dark:to-sky-950/30">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-accent-400/30 blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-sky-400/20 blur-3xl"
       />
 
-      {reasonKeys.length > 0 && (
-        <ul className="relative mt-4 grid gap-1.5 sm:grid-cols-2">
-          {reasonKeys.map((k) => (
-            <li
-              key={k}
-              className="flex items-start gap-2 text-[13px] text-ink-800 dark:text-ink-100"
-            >
-              <Check
-                className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400"
-                strokeWidth={2.4}
-              />
-              <span>{t(`reasons.${k}` as 'reasons.price')}</span>
-            </li>
-          ))}
-        </ul>
-      )}
+      {/* Top eyebrow row */}
+      <div className="relative flex flex-wrap items-center justify-between gap-2 px-5 pt-5 md:px-7 md:pt-7">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-ink-900 px-3 py-1.5 text-[11px] font-bold tracking-wider text-white shadow-sm dark:bg-white dark:text-ink-900">
+          <Sparkles className="h-3.5 w-3.5" strokeWidth={2.4} />
+          {tv(`label.${confidence}`)}
+        </div>
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-accent-300/80 bg-white/80 px-3 py-1.5 text-[11px] font-bold tracking-wide text-accent-700 backdrop-blur dark:border-accent-700/60 dark:bg-ink-900/70 dark:text-accent-300">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inset-0 animate-ping rounded-full bg-accent-500 opacity-70" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-accent-500" />
+          </span>
+          {tv('confidencePill', { pct: confidencePct })}
+        </div>
+      </div>
+
+      <div className="relative grid grid-cols-1 gap-6 p-5 md:grid-cols-[220px_1fr] md:gap-7 md:p-7">
+        {/* Winner image */}
+        {winner.imageUrl ? (
+          <div className="relative hidden aspect-square overflow-hidden rounded-2xl bg-gradient-to-br from-white to-ink-100 shadow-sm ring-1 ring-ink-200/50 dark:from-ink-800 dark:to-ink-900 dark:ring-ink-700/40 md:block">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={winner.imageUrl}
+              alt={winner.name}
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-contain p-5"
+            />
+            <div className="absolute bottom-3 right-3 inline-flex items-center gap-1 rounded-full bg-ink-900/90 px-2.5 py-1 text-[11px] font-bold text-white shadow-md backdrop-blur dark:bg-white/90 dark:text-ink-900">
+              <Sparkles className="h-3 w-3" strokeWidth={2.4} />
+              {tv('scorePill', { score })}
+            </div>
+          </div>
+        ) : null}
+
+        <div className="flex flex-col">
+          <p className="text-[15px] font-semibold text-accent-700 dark:text-accent-300 md:text-[16px]">
+            {tc('cohortTagline', { count: totalCount })}
+          </p>
+          <h2 className="mt-1.5 text-[22px] font-extrabold leading-tight tracking-tighter2 md:text-[30px]">
+            {winner.name}
+          </h2>
+
+          <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[12px] text-ink-600 dark:text-ink-300">
+            <span className="font-semibold">{winner.store}</span>
+            {winner.official && (
+              <span className="rounded border border-sky-200 bg-sky-50 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider text-sky-700 dark:border-sky-800 dark:bg-sky-950/50 dark:text-sky-300">
+                {tg('card.official')}
+              </span>
+            )}
+            {typeof winner.rating === 'number' && (
+              <>
+                <span className="text-ink-300 dark:text-ink-600">·</span>
+                <span className="inline-flex items-center gap-1">
+                  <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
+                  {winner.rating}
+                </span>
+              </>
+            )}
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-end gap-3">
+            <DualMoney money={winner.finalPrice} size="xl" layout="stacked" />
+            {savingsPct > 0 && (
+              <div className="inline-flex items-center gap-1 rounded-full border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-[11.5px] font-bold text-emerald-700 dark:border-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
+                <TrendingDown className="h-3.5 w-3.5" strokeWidth={2.4} />
+                {tv('savingsPill', { pct: savingsPct })}
+              </div>
+            )}
+          </div>
+
+          <NarrativeBlock
+            text={narrative}
+            loading={narrativeLoading}
+            errored={narrativeError}
+            source={narrativeSource}
+            winnerName={winner.name}
+            winnerStore={String(winner.store)}
+            onRefetch={onNarrativeRefetch}
+          />
+
+          {reasonKeys.length > 0 && (
+            <div className="mt-5">
+              <div className="mb-2 text-[10.5px] font-bold uppercase tracking-widest text-ink-500 dark:text-ink-400">
+                {tv('evidence')}
+              </div>
+              <ul className="grid gap-2 sm:grid-cols-2">
+                {reasonKeys.map((k) => (
+                  <li
+                    key={k}
+                    className="flex items-start gap-2.5 text-[13.5px] leading-snug text-ink-800 dark:text-ink-100"
+                  >
+                    <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
+                      <Check className="h-3.5 w-3.5" strokeWidth={2.4} />
+                    </span>
+                    <span className="font-medium">
+                      {tc(`reasons.${k}` as 'reasons.price')}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {hasBuyUrl && (
+            <div className="mt-6 flex flex-col gap-2 md:flex-row md:items-center">
+              <Button
+                variant="primary"
+                className="group/cta relative h-12 flex-1 overflow-hidden rounded-2xl px-5 text-[15px] font-extrabold tracking-tight shadow-md transition-shadow hover:shadow-lg md:h-14 md:text-[16px]"
+                asChild
+              >
+                <a
+                  href={buyHref}
+                  target="_blank"
+                  rel="noreferrer noopener sponsored"
+                  className="inline-flex items-center justify-center gap-2"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover/cta:translate-x-full"
+                  />
+                  <span className="relative">{tv(`cta.${confidence}`)}</span>
+                  <ArrowRight
+                    className="relative h-4 w-4 transition-transform group-hover/cta:translate-x-0.5"
+                    strokeWidth={2.4}
+                  />
+                </a>
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

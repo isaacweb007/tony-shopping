@@ -274,41 +274,74 @@ function BuyNowBanner({
     ? affiliateUrl({ store: snap.store as Parameters<typeof affiliateUrl>[0]['store'], url: snap.buyUrl })
     : null;
   return (
-    <div className="relative mt-6 overflow-hidden rounded-3xl border border-emerald-300/70 bg-gradient-to-br from-emerald-50 via-white to-sky-50 p-5 shadow-card dark:border-emerald-700/50 dark:from-emerald-950/40 dark:via-ink-900 dark:to-sky-950/30 md:p-6">
-      <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-emerald-400/30 blur-3xl" />
-      <div className="relative inline-flex items-center gap-1.5 rounded-full bg-emerald-700 px-2.5 py-1 text-[11px] font-bold tracking-wider text-white dark:bg-emerald-500">
-        <Sparkles className="h-3.5 w-3.5" strokeWidth={2} />
-        {t('buyNow.label')}
+    <div className="relative mt-6 overflow-hidden rounded-3xl border border-emerald-300/70 bg-gradient-to-br from-emerald-50 via-white to-sky-50 shadow-card dark:border-emerald-700/50 dark:from-emerald-950/40 dark:via-ink-900 dark:to-sky-950/30">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-emerald-400/30 blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-20 -left-20 h-56 w-56 rounded-full bg-sky-400/20 blur-3xl"
+      />
+
+      <div className="relative flex flex-wrap items-center justify-between gap-2 px-5 pt-5 md:px-6 md:pt-6">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-700 px-3 py-1.5 text-[11px] font-bold tracking-wider text-white shadow-sm dark:bg-emerald-500">
+          <Sparkles className="h-3.5 w-3.5" strokeWidth={2.4} />
+          {t('buyNow.label')}
+        </div>
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-300/80 bg-white/80 px-3 py-1.5 text-[11px] font-bold tracking-wide text-emerald-700 backdrop-blur dark:border-emerald-700/60 dark:bg-ink-900/70 dark:text-emerald-300">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inset-0 animate-ping rounded-full bg-emerald-500 opacity-70" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+          </span>
+          ▼ {pct}%
+        </div>
       </div>
-      <p className="relative mt-3 text-[14px] font-semibold text-emerald-700 dark:text-emerald-300">
-        {t(`buyNow.reason.${reasonKey}` as 'buyNow.reason.bigDrop', { pct })}
-      </p>
-      <div className="relative mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <h2 className="text-[20px] font-extrabold leading-tight tracking-tighter2 md:text-[24px]">
+
+      <div className="relative px-5 pb-5 pt-3 md:px-6 md:pb-6">
+        <p className="text-[15px] font-semibold text-emerald-700 dark:text-emerald-300 md:text-[16px]">
+          {t(`buyNow.reason.${reasonKey}` as 'buyNow.reason.bigDrop', { pct })}
+        </p>
+        <h2 className="mt-1 text-[22px] font-extrabold leading-tight tracking-tighter2 md:text-[28px]">
           {snap.name}
         </h2>
-        <span className="text-[12px] font-semibold text-ink-600 dark:text-ink-300">
-          {snap.store}
-        </span>
+        <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <span className="text-[12px] font-semibold text-ink-600 dark:text-ink-300">
+            {snap.store}
+          </span>
+        </div>
+        <div className="mt-3 flex flex-wrap items-end gap-3">
+          <DualMoney money={snap.finalPrice} size="xl" layout="stacked" locale={locale} />
+          <div className="inline-flex items-center gap-1 rounded-full border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-[11.5px] font-bold text-emerald-700 dark:border-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
+            ▼ {pct}% {t('buyNow.dropLabel')}
+          </div>
+        </div>
+
+        {buyHref && (
+          <Button
+            asChild
+            variant="primary"
+            className="group/cta relative mt-5 h-12 overflow-hidden rounded-2xl px-5 text-[14px] font-extrabold tracking-tight shadow-md transition-shadow hover:shadow-lg md:h-13 md:text-[15px]"
+          >
+            <a
+              href={buyHref}
+              target="_blank"
+              rel="noreferrer noopener sponsored"
+              className="inline-flex items-center justify-center gap-2"
+            >
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover/cta:translate-x-full"
+              />
+              <span className="relative">{t('buyNow.cta', { store: snap.store })}</span>
+              <ExternalLink
+                className="relative h-4 w-4 transition-transform group-hover/cta:translate-x-0.5"
+                strokeWidth={2}
+              />
+            </a>
+          </Button>
+        )}
       </div>
-      <div className="relative mt-2 flex flex-wrap items-baseline gap-3">
-        <DualMoney money={snap.finalPrice} size="lg" layout="inline" locale={locale} />
-        <span className="rounded bg-emerald-600 px-1.5 py-0.5 text-[11px] font-extrabold text-white">
-          ▼ {pct}%
-        </span>
-      </div>
-      {buyHref && (
-        <Button
-          asChild
-          variant="primary"
-          className="mt-4 h-11 rounded-xl px-5 font-bold"
-        >
-          <a href={buyHref} target="_blank" rel="noreferrer noopener sponsored">
-            {t('buyNow.cta', { store: snap.store })}
-            <ExternalLink className="h-4 w-4" strokeWidth={1.9} />
-          </a>
-        </Button>
-      )}
     </div>
   );
 }
