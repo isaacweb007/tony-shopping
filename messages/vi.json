@@ -27,6 +27,31 @@
     "recentQueries": {
       "label": "Tiếp tục tìm kiếm gần đây"
     },
+    "browse": {
+      "aria": "Duyệt theo danh mục",
+      "label": "Danh mục",
+      "headline": "Chưa biết tìm gì?",
+      "subtitle": "Bấm một danh mục — Tony sẽ chọn cho bạn vài lựa chọn.",
+      "topPick": "Tony gợi ý"
+    },
+    "picks": {
+      "aria": "Editor's picks của Tony",
+      "label": "Tony's editor picks",
+      "headline": "Tuần này Tony chọn",
+      "subtitle": "Những sản phẩm Tony tự tin nhất ngay bây giờ.",
+      "tone": {
+        "hot": "HOT",
+        "rising": "RISING"
+      },
+      "item": {
+        "airpodsPro": "AirPods Pro 2 USB-C",
+        "dyson": "Máy uốn tóc Dyson Airwrap",
+        "airfryer": "Nồi chiên không dầu Philips",
+        "monitor": "Màn hình 4K 27 inch",
+        "roborock": "Robot hút bụi Roborock S8 Pro Ultra",
+        "mattress": "Nệm Simmons cỡ Queen"
+      }
+    },
     "install": {
       "title": "Thêm Tony vào màn hình chính",
       "body": "Một chạm mở như một ứng dụng — không thanh trình duyệt.",

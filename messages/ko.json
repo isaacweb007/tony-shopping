@@ -27,6 +27,30 @@
     "recentQueries": {
       "label": "지난 검색 다시"
     },
+    "browse": {
+      "aria": "카테고리별 둘러보기",
+      "label": "카테고리",
+      "headline": "뭘 찾을지 모르겠다면",
+      "subtitle": "관심 분야 한 번 눌러보세요. 토니가 추려서 보여드릴게요."
+    },
+    "picks": {
+      "aria": "토니 에디터 픽",
+      "label": "Tony 에디터 픽",
+      "headline": "이번 주 토니가 골랐어요",
+      "subtitle": "지금 검색하면 토니가 가장 자신 있게 추천하는 상품들이에요.",
+      "tone": {
+        "hot": "HOT",
+        "rising": "RISING"
+      },
+      "item": {
+        "airpodsPro": "AirPods Pro 2 USB-C 모델",
+        "dyson": "Dyson Airwrap 헤어 스타일러",
+        "airfryer": "필립스 에어프라이어",
+        "monitor": "4K 모니터 27인치",
+        "roborock": "로보락 S8 Pro Ultra 로봇청소기",
+        "mattress": "시몬스 매트리스 퀸"
+      }
+    },
     "install": {
       "title": "토니를 홈 화면에 추가",
       "body": "한 번 누르면 앱처럼 실행돼요 — 브라우저 탭 없이 빠르게.",

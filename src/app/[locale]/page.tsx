@@ -4,6 +4,8 @@ import { FeatureCards } from '@/components/home/feature-cards';
 import { HowItWorks } from '@/components/home/how-it-works';
 import { RecentProducts } from '@/components/home/recent-products';
 import { InstallPrompt } from '@/components/home/install-prompt';
+import { BrowseCategories } from '@/components/home/browse-categories';
+import { EditorPicks } from '@/components/home/editor-picks';
 
 export default async function HomePage({
   params,
@@ -18,7 +20,11 @@ export default async function HomePage({
       <Hero />
       <InstallPrompt />
       <RecentProducts />
-      <div className="space-y-16 pb-20 md:space-y-24 md:pb-28">
+      <div className="container max-w-7xl">
+        <BrowseCategories />
+        <EditorPicks />
+      </div>
+      <div className="space-y-16 pb-20 pt-12 md:space-y-24 md:pb-28">
         <FeatureCards />
         <HowItWorks />
       </div>

@@ -27,6 +27,31 @@
     "recentQueries": {
       "label": "Pick up a recent search"
     },
+    "browse": {
+      "aria": "Browse by category",
+      "label": "Categories",
+      "headline": "Not sure what to look for?",
+      "subtitle": "Tap a category — Tony will curate a starting set for you.",
+      "topPick": "Tony's pick"
+    },
+    "picks": {
+      "aria": "Tony's editor picks",
+      "label": "Tony's editor picks",
+      "headline": "This week, Tony's picks",
+      "subtitle": "Products Tony is most confident about right now.",
+      "tone": {
+        "hot": "HOT",
+        "rising": "RISING"
+      },
+      "item": {
+        "airpodsPro": "AirPods Pro 2 USB-C",
+        "dyson": "Dyson Airwrap styler",
+        "airfryer": "Philips Air Fryer",
+        "monitor": "4K monitor 27\"",
+        "roborock": "Roborock S8 Pro Ultra robot vacuum",
+        "mattress": "Simmons mattress queen"
+      }
+    },
     "install": {
       "title": "Add Tony to your home screen",
       "body": "One tap and it opens like an app — no browser chrome.",
