@@ -16,28 +16,35 @@ const MODEL = 'claude-sonnet-4-5';
 const ANTHROPIC_VERSION = '2023-06-01';
 
 const PROMPT = `이 이미지는 SNS 영상(틱톡/인스타/유튜브)의 썸네일이야.
-사용자가 영상 속에 등장하는 상품을 사고 싶어해서 찾는 중이야.
+사용자가 영상 속에 등장하는 상품을 사고 싶어해서 쇼핑 사이트에서 찾는 중이야.
 
 이 이미지에서 보이는 상품 후보를 최대 3개 골라서 JSON으로만 답해줘. 가장 확실한 후보가 첫 번째여야 해.
 
-규칙:
-- JSON 외 텍스트 절대 금지. 설명·따옴표·접두어 ("후보:" 등) 금지.
-- 각 항목은 5~10단어 한국어 검색어. 브랜드 알면 포함, 모르면 색상 + 카테고리 + 특징.
+⚠️ 가장 중요한 규칙 — 검색어 길이 제한:
+- 각 항목은 **3~5단어**의 간결한 한국어 검색어로만 작성. 절대 6단어 넘기지 마.
+- 너무 구체적으로 묘사하면 쇼핑 사이트가 매칭을 못 함. "청록색 트로피컬 패턴 스노클링 마스크 물안경 세트" (X) — 너무 김 → "스노클링 마스크 세트" (O).
+- 브랜드명을 알면 반드시 포함 + 카테고리. "Apple AirPods Pro 2" (O), "흰색 무선 이어폰" (브랜드 모를 때만 O).
+- 색상은 브랜드 모를 때만. 브랜드를 안다면 "Sony WH-1000XM5"만으로 충분 (색상 빼).
 - 사람·풍경·배경은 무시. 상품 자체만.
-- 후보가 1개면 1개만 반환해도 됨. 보이는 상품이 없거나 분간 안 되면 빈 배열.
+
+기타 규칙:
+- JSON 외 텍스트 절대 금지. 설명·따옴표·접두어 ("후보:" 등) 금지.
+- 후보 3개는 서로 달라야 함 (다른 카테고리 또는 다른 추상 레벨).
+- 보이는 상품이 없거나 분간 안 되면 빈 배열.
 
 응답 형식 (반드시 이 JSON 형태):
 {"candidates": ["후보1", "후보2", "후보3"]}
 
 좋은 예시:
-{"candidates": ["white Nike Air Force 1 sneakers", "white low-top tennis shoes"]}
-{"candidates": ["청록색 스노클링 마스크 세트", "물안경 다이빙 마스크"]}
-{"candidates": ["Apple AirPods Pro 2 white wireless earbuds"]}
+{"candidates": ["Nike Air Force 1", "흰색 운동화", "스니커즈"]}
+{"candidates": ["스노클링 마스크", "다이빙 핀", "수영 장비 세트"]}
+{"candidates": ["Apple AirPods Pro 2", "무선 이어폰", "노이즈캔슬링 이어폰"]}
 {"candidates": []}
 
 나쁜 예시 (절대 이렇게 답하지 마):
+{"candidates": ["청록색 트로피컬 패턴 스노클링 마스크 물안경 세트"]} (너무 김 — 7단어 넘음)
+{"candidates": ["white Nike Air Force 1 low-top sneakers with classic design"]} (영어 너무 김)
 "이 사진에는..." (설명 금지)
-{"main": "..."} (필드명 candidates 아님)
 \`\`\`json ...\`\`\` (코드블록 금지)`;
 
 interface ClaudeResponse {
@@ -147,7 +154,30 @@ function parseClaudeJson(text: string): ClaudeVisionResult | null {
   const clean = cands
     .filter((s): s is string => typeof s === 'string')
     .map((s) => s.replace(/^["']|["']$/g, '').slice(0, 120).trim())
+    .map(condenseQuery)
     .filter((s) => s.length >= 3);
   if (clean.length === 0) return null;
   return { main: clean[0]!, alternatives: clean.slice(1, 3) };
+}
+
+/**
+ * Safety net: if Claude returns a query longer than ~6 tokens despite the
+ * prompt's length cap, condense it down. SerpAPI's Google Shopping engine
+ * does fuzzy matching on short queries but falls through to unrelated
+ * results when every adjective has to match — "청록색 트로피컬 패턴
+ * 스노클링 마스크 물안경 세트" (7 tokens) returns shoes and foam cleanser
+ * for "쿨" / "패턴". 4-token caps keep the brand+category signal without
+ * the overspecific adjective noise.
+ *
+ * Strategy:
+ *  - Tokens already ≤ 5 → leave as-is.
+ *  - Longer → keep the FIRST 4 tokens (heads usually carry brand/category;
+ *    adjective tails carry color/material/etc. which we drop).
+ *
+ * Word boundaries: any whitespace splits.
+ */
+function condenseQuery(s: string): string {
+  const tokens = s.split(/\s+/).filter((t) => t.length > 0);
+  if (tokens.length <= 5) return s;
+  return tokens.slice(0, 4).join(' ');
 }

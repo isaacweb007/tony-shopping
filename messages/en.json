@@ -621,6 +621,19 @@
     "pickHere": "Tony's pick at {price}",
     "acrossStores": "across {n} stores"
   },
+  "alternatives": {
+    "aria": "Tony's suggested alternatives",
+    "label": "Tony also considered",
+    "headline": "Looking at other options too?",
+    "subtle": "3 alternatives picked by Claude AI",
+    "cta": "Search this",
+    "angle": {
+      "competitor": "Similar price",
+      "prior_gen": "Prior generation",
+      "budget": "Cheaper option",
+      "premium": "One step up"
+    }
+  },
   "analysis": {
     "label": "Tony's deep dive",
     "engineClaude": "Claude AI",

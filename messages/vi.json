@@ -621,6 +621,19 @@
     "pickHere": "Tony chọn ở mức {price}",
     "acrossStores": "qua {n} cửa hàng"
   },
+  "alternatives": {
+    "aria": "Lựa chọn thay thế Tony gợi ý",
+    "label": "Tony cũng đã cân nhắc",
+    "headline": "Xem qua lựa chọn khác nhé?",
+    "subtle": "3 lựa chọn do Claude AI chọn lọc",
+    "cta": "Tìm với này",
+    "angle": {
+      "competitor": "Cùng tầm giá",
+      "prior_gen": "Đời trước",
+      "budget": "Lựa chọn rẻ hơn",
+      "premium": "Cao cấp hơn"
+    }
+  },
   "analysis": {
     "label": "Phân tích sâu của Tony",
     "engineClaude": "Claude AI",

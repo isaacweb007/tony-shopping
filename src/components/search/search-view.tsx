@@ -13,6 +13,7 @@ import { useSearch } from '@/hooks/use-search';
 import { ReportCard } from './report-card';
 import { VerdictCard } from './verdict-card';
 import { AnalysisTrail } from './analysis-trail';
+import { AlternativesRail } from './alternatives-rail';
 import { MetricsTiles } from './metrics-tiles';
 import { PriceDistribution } from './price-distribution';
 import { Clusters } from './clusters';
@@ -273,6 +274,8 @@ export function SearchView() {
       <AnalysisTrail products={result.products} report={result.report} />
 
       <MetricsTiles products={result.products} report={result.report} />
+
+      <AlternativesRail product={result.report.best} />
 
       <Clusters query={q} products={result.products} />
 

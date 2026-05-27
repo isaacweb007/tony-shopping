@@ -621,6 +621,19 @@
     "pickHere": "토니의 추천 가격 {price}",
     "acrossStores": "{n}개 쇼핑몰"
   },
+  "alternatives": {
+    "aria": "토니가 추천하는 대안 상품",
+    "label": "Tony도 같이 고려해봤어요",
+    "headline": "다른 옵션도 한 번 볼까요?",
+    "subtle": "Claude AI가 추린 대안 3개",
+    "cta": "이걸로 검색",
+    "angle": {
+      "competitor": "비슷한 가격대",
+      "prior_gen": "이전 세대",
+      "budget": "더 저렴한 옵션",
+      "premium": "한 단계 위"
+    }
+  },
   "analysis": {
     "label": "토니의 깊이 분석",
     "engineClaude": "Claude AI",
