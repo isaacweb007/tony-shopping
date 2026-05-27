@@ -14,7 +14,7 @@ import type { SearchAdapter, SearchInput } from './base';
 import { generateMockProducts } from './mock-factory';
 import { ADAPTER_MODE } from '@/lib/env';
 import { computeTonyScore } from '@/lib/scoring';
-import type { Product, Money, StoreId } from '@/types/product';
+import type { Product, Money, StoreId, CountryCode } from '@/types/product';
 
 const ENDPOINT = 'https://serpapi.com/search.json';
 
@@ -68,7 +68,31 @@ function parseDeliveryDays(delivery?: string): number {
   return 5;
 }
 
-function toProduct(item: SerpShoppingItem, idx: number): Product | null {
+/** SerpAPI returns prices already converted to the search locale's currency. */
+const LOCALE_CURRENCY: Record<'ko' | 'en' | 'vi', Money['currency']> = {
+  ko: 'KRW',
+  en: 'USD',
+  vi: 'VND',
+};
+const LOCALE_COUNTRY: Record<'ko' | 'en' | 'vi', CountryCode> = {
+  ko: 'KR',
+  en: 'US',
+  vi: 'VN',
+};
+
+/**
+ * Reference price (for the priceEdge scoring component) is currency-aware:
+ * a $50 reference doesn't map to ₩50, so we ballpark a typical mid-range
+ * product price in each currency.
+ */
+const LOCALE_REFERENCE_PRICE: Record<Money['currency'], number> = {
+  USD: 50,
+  KRW: 60000,
+  VND: 1200000,
+  JPY: 7000,
+};
+
+function toProduct(item: SerpShoppingItem, idx: number, locale: 'ko' | 'en' | 'vi'): Product | null {
   const price = item.extracted_price;
   if (!price || price <= 0 || !item.title) return null;
   const store = mapSource(item.source);
@@ -78,14 +102,14 @@ function toProduct(item: SerpShoppingItem, idx: number): Product | null {
   const trustedBadge = !!(item.badge?.toLowerCase().includes('trusted') || item.tag);
   const authPct = trustedBadge ? 88 : 72;
 
-  // SerpAPI returns prices in the search locale's currency; default to USD.
-  const currency: Money['currency'] = 'USD';
+  const currency: Money['currency'] = LOCALE_CURRENCY[locale];
+  const country = LOCALE_COUNTRY[locale];
   const finalAmt = price;
 
   const score = computeTonyScore({
     similarity: 92 - idx * 2,
     finalPrice: finalAmt,
-    referencePrice: 50,
+    referencePrice: LOCALE_REFERENCE_PRICE[currency] ?? 50,
     reviewCount,
     authenticityPct: authPct,
   });
@@ -94,7 +118,7 @@ function toProduct(item: SerpShoppingItem, idx: number): Product | null {
     id: 'serp_' + (item.product_id ?? `${idx}_${Date.now()}`),
     name: item.title,
     store,
-    country: 'US',
+    country,
     price: { amount: price, currency },
     finalPrice: { amount: finalAmt, currency },
     shippingFee: { amount: 0, currency },
@@ -192,7 +216,7 @@ async function searchReal(
 
   const parsed = items
     .slice(0, limit)
-    .map((it, i) => toProduct(it, i))
+    .map((it, i) => toProduct(it, i, locale))
     .filter((p): p is Product => p !== null);
 
   if (items.length > 0 && parsed.length === 0) {
