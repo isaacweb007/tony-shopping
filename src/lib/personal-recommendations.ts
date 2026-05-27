@@ -92,7 +92,10 @@ export async function suggestPersonal(input: PersonalInput): Promise<PersonalRes
       },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 800,
+        // 4 KR recommendations × (name + reason + emoji) easily clears 800
+        // tokens and truncates mid-JSON — same lesson learned with product
+        // analysis. 1500 gives headroom across ko/vi.
+        max_tokens: 1500,
         temperature: 0.3, // Tiny variability so recommendations don't feel canned
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: userMsg }],
