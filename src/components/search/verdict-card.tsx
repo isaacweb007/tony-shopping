@@ -283,6 +283,57 @@ export function VerdictCard({ product, peers }: Props) {
             </ul>
           </div>
 
+          {/*
+            Meta-shop offer rail — when the clusterer found this same
+            product at other merchants, surface them as full rows so the
+            user can comparison-shop right inside the verdict card. The
+            canonical merchant (already shown in the meta row above) is
+            implicit as the recommended pick; the rail shows alternates
+            ranked by price ascending.
+          */}
+          {product.offers && product.offers.length > 0 && (
+            <div className="mt-5">
+              <div className="mb-2 text-[10.5px] font-bold uppercase tracking-widest text-ink-500 dark:text-ink-400">
+                {tv('availableAt', { n: product.offers.length + 1 })}
+              </div>
+              <ul className="space-y-1.5">
+                {product.offers.slice(0, 4).map((o) => (
+                  <li key={o.merchantName + o.price.amount}>
+                    <a
+                      href={o.buyUrl}
+                      target="_blank"
+                      rel="noreferrer noopener sponsored"
+                      className="group/offer flex items-center justify-between gap-2 rounded-xl border border-ink-200/80 bg-white/70 px-3 py-2 text-[13px] transition hover:border-accent-300 hover:bg-white dark:border-ink-700/80 dark:bg-ink-900/70 dark:hover:border-accent-500 dark:hover:bg-ink-900"
+                    >
+                      <span className="flex min-w-0 flex-1 items-center gap-2">
+                        <span className="truncate font-semibold text-ink-800 dark:text-ink-100">
+                          {o.merchantName}
+                        </span>
+                        <span className="shrink-0 text-[11px] text-ink-500 dark:text-ink-400">
+                          {shipLabel(o.shipDays, tg)}
+                        </span>
+                      </span>
+                      <span className="flex shrink-0 items-center gap-2">
+                        <span className="font-extrabold tabular-nums text-ink-900 dark:text-ink-50">
+                          {formatMoney(o.price, locale)}
+                        </span>
+                        <ArrowRight
+                          className="h-3.5 w-3.5 text-ink-400 transition-transform group-hover/offer:translate-x-0.5 group-hover/offer:text-accent-600 dark:text-ink-500 dark:group-hover/offer:text-accent-400"
+                          strokeWidth={2.2}
+                        />
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              {product.offers.length > 4 && (
+                <div className="mt-1.5 text-[11px] text-ink-400 dark:text-ink-500">
+                  {tv('moreMerchants', { n: product.offers.length - 4 })}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Big CTA + secondary actions */}
           <div className="mt-6 flex flex-col gap-2 md:flex-row md:items-center">
             <Button

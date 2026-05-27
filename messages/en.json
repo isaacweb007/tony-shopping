@@ -663,6 +663,8 @@
       "consider": "Go to buy"
     },
     "savingsPill": "-{pct}% vs market",
+    "availableAt": "Available at {n} merchants",
+    "moreMerchants": "+{n} more merchants",
     "alternative": "Curious about other options? See TOP 3 below",
     "compareNote": "Not sure? Save to compare for later"
   },
@@ -785,7 +787,9 @@
     "buy": "Buy",
     "recentViewed": "Seen",
     "watchOnAria": "Watching price — tap to stop",
-    "watchOffAria": "Start watching this product's price"
+    "watchOffAria": "Start watching this product's price",
+    "alsoAt": "Sold at {n} merchants",
+    "moreOffers": "+{n} more"
   },
   "detail": {
     "title": "Product details",

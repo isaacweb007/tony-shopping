@@ -663,6 +663,8 @@
       "consider": "Đi mua"
     },
     "savingsPill": "-{pct}% so với thị trường",
+    "availableAt": "Có bán ở {n} cửa hàng",
+    "moreMerchants": "+{n} cửa hàng khác",
     "alternative": "Muốn xem lựa chọn khác? Xem TOP 3 bên dưới",
     "compareNote": "Chưa chắc? Lưu vào so sánh để xem lại"
   },
@@ -785,7 +787,9 @@
     "buy": "Mua",
     "recentViewed": "Đã xem",
     "watchOnAria": "Đang theo dõi giá — bấm để dừng",
-    "watchOffAria": "Bắt đầu theo dõi giá sản phẩm này"
+    "watchOffAria": "Bắt đầu theo dõi giá sản phẩm này",
+    "alsoAt": "Có bán ở {n} cửa hàng",
+    "moreOffers": "+{n} nữa"
   },
   "detail": {
     "title": "Chi tiết sản phẩm",

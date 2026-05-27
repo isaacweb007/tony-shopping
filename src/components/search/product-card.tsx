@@ -233,6 +233,42 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
           </span>
         </div>
 
+        {/*
+          Meta-shop offer rail — sibling listings of the same product from
+          other merchants. Renders inline below the meta row so users see
+          "Apple AirPods Pro 2 — also at KREAM ₩48K / 11번가 ₩52K" without
+          having to open the detail.
+        */}
+        {product.offers && product.offers.length > 0 && (
+          <div className="mt-2.5">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-ink-400 dark:text-ink-500">
+              {tc('alsoAt', { n: product.offers.length + 1 })}
+            </div>
+            <div className="mt-1 flex flex-wrap gap-1">
+              {product.offers.slice(0, isFeature ? 4 : 3).map((o) => (
+                <a
+                  key={o.merchantName + o.price.amount}
+                  href={o.buyUrl}
+                  target="_blank"
+                  rel="noreferrer noopener sponsored"
+                  className="inline-flex items-center gap-1 rounded-md border border-ink-200 bg-white px-1.5 py-0.5 text-[10.5px] font-semibold text-ink-700 transition hover:border-accent-300 hover:text-accent-700 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200 dark:hover:border-accent-500 dark:hover:text-accent-300"
+                  title={`${o.merchantName} ${formatMoney(o.price, locale)}`}
+                >
+                  <span className="max-w-[80px] truncate">{o.merchantName}</span>
+                  <span className="font-bold tabular-nums">
+                    {formatMoney(o.price, locale)}
+                  </span>
+                </a>
+              ))}
+              {product.offers.length > (isFeature ? 4 : 3) && (
+                <span className="inline-flex items-center rounded-md border border-dashed border-ink-200 px-1.5 py-0.5 text-[10.5px] text-ink-500 dark:border-ink-700 dark:text-ink-400">
+                  {tc('moreOffers', { n: product.offers.length - (isFeature ? 4 : 3) })}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Action bar — Buy is the primary action and gets ~2/3 of the row.
             Report is secondary and shrinks to a fixed pill on compact cards. */}
         <div

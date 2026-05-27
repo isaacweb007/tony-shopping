@@ -11,8 +11,13 @@ import { getEnabledAdapters } from '@/lib/adapters/registry';
 import { withTimeout, type SearchAdapter } from '@/lib/adapters/base';
 import { recordAdapterCall } from '@/lib/adapter-stats';
 import { ADAPTER_MODE } from '@/lib/env';
+import { clusterProducts } from './cluster';
 
-const PER_ADAPTER_LIMIT = 4;
+// Pulled wider than the visible card count so the clusterer has material
+// to work with — a single adapter may surface the same product from many
+// merchants (SerpAPI's `multiple_sources: true` cases). After clustering
+// we collapse back down to the canonical listings.
+const PER_ADAPTER_LIMIT = 16;
 // SerpAPI live calls routinely take 2-4 s; mocks return in ~200 ms.
 // 5 s gives the real adapter room without blocking the UI noticeably.
 const ADAPTER_TIMEOUT_MS = 5000;
@@ -107,9 +112,16 @@ export async function runServerSearch(
     }),
   );
 
-  const products: Product[] = results
+  const rawProducts: Product[] = results
     .flatMap((r) => (r.status === 'fulfilled' ? r.value : []))
     .map((p) => ({ ...p })); // shallow clone — we'll mutate `tag` below
+
+  // Cluster sibling listings of the same product (e.g. Apple AirPods Pro 2
+  // from KREAM / 쿠팡 / 11번가) into one canonical row per product, with
+  // alternate merchants attached as MerchantOffer[]. Tagging + reporting
+  // operate on this de-duplicated set so scoring isn't biased by
+  // duplicate-name spam.
+  const products = clusterProducts(rawProducts);
 
   assignTags(products);
 

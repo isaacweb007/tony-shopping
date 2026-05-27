@@ -663,6 +663,8 @@
       "consider": "구매하러 가기"
     },
     "savingsPill": "시세보다 -{pct}%",
+    "availableAt": "이 상품을 판매하는 매장 {n}곳",
+    "moreMerchants": "그 외 매장 +{n}곳",
     "alternative": "다른 선택지도 궁금하면 아래 TOP 3",
     "compareNote": "주저되면 비교함에 담아두세요"
   },
@@ -785,7 +787,9 @@
     "buy": "구매",
     "recentViewed": "최근 본",
     "watchOnAria": "가격 추적 중 — 다시 누르면 해제",
-    "watchOffAria": "이 상품 가격 추적 시작"
+    "watchOffAria": "이 상품 가격 추적 시작",
+    "alsoAt": "{n}개 매장에서 판매",
+    "moreOffers": "+{n}곳"
   },
   "detail": {
     "title": "상품 상세",

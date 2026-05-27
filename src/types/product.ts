@@ -40,6 +40,28 @@ export interface TonyScore {
   authenticity: number;   // 0..100
 }
 
+/**
+ * One sibling listing of the same product from a different merchant.
+ *
+ * When the search aggregator clusters results (e.g. SerpAPI returns "Apple
+ * AirPods Pro 2" from KREAM, 쿠팡, 11번가 and Apple at different prices),
+ * the canonical Product keeps the best (highest-score) listing and the
+ * other merchants are attached as MerchantOffer[]. UI renders them as a
+ * compact "available at" rail so users see real cross-mall comparison.
+ */
+export interface MerchantOffer {
+  /** Display label for the merchant (e.g. "쿠팡", "KREAM", "11번가"). */
+  merchantName: string;
+  /** Canonical StoreId for affiliate routing. */
+  store: StoreId;
+  /** Final price as shown to the user (includes shipping). */
+  price: Money;
+  /** Estimated delivery in days. 0 = today, 1 = tomorrow. */
+  shipDays: number;
+  /** Outbound product URL (affiliate-wrapped at click time). */
+  buyUrl: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -80,6 +102,13 @@ export interface Product {
    * Tony's LLM review summariser.
    */
   reviewSamples?: string[];
+  /**
+   * Sibling listings of the same product from other merchants, populated by
+   * the post-aggregation clusterer in lib/search/cluster.ts. Sorted by
+   * price ascending. Empty/undefined when the product is unique in the
+   * result set.
+   */
+  offers?: MerchantOffer[];
 }
 
 export interface TonyReport {
