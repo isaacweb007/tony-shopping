@@ -138,7 +138,15 @@ export async function analyzeProduct(input: AnalysisInput): Promise<ProductAnaly
       return fallbackAnalysis(input);
     }
     const text = data.content?.find((c) => c.type === 'text')?.text?.trim() ?? '';
-    return parseAnalysis(text) ?? fallbackAnalysis(input);
+    const parsed = parseAnalysis(text);
+    if (!parsed) {
+      console.error(
+        '[Product analysis] parse failed. raw first 300 chars:',
+        text.slice(0, 300),
+      );
+      return fallbackAnalysis(input);
+    }
+    return parsed;
   } catch (e) {
     console.error('[Product analysis] threw', e instanceof Error ? e.message : e);
     return fallbackAnalysis(input);
