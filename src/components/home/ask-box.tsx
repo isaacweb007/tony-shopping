@@ -76,6 +76,7 @@ export function AskBox() {
             if (data.suggestedQuery) {
               setExtractResult({
                 suggestedQuery: data.suggestedQuery,
+                candidates: data.candidates,
                 source: data.source ?? 'fallback',
                 hint: data.hint,
                 tags: data.tags,
@@ -187,6 +188,7 @@ export function AskBox() {
         if (data.suggestedQuery) {
           setExtractResult({
             suggestedQuery: data.suggestedQuery,
+            candidates: data.candidates,
             source: data.source ?? 'fallback',
             hint: data.hint,
             tags: data.tags,
@@ -272,6 +274,7 @@ export function AskBox() {
         if (data.suggestedQuery) {
           setExtractResult({
             suggestedQuery: data.suggestedQuery,
+            candidates: data.candidates,
             source: data.source ?? 'fallback',
             hint: data.hint,
             tags: data.tags,
@@ -320,7 +323,7 @@ export function AskBox() {
 
     // URL-only input: run /api/extract first so the upstream search gets a
     // real product-name query instead of "https://...". Skip if the caller
-    // already supplied an override (means extract has run upstream).
+    // already supplied an override (means user already accepted a preview).
     if (!override && isUrlLikeQuery(raw)) {
       setExtracting(true);
       try {
@@ -332,18 +335,22 @@ export function AskBox() {
         if (res.ok) {
           const data = (await res.json()) as ExtractResult & { source: ExtractResult['source'] };
           if (data.suggestedQuery && data.suggestedQuery.trim().length > 0) {
+            // Show the preview — DO NOT auto-navigate. The user clicks
+            // "이걸로 검색" (or picks a candidate) which calls submit(override)
+            // with the chosen query and falls through to navigation below.
             setExtractResult({
               suggestedQuery: data.suggestedQuery,
+              candidates: data.candidates,
               source: data.source ?? 'fallback',
               hint: data.hint,
               tags: data.tags,
               image: data.image,
             });
-            q = data.suggestedQuery;
+            return;
           }
         }
       } catch {
-        /* keep raw URL — /search page will show empty state */
+        /* fall through — let /search page show empty state */
       } finally {
         setExtracting(false);
       }
@@ -500,6 +507,10 @@ export function AskBox() {
           result={extractResult}
           onAccept={() => {
             submit(extractResult.suggestedQuery);
+            setExtractResult(null);
+          }}
+          onSelectCandidate={(q) => {
+            submit(q);
             setExtractResult(null);
           }}
           onEdit={() => {

@@ -1,14 +1,13 @@
 /**
- * Claude vision — semantic product identification from a video thumbnail.
+ * Claude vision — semantic product identification from an image.
  *
- * Why Claude on top of Google Vision: Vision API returns generic labels
- * ("shoe", "fashion accessory", "leather"). For a shopping search we want
- * a phrase a human would actually type. Claude with vision returns
- * "white Nike Air Force 1 low-top sneakers" — directly searchable.
+ * Single API call returns up to 3 ranked candidate shopping queries so the
+ * user can disambiguate when the image has multiple plausible products
+ * (e.g. an outfit shot with shoes + bag + jacket). The first candidate is
+ * always the "most confident" pick.
  *
- * Used by /api/extract as the preferred semantic layer when ANTHROPIC_API_KEY
- * is configured. Falls through silently on any error so the caller can fall
- * back to Google Vision and then to the oEmbed/OG title.
+ * Falls through silently on any error so the caller can fall back to
+ * Google Vision and then to the oEmbed/OG title.
  */
 import 'server-only';
 
@@ -16,40 +15,52 @@ const ENDPOINT = 'https://api.anthropic.com/v1/messages';
 const MODEL = 'claude-sonnet-4-5';
 const ANTHROPIC_VERSION = '2023-06-01';
 
-const PROMPT = `이 이미지는 SNS 영상(틱톡/인스타/유튜브)의 썸네일이야. 사용자가 영상 속에 등장하는 상품을 사고 싶어해서 찾는 중이야.
+const PROMPT = `이 이미지는 SNS 영상(틱톡/인스타/유튜브)의 썸네일이야.
+사용자가 영상 속에 등장하는 상품을 사고 싶어해서 찾는 중이야.
 
-이 이미지에서 가장 명확히 보이는 상품(또는 가장 핵심 상품) 하나를 골라서, 그 상품을 쇼핑 사이트에서 찾기 위한 검색어를 5~10단어로 작성해줘.
+이 이미지에서 보이는 상품 후보를 최대 3개 골라서 JSON으로만 답해줘. 가장 확실한 후보가 첫 번째여야 해.
 
 규칙:
-- 답변은 검색어 단 한 줄만. 설명·따옴표·접두어("검색어:" 등) 절대 금지.
-- 브랜드명을 알면 포함. 모르면 색상 + 카테고리 + 특징 형태.
-- 사람·풍경·배경은 무시하고 상품 자체만.
-- 상품이 보이지 않거나 분간이 안 되면 빈 줄 한 줄만 반환.
+- JSON 외 텍스트 절대 금지. 설명·따옴표·접두어 ("후보:" 등) 금지.
+- 각 항목은 5~10단어 한국어 검색어. 브랜드 알면 포함, 모르면 색상 + 카테고리 + 특징.
+- 사람·풍경·배경은 무시. 상품 자체만.
+- 후보가 1개면 1개만 반환해도 됨. 보이는 상품이 없거나 분간 안 되면 빈 배열.
 
-예시 좋은 답변:
-- "white Nike Air Force 1 low-top sneakers"
-- "검정 미니 가죽 백팩 여성용"
-- "Apple AirPods Pro 2 white wireless earbuds"
+응답 형식 (반드시 이 JSON 형태):
+{"candidates": ["후보1", "후보2", "후보3"]}
 
-예시 나쁜 답변 (절대 이렇게 답하지 마):
-- "이 사진에는 신발이 보입니다..." (설명 금지)
-- "상품: Nike Air Force 1" (접두어 금지)
-- "Nike" (너무 짧음, 카테고리 필수)`;
+좋은 예시:
+{"candidates": ["white Nike Air Force 1 sneakers", "white low-top tennis shoes"]}
+{"candidates": ["청록색 스노클링 마스크 세트", "물안경 다이빙 마스크"]}
+{"candidates": ["Apple AirPods Pro 2 white wireless earbuds"]}
+{"candidates": []}
+
+나쁜 예시 (절대 이렇게 답하지 마):
+"이 사진에는..." (설명 금지)
+{"main": "..."} (필드명 candidates 아님)
+\`\`\`json ...\`\`\` (코드블록 금지)`;
 
 interface ClaudeResponse {
   content?: Array<{ type?: string; text?: string }>;
   error?: { type?: string; message?: string };
 }
 
+export interface ClaudeVisionResult {
+  /** Highest-confidence candidate. Always non-empty when this object is returned. */
+  main: string;
+  /** Additional candidates (0-2 items). May be empty. */
+  alternatives: string[];
+}
+
 /**
- * Identify the product visible in an image and return a shopping query.
- * Returns null on missing key, network error, or empty/refusal response —
- * callers should fall back to other vision providers.
+ * Identify product(s) visible in an image and return ranked shopping queries.
+ * Returns null on: missing key, network error, JSON parse failure, or
+ * empty/refusal response. Callers should fall back to Google Vision.
  */
 export async function identifyProductWithClaude(
   dataUrl: string,
   signal?: AbortSignal,
-): Promise<string | null> {
+): Promise<ClaudeVisionResult | null> {
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) return null;
 
@@ -58,11 +69,7 @@ export async function identifyProductWithClaude(
   if (!m) return null;
   const mediaType = m[1]!;
   const base64 = m[2]!;
-
-  // Claude vision supports png, jpeg, gif, webp.
-  if (!/^image\/(png|jpeg|gif|webp)$/.test(mediaType)) {
-    return null;
-  }
+  if (!/^image\/(png|jpeg|gif|webp)$/.test(mediaType)) return null;
 
   try {
     const res = await fetch(ENDPOINT, {
@@ -75,7 +82,7 @@ export async function identifyProductWithClaude(
       },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 60,
+        max_tokens: 200,
         messages: [
           {
             role: 'user',
@@ -103,11 +110,44 @@ export async function identifyProductWithClaude(
     }
     const text = data.content?.find((c) => c.type === 'text')?.text?.trim() ?? '';
     if (!text) return null;
-    // Cap length defensively.
-    const trimmed = text.replace(/^["']|["']$/g, '').slice(0, 120).trim();
-    return trimmed.length >= 3 ? trimmed : null;
+    return parseClaudeJson(text);
   } catch (e) {
     console.error('[Claude vision] threw', e instanceof Error ? e.message : e);
     return null;
   }
+}
+
+/**
+ * Tolerant JSON parser for Claude's response. The model is instructed to
+ * return raw JSON but occasionally wraps in markdown fences or adds prose,
+ * so try a couple of extraction passes before giving up.
+ */
+function parseClaudeJson(text: string): ClaudeVisionResult | null {
+  // Strip markdown fences if present.
+  let body = text
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/\s*```$/i, '')
+    .trim();
+  // Find the first {...} block if there's prose around it.
+  if (!body.startsWith('{')) {
+    const start = body.indexOf('{');
+    const end = body.lastIndexOf('}');
+    if (start >= 0 && end > start) body = body.slice(start, end + 1);
+    else return null;
+  }
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(body);
+  } catch {
+    return null;
+  }
+  if (!parsed || typeof parsed !== 'object') return null;
+  const cands = (parsed as { candidates?: unknown }).candidates;
+  if (!Array.isArray(cands)) return null;
+  const clean = cands
+    .filter((s): s is string => typeof s === 'string')
+    .map((s) => s.replace(/^["']|["']$/g, '').slice(0, 120).trim())
+    .filter((s) => s.length >= 3);
+  if (clean.length === 0) return null;
+  return { main: clean[0]!, alternatives: clean.slice(1, 3) };
 }

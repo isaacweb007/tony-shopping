@@ -20,6 +20,7 @@ import { affiliateUrl } from '@/lib/affiliate';
 import { useCompareNarrative } from '@/hooks/use-compare-narrative';
 import { useAutoPriority } from '@/hooks/use-auto-priority';
 import { RecentCohorts } from './recent-cohorts';
+import { AddByVision } from './add-by-vision';
 import type { AutoPriorityResult } from '@/lib/compare/auto-priority';
 import { cn } from '@/lib/utils';
 import type { AppLocale } from '@/i18n/routing';
@@ -225,10 +226,13 @@ export function CompareView({ seedSnaps, initialPriority, readOnly }: Props = {}
             {t('subtitle', { n: snaps.length })}
           </p>
         </div>
-        <Button variant="outline" size="sm" className="h-10 rounded-xl" onClick={shareSet}>
-          <Share2 className="h-3.5 w-3.5" strokeWidth={2} />
-          {t('shareSet')}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          {!readOnly && <AddByVision />}
+          <Button variant="outline" size="sm" className="h-10 rounded-xl" onClick={shareSet}>
+            <Share2 className="h-3.5 w-3.5" strokeWidth={2} />
+            {t('shareSet')}
+          </Button>
+        </div>
       </div>
 
       {snaps.length >= 2 && (

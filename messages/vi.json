@@ -491,6 +491,27 @@
     "openCompare": "Mở bảng so sánh",
     "floatingCta": "So sánh ngay",
     "shareSet": "Chia sẻ bộ này",
+    "addByVision": {
+      "openCta": "Thêm bằng ảnh/link",
+      "close": "Đóng",
+      "title": "Thêm vào so sánh bằng ảnh hoặc link",
+      "subtitle": "Dán link TikTok/Instagram/YouTube hoặc ảnh sản phẩm — Tony nhận diện và thêm món phù hợp nhất.",
+      "placeholder": "Dán link mạng xã hội (ví dụ: tiktok.com/@user/video/...)",
+      "hint": "Bạn cũng có thể dán ảnh trực tiếp (Cmd/Ctrl+V).",
+      "analyzeUrl": "Phân tích",
+      "uploadPhoto": "Ảnh",
+      "searching": "Đang tìm...",
+      "added": "Đã thêm {name}",
+      "alreadyAdded": "{name} đã có trong so sánh",
+      "error": {
+        "extractFailed": "Không thể phân tích ảnh/link đó",
+        "noProductFound": "Không nhận diện được sản phẩm. Hãy thử ảnh khác.",
+        "searchFailed": "Tìm kiếm thất bại",
+        "zeroResults": "Không có kết quả cho '{q}'. Hãy thử ứng viên khác.",
+        "network": "Lỗi mạng",
+        "readFile": "Không đọc được tệp"
+      }
+    },
     "shareTitle": "Bộ so sánh của Tony",
     "shareText": "Mình đang cân nhắc {n} ứng viên. Giúp mình chọn nhé.",
     "emptyTitle": "Chưa có gì để so sánh",
@@ -809,7 +830,9 @@
         "fallback": "Heuristic"
       },
       "accept": "Tìm với này",
-      "edit": "Chỉnh sửa"
+      "edit": "Chỉnh sửa",
+      "candidatesLabel": "Ứng viên khác",
+      "useCandidate": "Tìm theo ứng viên này: {q}"
     }
   },
   "voice": {

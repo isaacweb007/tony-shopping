@@ -491,6 +491,27 @@
     "openCompare": "비교 분석 열기",
     "floatingCta": "비교 페이지로",
     "shareSet": "비교 링크 공유",
+    "addByVision": {
+      "openCta": "사진/링크로 추가",
+      "close": "닫기",
+      "title": "사진·링크로 비교함에 추가",
+      "subtitle": "TikTok·인스타·유튜브 링크나 상품 사진을 분석해서 매칭 상품을 자동으로 비교함에 넣어드려요.",
+      "placeholder": "SNS 링크 붙여넣기 (예: tiktok.com/@user/video/...)",
+      "hint": "사진은 직접 붙여넣기(Cmd/Ctrl+V)도 됩니다.",
+      "analyzeUrl": "분석",
+      "uploadPhoto": "사진",
+      "searching": "검색 중...",
+      "added": "{name} 비교함에 추가됨",
+      "alreadyAdded": "{name} 은(는) 이미 비교함에 있어요",
+      "error": {
+        "extractFailed": "이미지/링크 분석에 실패했어요",
+        "noProductFound": "상품을 인식할 수 없어요. 다른 사진을 시도해보세요.",
+        "searchFailed": "검색 중 오류가 발생했어요",
+        "zeroResults": "'{q}' 검색 결과가 없어요. 다른 후보를 골라보세요.",
+        "network": "네트워크 오류가 발생했어요",
+        "readFile": "사진 파일을 읽지 못했어요"
+      }
+    },
     "shareTitle": "토니가 추린 비교 후보",
     "shareText": "{n}개 후보를 비교 중이에요. 같이 골라봐요.",
     "emptyTitle": "아직 비교할 상품이 없어요",
@@ -809,7 +830,9 @@
         "fallback": "휴리스틱"
       },
       "accept": "이걸로 검색",
-      "edit": "수정"
+      "edit": "수정",
+      "candidatesLabel": "다른 후보",
+      "useCandidate": "이 후보로 검색: {q}"
     }
   },
   "voice": {

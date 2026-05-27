@@ -87,19 +87,32 @@ async function fetchImageAsDataUrl(url: string): Promise<string | null> {
 
 /**
  * Run vision pipeline on a thumbnail data URL: try Claude first (shopping-
- * grade phrasing), then Google Vision. Returns null if neither yields
- * something usable.
+ * grade phrasing + multiple candidates), then Google Vision. Returns null
+ * if neither yields something usable.
  */
-async function identifyFromThumbnail(
-  dataUrl: string,
-): Promise<{ query: string; tags: string[]; provider: 'claude' | 'google' } | null> {
-  const claudeQuery = await identifyProductWithClaude(dataUrl);
-  if (claudeQuery && claudeQuery.length >= 3) {
-    return { query: claudeQuery, tags: [claudeQuery], provider: 'claude' };
+async function identifyFromThumbnail(dataUrl: string): Promise<{
+  query: string;
+  candidates: string[];
+  tags: string[];
+  provider: 'claude' | 'google';
+} | null> {
+  const claude = await identifyProductWithClaude(dataUrl);
+  if (claude) {
+    return {
+      query: claude.main,
+      candidates: claude.alternatives,
+      tags: [claude.main, ...claude.alternatives],
+      provider: 'claude',
+    };
   }
   const v = await extractFromImage(dataUrl);
   if (v.source === 'vision' && v.suggestedQuery && v.suggestedQuery.length >= 3) {
-    return { query: v.suggestedQuery, tags: v.tags, provider: 'google' };
+    return {
+      query: v.suggestedQuery,
+      candidates: v.tags.slice(1, 3),
+      tags: v.tags,
+      provider: 'google',
+    };
   }
   return null;
 }
@@ -122,18 +135,20 @@ export async function POST(req: Request) {
   // ----- Direct image upload path -----
   // Prefer Claude for shopping-grade phrasing; fall back to Google Vision.
   if (imageDataUrl) {
-    const claudeQuery = await identifyProductWithClaude(imageDataUrl);
-    if (claudeQuery) {
+    const claude = await identifyProductWithClaude(imageDataUrl);
+    if (claude) {
       return NextResponse.json({
-        suggestedQuery: claudeQuery,
+        suggestedQuery: claude.main,
+        candidates: claude.alternatives,
         hint: 'Claude vision',
-        tags: [claudeQuery],
+        tags: [claude.main, ...claude.alternatives],
         source: 'vision' as const,
       });
     }
     const v = await extractFromImage(imageDataUrl, filename);
     return NextResponse.json({
       suggestedQuery: v.suggestedQuery,
+      candidates: v.tags.slice(1, 3),
       hint: v.source === 'vision' ? 'Vision API detected' : 'Heuristic placeholder',
       tags: v.tags,
       source: v.source,
@@ -153,6 +168,7 @@ export async function POST(req: Request) {
     // video the title is often a description ("click link above") rather
     // than a product name, so the thumbnail is the only real signal.
     let visionQuery = '';
+    let visionCandidates: string[] = [];
     let visionTags: string[] = [];
     let visionProvider: 'claude' | 'google' | null = null;
     if (oembed.image) {
@@ -161,6 +177,7 @@ export async function POST(req: Request) {
         const r = await identifyFromThumbnail(thumbData);
         if (r) {
           visionQuery = r.query;
+          visionCandidates = r.candidates;
           visionTags = r.tags;
           visionProvider = r.provider;
         }
@@ -170,6 +187,7 @@ export async function POST(req: Request) {
     const suggestedQuery = visionQuery || titleQuery;
     return NextResponse.json({
       suggestedQuery,
+      candidates: visionCandidates,
       hint: visionProvider
         ? `${visionProvider}-vision-${oembed.provider}`
         : `${oembed.provider}:${oembed.author ?? ''}`,
@@ -190,6 +208,7 @@ export async function POST(req: Request) {
 
     // Same enrichment for OG: if the page has an og:image, run vision.
     let visionQuery = '';
+    let visionCandidates: string[] = [];
     let visionTags: string[] = [];
     let visionProvider: 'claude' | 'google' | null = null;
     if (og.image) {
@@ -198,6 +217,7 @@ export async function POST(req: Request) {
         const r = await identifyFromThumbnail(thumbData);
         if (r) {
           visionQuery = r.query;
+          visionCandidates = r.candidates;
           visionTags = r.tags;
           visionProvider = r.provider;
         }
@@ -212,6 +232,7 @@ export async function POST(req: Request) {
     const suggestedQuery = visionQuery || titleQuery;
     return NextResponse.json({
       suggestedQuery,
+      candidates: visionCandidates,
       hint: visionProvider
         ? `${visionProvider}-vision-og`
         : og.siteName

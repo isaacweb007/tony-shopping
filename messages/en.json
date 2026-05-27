@@ -491,6 +491,27 @@
     "openCompare": "Open compare view",
     "floatingCta": "Compare them",
     "shareSet": "Share this set",
+    "addByVision": {
+      "openCta": "Add by photo/link",
+      "close": "Close",
+      "title": "Add to compare via photo or link",
+      "subtitle": "Drop a TikTok/Instagram/YouTube link or product photo — Tony identifies it and adds the best match.",
+      "placeholder": "Paste a social link (e.g. tiktok.com/@user/video/...)",
+      "hint": "You can also paste a photo directly (Cmd/Ctrl+V).",
+      "analyzeUrl": "Analyze",
+      "uploadPhoto": "Photo",
+      "searching": "Searching...",
+      "added": "Added {name}",
+      "alreadyAdded": "{name} is already in compare",
+      "error": {
+        "extractFailed": "Could not analyze that image/link",
+        "noProductFound": "Couldn't identify a product. Try another photo.",
+        "searchFailed": "Search failed",
+        "zeroResults": "No results for '{q}'. Try another candidate.",
+        "network": "Network error",
+        "readFile": "Could not read the file"
+      }
+    },
     "shareTitle": "Tony's compare set",
     "shareText": "I'm weighing {n} candidates. Help me pick.",
     "emptyTitle": "Nothing to compare yet",
@@ -809,7 +830,9 @@
         "fallback": "Heuristic"
       },
       "accept": "Search this",
-      "edit": "Edit"
+      "edit": "Edit",
+      "candidatesLabel": "Other candidates",
+      "useCandidate": "Search this candidate: {q}"
     }
   },
   "voice": {
