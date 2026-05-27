@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { runServerSearch } from '@/lib/search/run';
 import { ProductDetailView } from '@/components/product/product-detail-view';
+import { ProductJsonLd } from '@/components/site/product-json-ld';
 import { SearchSkeleton } from '@/components/search/search-skeleton';
 import { SITE_NAME, absoluteUrl } from '@/lib/site';
 import type { AppLocale } from '@/i18n/routing';
@@ -51,8 +52,15 @@ export default async function ProductPage({ params, searchParams }: PageProps) {
   const product = result.products.find((p) => p.id === id);
   if (!product) notFound();
 
+  const canonical = absoluteUrl(
+    `/product/${id}?q=${encodeURIComponent(q)}`,
+    locale as AppLocale,
+  );
+
   return (
     <Suspense fallback={<SearchSkeleton />}>
+      {/* Server-rendered structured data for Google rich snippets. */}
+      <ProductJsonLd product={product} pageUrl={canonical} />
       <ProductDetailView product={product} q={q} />
     </Suspense>
   );
