@@ -27,6 +27,13 @@
     "recentQueries": {
       "label": "Tiếp tục tìm kiếm gần đây"
     },
+    "personal": {
+      "aria": "Cá nhân hoá cho bạn",
+      "label": "Dành riêng cho bạn",
+      "headline": "Có thể bạn sẽ thích",
+      "subtitle": "Tony chọn dựa trên các tìm kiếm và lượt xem gần đây.",
+      "cta": "Hỏi Tony"
+    },
     "browse": {
       "aria": "Duyệt theo danh mục",
       "label": "Danh mục",

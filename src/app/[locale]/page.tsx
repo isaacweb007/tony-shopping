@@ -6,6 +6,7 @@ import { RecentProducts } from '@/components/home/recent-products';
 import { InstallPrompt } from '@/components/home/install-prompt';
 import { BrowseCategories } from '@/components/home/browse-categories';
 import { EditorPicks } from '@/components/home/editor-picks';
+import { PersonalRecommendations } from '@/components/home/personal-recommendations';
 
 export default async function HomePage({
   params,
@@ -21,6 +22,7 @@ export default async function HomePage({
       <InstallPrompt />
       <RecentProducts />
       <div className="container max-w-7xl">
+        <PersonalRecommendations />
         <BrowseCategories />
         <EditorPicks />
       </div>

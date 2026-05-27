@@ -27,6 +27,13 @@
     "recentQueries": {
       "label": "지난 검색 다시"
     },
+    "personal": {
+      "aria": "당신 맞춤 추천",
+      "label": "당신만을 위한",
+      "headline": "당신이 좋아할 만한 것들",
+      "subtitle": "토니가 최근 검색·조회 패턴을 보고 골랐어요.",
+      "cta": "토니에게 분석 요청"
+    },
     "browse": {
       "aria": "카테고리별 둘러보기",
       "label": "카테고리",

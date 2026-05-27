@@ -27,6 +27,13 @@
     "recentQueries": {
       "label": "Pick up a recent search"
     },
+    "personal": {
+      "aria": "Personalised for you",
+      "label": "Just for you",
+      "headline": "Things you might like",
+      "subtitle": "Tony picked these from your recent searches and clicks.",
+      "cta": "Ask Tony"
+    },
     "browse": {
       "aria": "Browse by category",
       "label": "Categories",
