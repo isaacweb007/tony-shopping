@@ -621,6 +621,20 @@
     "pickHere": "Tony's pick at {price}",
     "acrossStores": "across {n} stores"
   },
+  "analysis": {
+    "label": "Tony's deep dive",
+    "engineClaude": "Claude AI",
+    "engineHeuristic": "Heuristic",
+    "error": "Could not load analysis. Try again in a moment.",
+    "specs": "Key specs",
+    "authenticity": {
+      "high": "High authenticity confidence",
+      "medium": "Medium authenticity confidence",
+      "low": "Verify authenticity"
+    },
+    "buyingTips": "Check before you buy",
+    "differentiators": "Differences vs alternatives"
+  },
   "searchLoading": {
     "label": "Tony is analyzing",
     "subtle": "Usually 0.5–3 seconds",

@@ -621,6 +621,20 @@
     "pickHere": "토니의 추천 가격 {price}",
     "acrossStores": "{n}개 쇼핑몰"
   },
+  "analysis": {
+    "label": "토니의 깊이 분석",
+    "engineClaude": "Claude AI",
+    "engineHeuristic": "휴리스틱",
+    "error": "분석을 가져올 수 없어요. 잠시 후 다시 시도해 주세요.",
+    "specs": "핵심 스펙",
+    "authenticity": {
+      "high": "정품 신뢰도 높음",
+      "medium": "정품 신뢰도 보통",
+      "low": "정품 신뢰도 확인 필요"
+    },
+    "buyingTips": "구매 전 체크 포인트",
+    "differentiators": "다른 옵션과의 차이"
+  },
   "searchLoading": {
     "label": "토니가 분석 중이에요",
     "subtle": "0.5~3초 정도 걸려요",

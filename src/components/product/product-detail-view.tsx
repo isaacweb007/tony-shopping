@@ -13,6 +13,7 @@ import { affiliateUrl } from '@/lib/affiliate';
 import { useCheckoutGuide } from '@/hooks/use-checkout-guide';
 import { haptic } from '@/lib/haptic';
 import { ReviewAnalysis } from '@/components/search/review-analysis';
+import { ProductAnalysisCard } from '@/components/product/product-analysis-card';
 import { PriceSparkline } from '@/components/product/price-sparkline';
 import { FloatingCompareBar } from '@/components/product/floating-compare-bar';
 import { RelatedProducts } from '@/components/product/related-products';
@@ -288,7 +289,9 @@ export function ProductDetailView({ product, q }: Props) {
       </div>
       </div>
 
-      <PriceSparkline snapshot={priceWatch} className="mt-8" />
+      <ProductAnalysisCard product={product} className="mt-8" />
+
+      <PriceSparkline snapshot={priceWatch} className="mt-6" />
 
       <ReviewAnalysis product={product} />
 

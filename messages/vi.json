@@ -621,6 +621,20 @@
     "pickHere": "Tony chọn ở mức {price}",
     "acrossStores": "qua {n} cửa hàng"
   },
+  "analysis": {
+    "label": "Phân tích sâu của Tony",
+    "engineClaude": "Claude AI",
+    "engineHeuristic": "Heuristic",
+    "error": "Không tải được phân tích. Thử lại sau.",
+    "specs": "Thông số chính",
+    "authenticity": {
+      "high": "Độ tin cậy chính hãng cao",
+      "medium": "Độ tin cậy chính hãng trung bình",
+      "low": "Cần xác minh chính hãng"
+    },
+    "buyingTips": "Cần kiểm tra trước khi mua",
+    "differentiators": "Khác biệt so với lựa chọn khác"
+  },
   "searchLoading": {
     "label": "Tony đang phân tích",
     "subtle": "Thường mất 0.5–3 giây",
