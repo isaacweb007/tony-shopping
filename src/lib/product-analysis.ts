@@ -118,7 +118,11 @@ export async function analyzeProduct(input: AnalysisInput): Promise<ProductAnaly
       },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 700,
+        // Korean specs + signals run hot on tokens — 700 was truncating
+        // mid-JSON, sending us to fallback. 1500 gives Claude room to
+        // finish the structured output for ko / vi without hitting the
+        // ceiling, and the cost difference is negligible.
+        max_tokens: 1500,
         // Deterministic output so the same product analysis is stable across
         // refreshes — a shopping agent that flip-flops on its recommendation
         // loses trust.
