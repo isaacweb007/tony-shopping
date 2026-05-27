@@ -1,6 +1,43 @@
-import type { Money } from '@/types/product';
+import type { Money, Product, StoreId } from '@/types/product';
 import type { AppLocale } from '@/i18n/routing';
 import { convertMoneySync, localeCurrency } from './currency';
+
+/**
+ * StoreId → human label. SerpAPI's `GoogleShopping` bucket gets a friendlier
+ * "Google Shopping" spacing; everything else is a brand name that already
+ * reads cleanly.
+ */
+const STORE_LABEL: Record<StoreId, string> = {
+  Coupang: 'Coupang',
+  Amazon: 'Amazon',
+  eBay: 'eBay',
+  Shopee: 'Shopee',
+  Lazada: 'Lazada',
+  NaverShopping: '네이버쇼핑',
+  AliExpress: 'AliExpress',
+  Gmarket: 'G마켓',
+  '11st': '11번가',
+  TikTokShop: 'TikTok Shop',
+  GoogleShopping: 'Google Shopping',
+  Rakuten: 'Rakuten',
+  YahooJP: 'Yahoo! Shopping',
+};
+
+/**
+ * The label to show users for the storefront behind a product.
+ * Prefers the adapter-supplied `merchantName` when set (e.g. "KREAM",
+ * "Walmart" from a SerpAPI result), and falls back to the StoreId label.
+ */
+export function storeDisplay(p: Pick<Product, 'store' | 'merchantName'>): string {
+  const m = p.merchantName?.trim();
+  if (m) return m;
+  return STORE_LABEL[p.store] ?? p.store;
+}
+
+/** Lookup the human label for a StoreId alone. */
+export function storeIdLabel(id: StoreId): string {
+  return STORE_LABEL[id] ?? id;
+}
 
 const LOCALE_MAP: Record<AppLocale, string> = {
   ko: 'ko-KR',

@@ -118,6 +118,12 @@ function toProduct(item: SerpShoppingItem, idx: number, locale: 'ko' | 'en' | 'v
     id: 'serp_' + (item.product_id ?? `${idx}_${Date.now()}`),
     name: item.title,
     store,
+    /**
+     * Preserve the actual merchant string from SerpAPI ("KREAM", "11번가",
+     * "Walmart"...). UI renders this verbatim instead of the generic
+     * "GoogleShopping" bucket so users see the real storefront.
+     */
+    merchantName: item.source?.trim() || undefined,
     country,
     price: { amount: price, currency },
     finalPrice: { amount: finalAmt, currency },

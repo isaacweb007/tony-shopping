@@ -20,7 +20,7 @@ import { recordProductClick } from '@/stores/click-store';
 import { affiliateUrl } from '@/lib/affiliate';
 import { useCheckoutGuide } from '@/hooks/use-checkout-guide';
 import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
-import { formatMoney, formatCount, shipLabel } from '@/lib/format';
+import { formatMoney, formatCount, shipLabel, storeDisplay } from '@/lib/format';
 import { DualMoney } from '@/components/ui/dual-money';
 import { Link } from '@/i18n/routing';
 import type { AppLocale } from '@/i18n/routing';
@@ -71,7 +71,7 @@ export function ProductDetailDialog({ product, onOpenChange }: Props) {
           </div>
           <div className="flex flex-col p-5 md:p-6">
             <div className="flex items-center gap-2 text-[11px] text-ink-500 dark:text-ink-400">
-              <span className="font-bold text-ink-800 dark:text-ink-100">{product.store}</span>
+              <span className="font-bold text-ink-800 dark:text-ink-100">{storeDisplay(product)}</span>
               {product.official && (
                 <span className="rounded border border-sky-100 bg-sky-50 px-1.5 py-0.5 text-[9px] font-bold tracking-wider text-sky-700 dark:border-sky-900/60 dark:bg-sky-950/40 dark:text-sky-300">
                   {tc('official')}
@@ -164,7 +164,7 @@ export function ProductDetailDialog({ product, onOpenChange }: Props) {
                     );
                   }}
                 >
-                  {td('buyAt', { store: product.store })}
+                  {td('buyAt', { store: storeDisplay(product) })}
                 </a>
               </Button>
               <ShareButton

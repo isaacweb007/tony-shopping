@@ -2,8 +2,9 @@
 
 import { useTranslations } from 'next-intl';
 import { Tag } from 'lucide-react';
-import type { Product, StoreId } from '@/types/product';
+import type { Product } from '@/types/product';
 import { categorize } from '@/lib/categorize';
+import { storeDisplay } from '@/lib/format';
 
 interface Props {
   query: string;
@@ -15,6 +16,10 @@ interface Props {
  * the user can decide "do these 24 items even mean the same thing?" at a
  * glance. Pure presentational — no filter wiring yet (Phase H can promote
  * these into actual filter actions).
+ *
+ * Grouping prefers `merchantName` when set so a meta-search bucket like
+ * "GoogleShopping" splits into the real storefronts behind it (KREAM, 11번가,
+ * Walmart...).
  */
 export function Clusters({ query, products }: Props) {
   const tr = useTranslations('recommend');
@@ -22,9 +27,14 @@ export function Clusters({ query, products }: Props) {
 
   const cats = categorize(query);
 
-  // Tally store frequency in the merged result set.
-  const storeTally = new Map<StoreId, number>();
-  for (const p of products) storeTally.set(p.store, (storeTally.get(p.store) ?? 0) + 1);
+  // Tally storefront frequency. Key is the human-readable display label so
+  // products from the same actual merchant collapse together even when they
+  // came in under different StoreId buckets.
+  const storeTally = new Map<string, number>();
+  for (const p of products) {
+    const label = storeDisplay(p);
+    storeTally.set(label, (storeTally.get(label) ?? 0) + 1);
+  }
   const stores = [...storeTally.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6);
 
   if (cats.length === 0 && stores.length === 0) return null;
@@ -45,24 +55,16 @@ export function Clusters({ query, products }: Props) {
           {tg('distribution.acrossStores', { n: stores.length })}:
         </span>
       )}
-      {stores.map(([s, n]) => (
+      {stores.map(([label, n]) => (
         <span
-          key={'store_' + s}
+          key={'store_' + label}
           className="inline-flex items-center gap-1 rounded-full border border-ink-200 bg-white px-2.5 py-1 text-[11.5px] font-medium text-ink-700 dark:border-ink-800 dark:bg-ink-900 dark:text-ink-200"
         >
-          {storeLabel(s)}
+          {label}
           <span className="text-ink-400 dark:text-ink-500">·</span>
           <span className="text-ink-500 dark:text-ink-400">{n}</span>
         </span>
       ))}
     </div>
   );
-}
-
-function storeLabel(s: StoreId): string {
-  if (s === 'NaverShopping') return '네이버쇼핑';
-  if (s === '11st') return '11번가';
-  if (s === 'TikTokShop') return 'TikTok Shop';
-  if (s === 'GoogleShopping') return 'Google Shopping';
-  return s;
 }

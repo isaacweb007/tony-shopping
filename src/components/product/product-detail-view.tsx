@@ -20,7 +20,7 @@ import { usePriceWatchStore } from '@/stores/price-watch-store';
 import { useRecentProductsStore } from '@/stores/recent-products-store';
 import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { useRouter } from '@/i18n/routing';
-import { formatMoney, formatCount, shipLabel } from '@/lib/format';
+import { formatMoney, formatCount, shipLabel, storeDisplay } from '@/lib/format';
 import { DualMoney } from '@/components/ui/dual-money';
 import type { AppLocale } from '@/i18n/routing';
 
@@ -101,7 +101,7 @@ export function ProductDetailView({ product, q }: Props) {
 
         <div className="flex flex-col">
           <div className="flex items-center gap-2 text-[12px] text-ink-500 dark:text-ink-400">
-            <span className="font-bold text-ink-800 dark:text-ink-100">{product.store}</span>
+            <span className="font-bold text-ink-800 dark:text-ink-100">{storeDisplay(product)}</span>
             {product.official && (
               <span className="rounded border border-sky-100 bg-sky-50 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-sky-700 dark:border-sky-900/60 dark:bg-sky-950/40 dark:text-sky-300">
                 {tc('official')}
@@ -187,7 +187,7 @@ export function ProductDetailView({ product, q }: Props) {
               href={`/search?q=${encodeURIComponent(q)}&store=${encodeURIComponent(product.store)}`}
               className="inline-flex items-center gap-1.5 rounded-full border border-ink-200 bg-white px-3 py-1.5 text-[12px] font-bold tracking-tight text-ink-700 transition hover:border-accent-300 hover:text-accent-700 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200 dark:hover:border-accent-500 dark:hover:text-accent-300"
             >
-              {td('moreFromStore', { store: product.store })}
+              {td('moreFromStore', { store: storeDisplay(product) })}
             </a>
           </div>
 
@@ -215,7 +215,7 @@ export function ProductDetailView({ product, q }: Props) {
                   );
                 }}
               >
-                {td('buyAt', { store: product.store })}
+                {td('buyAt', { store: storeDisplay(product) })}
               </a>
             </Button>
           </div>

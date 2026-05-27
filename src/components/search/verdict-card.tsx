@@ -13,7 +13,7 @@ import { affiliateUrl } from '@/lib/affiliate';
 import { useCheckoutGuide } from '@/hooks/use-checkout-guide';
 import { haptic } from '@/lib/haptic';
 import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
-import { formatMoney, formatCount, shipLabel } from '@/lib/format';
+import { formatMoney, formatCount, shipLabel, storeDisplay } from '@/lib/format';
 import { DualMoney } from '@/components/ui/dual-money';
 import type { AppLocale } from '@/i18n/routing';
 
@@ -78,7 +78,7 @@ export function VerdictCard({ product }: Props) {
     evidence.push(tv('reasonShip', { eta: shipLabel(product.shipDays, tg) }));
   }
   if (product.official) {
-    evidence.push(tv('reasonOfficial', { store: product.store }));
+    evidence.push(tv('reasonOfficial', { store: storeDisplay(product) }));
   }
   if (product.authenticityPct >= 80) {
     evidence.push(tv('reasonAuth', { pct: product.authenticityPct }));
@@ -104,9 +104,14 @@ export function VerdictCard({ product }: Props) {
 
       <div className="relative mt-3 grid grid-cols-1 gap-5 md:grid-cols-[200px_1fr]">
         {/* Product image */}
-        <div className="hidden aspect-square overflow-hidden rounded-2xl bg-ink-50 dark:bg-ink-800 md:block">
+        <div className="relative hidden aspect-square overflow-hidden rounded-2xl bg-gradient-to-br from-ink-50 to-ink-100 dark:from-ink-800 dark:to-ink-900 md:block">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover" />
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            loading="lazy"
+            className="absolute inset-0 h-full w-full object-contain p-4"
+          />
         </div>
 
         <div className="flex flex-col">
@@ -123,7 +128,7 @@ export function VerdictCard({ product }: Props) {
           {/* Store + Price line */}
           <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
             <span className="text-[12px] font-semibold text-ink-600 dark:text-ink-300">
-              {product.store}
+              {storeDisplay(product)}
             </span>
             <DualMoney money={product.finalPrice} size="xl" layout="inline" />
             <span className="text-[11px] text-ink-500 dark:text-ink-400">

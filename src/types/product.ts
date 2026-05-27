@@ -44,6 +44,12 @@ export interface Product {
   id: string;
   name: string;
   store: StoreId;
+  /**
+   * Adapter-supplied human-readable merchant name (e.g. "KREAM", "11번가",
+   * "Walmart"). When present, UI prefers this over the StoreId-derived label
+   * — it surfaces the actual storefront behind a meta-search result.
+   */
+  merchantName?: string;
   /** Country the listing ships from. */
   country: CountryCode;
   /** Itself, in displayed currency. */

@@ -17,7 +17,7 @@ import { affiliateUrl } from '@/lib/affiliate';
 import { useCheckoutGuide } from '@/hooks/use-checkout-guide';
 import { haptic } from '@/lib/haptic';
 import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
-import { formatMoney, formatCount, shipLabel } from '@/lib/format';
+import { formatMoney, formatCount, shipLabel, storeDisplay } from '@/lib/format';
 import { DualMoney } from '@/components/ui/dual-money';
 import { useSearchParams } from 'next/navigation';
 import type { AppLocale } from '@/i18n/routing';
@@ -120,15 +120,16 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
       <div
         className={
           isFeature
-            ? 'mt-3 aspect-[4/3] overflow-hidden rounded-2xl bg-ink-50 dark:bg-ink-800'
-            : 'relative aspect-[4/3] overflow-hidden bg-ink-50 dark:bg-ink-800'
+            ? 'relative mt-3 aspect-[4/3] overflow-hidden rounded-2xl bg-gradient-to-br from-ink-50 to-ink-100 dark:from-ink-800 dark:to-ink-900'
+            : 'relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-ink-50 to-ink-100 dark:from-ink-800 dark:to-ink-900'
         }
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={product.imageUrl}
-          alt=""
-          className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+          alt={product.name}
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-contain p-3 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
         />
         {!isFeature && (
           <>
@@ -161,7 +162,7 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
 
       <div className={isFeature ? 'mt-3' : 'flex flex-1 flex-col p-3'}>
         <div className="flex items-center gap-1.5 text-[11px] text-ink-500 dark:text-ink-400">
-          <span className="font-semibold text-ink-800 dark:text-ink-100">{product.store}</span>
+          <span className="font-semibold text-ink-800 dark:text-ink-100">{storeDisplay(product)}</span>
           {product.official && (
             <span className="rounded-md border border-sky-100 bg-sky-50 px-1 py-0.5 text-[9px] font-bold tracking-wider text-sky-700 dark:border-sky-900/60 dark:bg-sky-950/40 dark:text-sky-300">
               {tc('official')}
@@ -232,10 +233,22 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
           </span>
         </div>
 
-        <div className={isFeature ? 'mt-4 grid grid-cols-2 gap-2' : 'mt-3 flex gap-2'}>
+        {/* Action bar — Buy is the primary action and gets ~2/3 of the row.
+            Report is secondary and shrinks to a fixed pill on compact cards. */}
+        <div
+          className={
+            isFeature
+              ? 'mt-4 grid grid-cols-[auto_1fr] gap-2'
+              : 'mt-3 grid grid-cols-[auto_1fr] gap-2'
+          }
+        >
           <Button
             variant="outline"
-            className={isFeature ? 'h-10 rounded-xl text-[13px]' : 'h-9 flex-1 rounded-lg text-[12px]'}
+            className={
+              isFeature
+                ? 'h-11 rounded-xl px-4 text-[13px]'
+                : 'h-10 rounded-lg px-3 text-[12px]'
+            }
             onClick={() => onOpenDetail?.(product)}
           >
             {isFeature ? tc('viewReport') : tc('report')}
@@ -244,8 +257,8 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
             variant="primary"
             className={
               isFeature
-                ? 'h-10 rounded-xl text-[13px] font-bold'
-                : 'h-9 flex-1 rounded-lg text-[12px] font-bold'
+                ? 'h-11 rounded-xl text-[14px] font-extrabold tracking-tight shadow-sm transition-shadow hover:shadow-md'
+                : 'h-10 rounded-lg text-[13px] font-extrabold tracking-tight shadow-sm transition-shadow hover:shadow-md'
             }
             asChild
           >
@@ -254,8 +267,10 @@ export function ProductCard({ product, variant = 'compact', onOpenDetail }: Prop
               target="_blank"
               rel="noreferrer noopener sponsored"
               onClick={onBuyClick}
+              className="inline-flex items-center justify-center gap-1.5"
             >
               {isFeature ? tc('buyNow') : tc('buy')}
+              <span aria-hidden="true">→</span>
             </a>
           </Button>
         </div>
