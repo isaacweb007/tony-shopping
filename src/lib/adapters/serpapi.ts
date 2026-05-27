@@ -138,7 +138,10 @@ async function searchReal(
   signal?: AbortSignal,
 ): Promise<Product[]> {
   const key = process.env.SERPAPI_KEY;
-  if (!key) return [];
+  if (!key) {
+    console.warn('[SerpAPI] SERPAPI_KEY not set');
+    return [];
+  }
 
   const loc = LOCALE_PARAMS[locale];
   const params = new URLSearchParams({
@@ -160,17 +163,45 @@ async function searchReal(
       headers: { Accept: 'application/json' },
       next: { revalidate: 60 },
     });
-  } catch {
+  } catch (e) {
+    console.error('[SerpAPI] fetch threw:', e instanceof Error ? e.message : e);
     return [];
   }
-  if (!res.ok) return [];
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    console.error('[SerpAPI] non-ok status:', res.status, body.slice(0, 200));
+    return [];
+  }
 
-  const data = (await res.json().catch(() => null)) as SerpResponse | null;
+  const data = (await res.json().catch((e: unknown) => {
+    console.error('[SerpAPI] json parse failed:', e instanceof Error ? e.message : e);
+    return null;
+  })) as SerpResponse | null;
+
+  if (data?.error) {
+    console.error('[SerpAPI] api returned error:', data.error);
+    return [];
+  }
+
   const items = data?.shopping_results ?? [];
-  return items
+  if (items.length === 0) {
+    console.warn('[SerpAPI] empty shopping_results for q=' + q + ' locale=' + locale);
+  } else {
+    console.info('[SerpAPI] got ' + items.length + ' raw items for q=' + q);
+  }
+
+  const parsed = items
     .slice(0, limit)
     .map((it, i) => toProduct(it, i))
     .filter((p): p is Product => p !== null);
+
+  if (items.length > 0 && parsed.length === 0) {
+    console.warn(
+      '[SerpAPI] all items dropped by parser. First raw item:',
+      JSON.stringify(items[0]).slice(0, 400),
+    );
+  }
+  return parsed;
 }
 
 export const serpapiAdapter: SearchAdapter = {

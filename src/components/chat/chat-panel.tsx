@@ -84,17 +84,13 @@ export function ChatPanel() {
         { id: 't_' + Date.now(), who: 'tony', text: reply },
       ]);
       // Auto-speak if the user used voice input.
-      if (speech.finalTranscript) tts.speak(stripHtml(reply));
+      if (speech.finalTranscript) tts.speak(reply);
     }, 550);
   }
 
   function toggleMic() {
     if (speech.listening) speech.stop();
     else speech.start();
-  }
-
-  function stripHtml(s: string): string {
-    return s.replace(/<[^>]*>/g, '');
   }
 
   function handleIntent(text: string): string {
@@ -206,7 +202,7 @@ export function ChatPanel() {
             m.who === 'tony' ? (
               <TonyBubble
                 key={m.id}
-                onSpeak={tts.supported ? () => tts.speak(stripHtml(m.text)) : undefined}
+                onSpeak={tts.supported ? () => tts.speak(m.text) : undefined}
                 onStop={tts.speaking ? tts.cancel : undefined}
                 speaking={tts.speaking}
                 speakLabel={tv('speak')}
@@ -285,20 +281,13 @@ function TonyBubble({
   speakLabel?: string;
   stopLabel?: string;
 }) {
-  // Render HTML (intent replies use <b>, <i>).
-  const html = typeof children === 'string' ? children : '';
   return (
     <div className="flex animate-fade-up gap-2">
       <span className="logo-mark mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-[8px] text-xs font-extrabold text-white">
         T
       </span>
       <div className="group max-w-[85%] rounded-2xl rounded-tl-md border border-ink-200 bg-white px-3.5 py-2.5 text-[13.5px] leading-relaxed dark:border-ink-700 dark:bg-ink-800">
-        {html ? (
-          // eslint-disable-next-line react/no-danger
-          <span dangerouslySetInnerHTML={{ __html: html }} />
-        ) : (
-          children
-        )}
+        <span>{children}</span>
         {onSpeak && (
           <button
             type="button"

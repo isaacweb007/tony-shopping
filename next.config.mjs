@@ -41,6 +41,40 @@ const nextConfig = {
       { protocol: 'https', hostname: 'images-na.ssl-images-amazon.com' },
       { protocol: 'https', hostname: 'image*.coupangcdn.com' },
       { protocol: 'https', hostname: '**.coupangcdn.com' },
+      // SerpAPI / Google Shopping image CDN (thumbnails come from gstatic)
+      { protocol: 'https', hostname: 'encrypted-tbn0.gstatic.com' },
+      { protocol: 'https', hostname: 'encrypted-tbn1.gstatic.com' },
+      { protocol: 'https', hostname: 'encrypted-tbn2.gstatic.com' },
+      { protocol: 'https', hostname: 'encrypted-tbn3.gstatic.com' },
+      { protocol: 'https', hostname: '**.gstatic.com' },
+      { protocol: 'https', hostname: 'serpapi.com' },
+      // AliExpress / Taobao image CDN
+      { protocol: 'https', hostname: 'gw.alicdn.com' },
+      { protocol: 'https', hostname: 'ae01.alicdn.com' },
+      { protocol: 'https', hostname: 'ae02.alicdn.com' },
+      { protocol: 'https', hostname: 'ae03.alicdn.com' },
+      { protocol: 'https', hostname: 'ae04.alicdn.com' },
+      { protocol: 'https', hostname: '**.alicdn.com' },
+      // Shopee CDN
+      { protocol: 'https', hostname: 'cf.shopee.com' },
+      { protocol: 'https', hostname: 'cf.shopee.vn' },
+      { protocol: 'https', hostname: 'cf.shopee.co.id' },
+      { protocol: 'https', hostname: 'cf.shopee.com.my' },
+      { protocol: 'https', hostname: 'cf.shopee.ph' },
+      { protocol: 'https', hostname: 'cf.shopee.sg' },
+      { protocol: 'https', hostname: 'cf.shopee.tw' },
+      { protocol: 'https', hostname: '**.shopee.com' },
+      { protocol: 'https', hostname: '**.shopee.vn' },
+      // Lazada CDN
+      { protocol: 'https', hostname: 'laz-img-cdn.alicdn.com' },
+      { protocol: 'https', hostname: '**.lazcdn.com' },
+      // Rakuten image CDN
+      { protocol: 'https', hostname: 'thumbnail.image.rakuten.co.jp' },
+      { protocol: 'https', hostname: '**.r10s.jp' },
+      { protocol: 'https', hostname: '**.rakuten.co.jp' },
+      // Yahoo Shopping JP
+      { protocol: 'https', hostname: 'item-shopping.c.yimg.jp' },
+      { protocol: 'https', hostname: '**.yimg.jp' },
     ],
   },
   async headers() {

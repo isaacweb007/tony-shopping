@@ -12,7 +12,9 @@ import { withTimeout } from '@/lib/adapters/base';
 import { recordAdapterCall } from '@/lib/adapter-stats';
 
 const PER_ADAPTER_LIMIT = 4;
-const ADAPTER_TIMEOUT_MS = 1500;
+// SerpAPI live calls routinely take 2-4 s; mocks return in ~200 ms.
+// 5 s gives the real adapter room without blocking the UI noticeably.
+const ADAPTER_TIMEOUT_MS = 5000;
 
 export async function runServerSearch(
   query: SearchQuery,
