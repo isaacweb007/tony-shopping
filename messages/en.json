@@ -621,6 +621,16 @@
     "pickHere": "Tony's pick at {price}",
     "acrossStores": "across {n} stores"
   },
+  "searchLoading": {
+    "label": "Tony is analyzing",
+    "subtle": "Usually 0.5–3 seconds",
+    "stage": {
+      "scan": "Scanning 10+ marketplaces in parallel…",
+      "reviews": "Reading reviews and ratings…",
+      "price": "Comparing prices and shipping…",
+      "decide": "Claude is deciding the top pick…"
+    }
+  },
   "verdict": {
     "label": {
       "strong": "✨ Tony's strong pick",

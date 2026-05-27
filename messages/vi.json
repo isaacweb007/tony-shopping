@@ -621,6 +621,16 @@
     "pickHere": "Tony chọn ở mức {price}",
     "acrossStores": "qua {n} cửa hàng"
   },
+  "searchLoading": {
+    "label": "Tony đang phân tích",
+    "subtle": "Thường mất 0.5–3 giây",
+    "stage": {
+      "scan": "Đang quét song song hơn 10 sàn TMĐT…",
+      "reviews": "Đang đọc đánh giá và xếp hạng…",
+      "price": "Đang so sánh giá và phí ship…",
+      "decide": "Claude đang quyết định lựa chọn tốt nhất…"
+    }
+  },
   "verdict": {
     "label": {
       "strong": "✨ Tony tự tin đề xuất",

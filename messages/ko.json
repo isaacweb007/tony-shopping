@@ -621,6 +621,16 @@
     "pickHere": "토니의 추천 가격 {price}",
     "acrossStores": "{n}개 쇼핑몰"
   },
+  "searchLoading": {
+    "label": "토니가 분석 중이에요",
+    "subtle": "0.5~3초 정도 걸려요",
+    "stage": {
+      "scan": "10+ 쇼핑몰을 동시에 스캔하고 있어요…",
+      "reviews": "리뷰와 평점을 읽고 있어요…",
+      "price": "가격과 배송 정보를 비교하고 있어요…",
+      "decide": "Claude AI가 최종 추천을 결정하고 있어요…"
+    }
+  },
   "verdict": {
     "label": {
       "strong": "✨ 토니의 강력 추천",
