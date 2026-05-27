@@ -161,24 +161,26 @@ export function AskBox() {
   const [extracting, setExtracting] = React.useState(false);
   const [extractResult, setExtractResult] = React.useState<ExtractResult | null>(null);
 
-  async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0];
-    if (!f) return;
-    e.target.value = '';
+  /**
+   * Shared pipeline for any image file source — `<input type=file>` upload,
+   * drag-drop, or clipboard paste. Reads the file, attaches it, then runs
+   * /api/extract (Vision when configured) to derive a search query.
+   */
+  async function processImageFile(f: File) {
     const dataUrl = await readFileAsDataUrl(f);
     if (!dataUrl) return;
+    const filename = f.name || 'pasted-image.png';
     setAttachments((prev) => [
       ...prev,
-      { id: nanoid(6), type: 'image', value: dataUrl, label: f.name },
+      { id: nanoid(6), type: 'image', value: dataUrl, label: filename },
     ]);
 
-    // Try to enrich the prompt via /api/extract (Vision when available).
     setExtracting(true);
     try {
       const res = await fetch('/api/extract', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageDataUrl: dataUrl, filename: f.name }),
+        body: JSON.stringify({ imageDataUrl: dataUrl, filename }),
       });
       if (res.ok) {
         const data = (await res.json()) as ExtractResult & { source: ExtractResult['source'] };
@@ -204,6 +206,37 @@ export function AskBox() {
     } finally {
       setExtracting(false);
     }
+  }
+
+  async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    e.target.value = '';
+    await processImageFile(f);
+  }
+
+  /**
+   * Native paste handler on the textarea. Three input shapes we care about:
+   *  - Image bytes on the clipboard (e.g. screenshot, copied-from-browser
+   *    image) → grab the first image item, prevent default text paste, and
+   *    run the same extract pipeline as upload.
+   *  - A URL string (TikTok / Instagram / shop page) → let native paste
+   *    populate the textarea; submit() will auto-detect URL-only input.
+   *  - Plain text → native paste, nothing special.
+   */
+  async function onPaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
+    const items = Array.from(e.clipboardData?.items ?? []);
+    const imageItem = items.find(
+      (it) => it.kind === 'file' && it.type.startsWith('image/'),
+    );
+    if (imageItem) {
+      const file = imageItem.getAsFile();
+      if (file) {
+        e.preventDefault();
+        await processImageFile(file);
+      }
+    }
+    // Otherwise fall through to default text paste.
   }
 
   function readFileAsDataUrl(f: File): Promise<string | null> {
@@ -393,6 +426,7 @@ export function AskBox() {
             value={text}
             onChange={onTextChange}
             onKeyDown={onKey}
+            onPaste={onPaste}
             className="w-full resize-none bg-transparent px-3 py-2.5 text-[15px] outline-none placeholder:text-ink-400 dark:placeholder:text-ink-500 md:text-[16px]"
           />
           <div className="pt-1.5 pr-1">
