@@ -5,16 +5,47 @@
  */
 import 'server-only';
 import { nanoid } from 'nanoid';
-import type { Product, TonyReport, TonyTag } from '@/types/product';
+import type { Product, StoreId, TonyReport, TonyTag } from '@/types/product';
 import type { SearchQuery, SearchResult } from '@/types/search';
 import { getEnabledAdapters } from '@/lib/adapters/registry';
-import { withTimeout } from '@/lib/adapters/base';
+import { withTimeout, type SearchAdapter } from '@/lib/adapters/base';
 import { recordAdapterCall } from '@/lib/adapter-stats';
+import { ADAPTER_MODE } from '@/lib/env';
 
 const PER_ADAPTER_LIMIT = 4;
 // SerpAPI live calls routinely take 2-4 s; mocks return in ~200 ms.
 // 5 s gives the real adapter room without blocking the UI noticeably.
 const ADAPTER_TIMEOUT_MS = 5000;
+
+/** Map an adapter's StoreId to its ADAPTER_MODE key. */
+const ID_TO_MODE_KEY: Partial<Record<StoreId, keyof typeof ADAPTER_MODE>> = {
+  Coupang: 'coupang',
+  NaverShopping: 'naver',
+  Amazon: 'amazon',
+  eBay: 'ebay',
+  Shopee: 'shopee',
+  Lazada: 'lazada',
+  Rakuten: 'rakuten',
+  YahooJP: 'yahoojp',
+  AliExpress: 'aliexpress',
+  GoogleShopping: 'serpapi',
+};
+
+function adapterIsReal(a: SearchAdapter): boolean {
+  const key = ID_TO_MODE_KEY[a.id];
+  return key ? ADAPTER_MODE[key]().real : false;
+}
+
+/**
+ * Production hygiene: once ANY adapter is configured with real credentials,
+ * stop mixing deterministic mock results into the live feed. The verdict card
+ * and Tony Score would otherwise be dominated by synthetic products. When zero
+ * real adapters exist (fresh deploy / demo), keep mocks so the UI isn't empty.
+ */
+function selectAdapters(all: SearchAdapter[]): SearchAdapter[] {
+  const anyReal = all.some(adapterIsReal);
+  return anyReal ? all.filter(adapterIsReal) : all;
+}
 
 export async function runServerSearch(
   query: SearchQuery,
@@ -25,10 +56,13 @@ export async function runServerSearch(
   // runner so stats get stamped. Case-insensitive compare against the
   // adapter's id (StoreId). Falls back to the full set on no-match so a
   // typo doesn't return an empty search.
-  const filtered = opts.only
+  const onlyFiltered = opts.only
     ? all.filter((a) => a.id.toLowerCase() === opts.only!.toLowerCase())
     : all;
-  const adapters = filtered.length > 0 ? filtered : all;
+  const baseSet = onlyFiltered.length > 0 ? onlyFiltered : all;
+  // When `only` is specified the operator is explicitly probing one adapter,
+  // so skip the real/mock filter — they want to see what that adapter returns.
+  const adapters = opts.only ? baseSet : selectAdapters(baseSet);
   const results = await Promise.allSettled(
     adapters.map(async (a) => {
       const t0 = Date.now();
