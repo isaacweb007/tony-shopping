@@ -22,6 +22,7 @@
 import 'server-only';
 import type { MerchantOffer, Product } from '@/types/product';
 import { storeDisplay } from '@/lib/format';
+import { clusterIndicesWithClaude } from './cluster-llm';
 
 const SIMILARITY_THRESHOLD = 0.55;
 
@@ -98,43 +99,74 @@ export function clusterProducts(products: Product[]): Product[] {
     }
   }
 
-  return clusters.map((c) => {
-    if (c.members.length === 1) return c.members[0]!;
+  return clusters.map((c) => mergeCluster(c.members));
+}
 
-    // Canonical = highest Tony Score. Ties broken by lowest price so the
-    // surfaced listing is the best score AND the better deal among equals.
-    const sorted = [...c.members].sort((a, b) => {
-      const ds = b.score.total - a.score.total;
-      return ds !== 0 ? ds : a.finalPrice.amount - b.finalPrice.amount;
-    });
-    const canonical = sorted[0]!;
+/**
+ * Collapse a list of same-product listings into one canonical Product with
+ * offers attached. Shared by both the Jaccard clusterer above and the
+ * LLM-first clusterer below.
+ *
+ * Canonical = highest Tony Score (ties broken by lowest price). Offers
+ * are ranked ascending price and de-duplicated by merchant label.
+ */
+function mergeCluster(members: Product[]): Product {
+  if (members.length === 1) return members[0]!;
 
-    // Other merchants ranked by ascending price — cheapest alternative first.
-    const others = c.members
-      .filter((p) => p !== canonical)
-      .sort((a, b) => a.finalPrice.amount - b.finalPrice.amount);
-
-    // De-duplicate offers by merchant label so the same merchant doesn't
-    // appear twice (can happen when SerpAPI surfaces variant listings of
-    // the same item from one storefront).
-    const seenMerchant = new Set<string>([
-      (canonical.merchantName ?? storeDisplay(canonical)).toLowerCase().trim(),
-    ]);
-    const offers: MerchantOffer[] = [];
-    for (const p of others) {
-      const label = (p.merchantName ?? storeDisplay(p)).trim();
-      const key = label.toLowerCase();
-      if (seenMerchant.has(key)) continue;
-      seenMerchant.add(key);
-      offers.push({
-        merchantName: label,
-        store: p.store,
-        price: p.finalPrice,
-        shipDays: p.shipDays,
-        buyUrl: p.buyUrl,
-      });
-    }
-
-    return offers.length > 0 ? { ...canonical, offers } : canonical;
+  const sorted = [...members].sort((a, b) => {
+    const ds = b.score.total - a.score.total;
+    return ds !== 0 ? ds : a.finalPrice.amount - b.finalPrice.amount;
   });
+  const canonical = sorted[0]!;
+
+  const others = members
+    .filter((p) => p !== canonical)
+    .sort((a, b) => a.finalPrice.amount - b.finalPrice.amount);
+
+  const seenMerchant = new Set<string>([
+    (canonical.merchantName ?? storeDisplay(canonical)).toLowerCase().trim(),
+  ]);
+  const offers: MerchantOffer[] = [];
+  for (const p of others) {
+    const label = (p.merchantName ?? storeDisplay(p)).trim();
+    const key = label.toLowerCase();
+    if (seenMerchant.has(key)) continue;
+    seenMerchant.add(key);
+    offers.push({
+      merchantName: label,
+      store: p.store,
+      price: p.finalPrice,
+      shipDays: p.shipDays,
+      buyUrl: p.buyUrl,
+    });
+  }
+
+  return offers.length > 0 ? { ...canonical, offers } : canonical;
+}
+
+/**
+ * LLM-first clustering with Jaccard fallback.
+ *
+ * Asks Claude to group product titles by physical-product identity. When
+ * Claude succeeds we use its groups; when it times out / errors we fall
+ * back to the deterministic Jaccard pass so search never blocks.
+ *
+ * Use this instead of clusterProducts() when ANTHROPIC_API_KEY is set —
+ * it catches cross-language and reordered variants that Jaccard misses
+ * (e.g. "Sony WH-1000XM5 무선 헤드폰" + "소니 노이즈캔슬링 헤드폰
+ * WH-1000XM5 플래티넘" + "[소니] Sony Wh-1000xm5 노이즈캔슬링" — all
+ * the same product, all separated by Jaccard 0.55).
+ */
+export async function clusterProductsSmart(products: Product[]): Promise<Product[]> {
+  if (products.length <= 1) return products;
+
+  const titles = products.map((p) => p.name);
+  const groups = await clusterIndicesWithClaude(titles);
+
+  if (!groups) {
+    // Claude unreachable / parse failed — keep search responsive.
+    return clusterProducts(products);
+  }
+
+  return groups.map((g) => mergeCluster(g.map((i) => products[i]!)));
 }

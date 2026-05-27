@@ -11,7 +11,7 @@ import { getEnabledAdapters } from '@/lib/adapters/registry';
 import { withTimeout, type SearchAdapter } from '@/lib/adapters/base';
 import { recordAdapterCall } from '@/lib/adapter-stats';
 import { ADAPTER_MODE } from '@/lib/env';
-import { clusterProducts } from './cluster';
+import { clusterProductsSmart } from './cluster';
 
 // Pulled wider than the visible card count so the clusterer has material
 // to work with — a single adapter may surface the same product from many
@@ -121,7 +121,11 @@ export async function runServerSearch(
   // alternate merchants attached as MerchantOffer[]. Tagging + reporting
   // operate on this de-duplicated set so scoring isn't biased by
   // duplicate-name spam.
-  const products = clusterProducts(rawProducts);
+  //
+  // LLM-first when ANTHROPIC_API_KEY is configured: Claude groups
+  // cross-language and reordered variants that Jaccard token-sets miss.
+  // Silently falls back to Jaccard if Claude is unreachable.
+  const products = await clusterProductsSmart(rawProducts);
 
   assignTags(products);
 
