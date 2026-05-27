@@ -621,19 +621,58 @@
     "acrossStores": "qua {n} cửa hàng"
   },
   "verdict": {
-    "label": "Kết luận của Tony",
-    "tagline": "Đừng phân vân nữa. Tony đã chọn giúp bạn.",
-    "pickReason": "Mua cái này. Bạn sẽ không hối hận.",
+    "label": {
+      "strong": "✨ Tony tự tin đề xuất",
+      "recommended": "Tony đề xuất",
+      "consider": "Tony đã chọn"
+    },
+    "tagline": {
+      "strong": "Mua cái này. Tony rất tự tin.",
+      "recommended": "Đừng phân vân nữa. Tony đã chọn giúp bạn.",
+      "consider": "Trong các ứng viên, đây là lựa chọn hợp lý nhất."
+    },
+    "confidence": {
+      "strong": "Đề xuất mạnh",
+      "recommended": "Đề xuất",
+      "consider": "Tham khảo"
+    },
+    "confidencePill": "Độ tin cậy {pct}%",
+    "scorePill": "Score {score}",
     "evidence": "Vì sao chọn cái này",
-    "reasonScore": "Tony Score cao nhất ({score}/100)",
+    "reasonScore": "Tony Score cao nhất ({score}/100) trong nhóm",
     "reasonPrice": "Giá hợp lý {price} gồm phí ship",
+    "reasonBelowMedian": "Rẻ hơn trung vị thị trường {pct}%",
     "reasonShip": "Giao {eta}",
     "reasonAuth": "Chính hãng {pct}%",
     "reasonReviews": "{n} đánh giá (★ {rating})",
     "reasonOfficial": "Nhà bán chính thức {store}",
-    "cta": "Chọn cái này",
+    "cta": {
+      "strong": "Mua cái này",
+      "recommended": "Chọn cái này",
+      "consider": "Đi mua"
+    },
+    "savingsPill": "-{pct}% so với thị trường",
     "alternative": "Muốn xem lựa chọn khác? Xem TOP 3 bên dưới",
     "compareNote": "Chưa chắc? Lưu vào so sánh để xem lại"
+  },
+  "analysisTrail": {
+    "aria": "Quá trình phân tích của Tony",
+    "headline": "Phân tích của Tony",
+    "highSim": "{n} mục khớp cao",
+    "merchants": "cửa hàng",
+    "products": "sản phẩm",
+    "reviews": "đánh giá",
+    "decided": "quyết định bởi",
+    "aiInline": "Claude"
+  },
+  "metricsTiles": {
+    "cheapest": "Rẻ nhất",
+    "highest": "Đắt nhất",
+    "topRated": "Điểm cao nhất",
+    "avgAuth": "Chính hãng TB",
+    "belowMedian": "{pct}% dưới trung vị",
+    "reviewsCount": "{n} đánh giá",
+    "fastest": "Giao nhanh nhất {eta}"
   },
   "search": {
     "title": "Kết quả · Tony Shopping",

@@ -621,19 +621,58 @@
     "acrossStores": "{n}개 쇼핑몰"
   },
   "verdict": {
-    "label": "토니의 결론",
-    "tagline": "고민하지 마세요. 토니가 정해드릴게요.",
-    "pickReason": "이거 사세요. 후회 안 합니다.",
+    "label": {
+      "strong": "✨ 토니의 강력 추천",
+      "recommended": "토니의 추천",
+      "consider": "토니가 골랐어요"
+    },
+    "tagline": {
+      "strong": "이걸 사세요. 토니가 자신 있게 추천합니다.",
+      "recommended": "고민하지 마세요. 토니가 정해드릴게요.",
+      "consider": "후보 중에서 이게 가장 합리적이에요."
+    },
+    "confidence": {
+      "strong": "강력 추천",
+      "recommended": "추천",
+      "consider": "참고"
+    },
+    "confidencePill": "토니 확신도 {pct}%",
+    "scorePill": "Score {score}",
     "evidence": "이걸 추천하는 이유",
-    "reasonScore": "Tony Score {score}점으로 가장 높음",
+    "reasonScore": "Tony Score {score}점으로 후보 중 최고",
     "reasonPrice": "배송비 포함 {price}로 합리적",
-    "reasonShip": "{eta} 도착 가능",
+    "reasonBelowMedian": "시세보다 {pct}% 저렴",
+    "reasonShip": "{eta} 배송 가능",
     "reasonAuth": "정품 신뢰도 {pct}%",
     "reasonReviews": "리뷰 {n}개 (★ {rating})",
     "reasonOfficial": "{store} 공식 판매처",
-    "cta": "이걸로 결정",
+    "cta": {
+      "strong": "이걸 사세요",
+      "recommended": "이걸로 결정",
+      "consider": "구매하러 가기"
+    },
+    "savingsPill": "시세보다 -{pct}%",
     "alternative": "다른 선택지도 궁금하면 아래 TOP 3",
     "compareNote": "주저되면 비교함에 담아두세요"
+  },
+  "analysisTrail": {
+    "aria": "토니의 분석 과정",
+    "headline": "토니의 분석 과정",
+    "highSim": "동일 상품 가능성 {n}개",
+    "merchants": "매장 분석",
+    "products": "상품 비교",
+    "reviews": "리뷰 분석",
+    "decided": "AI 결정",
+    "aiInline": "Claude"
+  },
+  "metricsTiles": {
+    "cheapest": "최저가",
+    "highest": "최고가",
+    "topRated": "최고 평점",
+    "avgAuth": "정품 가능성 평균",
+    "belowMedian": "시세 -{pct}%",
+    "reviewsCount": "{n} 리뷰",
+    "fastest": "최단 배송 {eta}"
   },
   "search": {
     "title": "검색 결과 · Tony Shopping",

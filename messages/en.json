@@ -621,19 +621,58 @@
     "acrossStores": "across {n} stores"
   },
   "verdict": {
-    "label": "Tony's verdict",
-    "tagline": "Stop debating. Tony picked one for you.",
-    "pickReason": "Buy this. You won't regret it.",
+    "label": {
+      "strong": "✨ Tony's strong pick",
+      "recommended": "Tony's pick",
+      "consider": "Tony's choice"
+    },
+    "tagline": {
+      "strong": "Buy this one. Tony's confident.",
+      "recommended": "Stop debating. Tony picked one for you.",
+      "consider": "Among the candidates, this is the most reasonable."
+    },
+    "confidence": {
+      "strong": "Strong pick",
+      "recommended": "Recommended",
+      "consider": "Consider"
+    },
+    "confidencePill": "Tony confidence {pct}%",
+    "scorePill": "Score {score}",
     "evidence": "Why this one wins",
-    "reasonScore": "Highest Tony Score ({score}/100)",
+    "reasonScore": "Highest Tony Score ({score}/100) in the set",
     "reasonPrice": "Reasonable {price} incl. shipping",
+    "reasonBelowMedian": "{pct}% below market median",
     "reasonShip": "Arrives {eta}",
     "reasonAuth": "Authenticity {pct}%",
     "reasonReviews": "{n} reviews (★ {rating})",
     "reasonOfficial": "Official {store} listing",
-    "cta": "Take this one",
+    "cta": {
+      "strong": "Buy this one",
+      "recommended": "Take this one",
+      "consider": "Go to buy"
+    },
+    "savingsPill": "-{pct}% vs market",
     "alternative": "Curious about other options? See TOP 3 below",
     "compareNote": "Not sure? Save to compare for later"
+  },
+  "analysisTrail": {
+    "aria": "Tony's analysis trail",
+    "headline": "Tony's analysis",
+    "highSim": "{n} high-similarity matches",
+    "merchants": "merchants",
+    "products": "products",
+    "reviews": "reviews",
+    "decided": "decided by",
+    "aiInline": "Claude"
+  },
+  "metricsTiles": {
+    "cheapest": "Cheapest",
+    "highest": "Highest",
+    "topRated": "Top rated",
+    "avgAuth": "Avg authenticity",
+    "belowMedian": "{pct}% below median",
+    "reviewsCount": "{n} reviews",
+    "fastest": "Fastest ship {eta}"
   },
   "search": {
     "title": "Search · Tony Shopping",

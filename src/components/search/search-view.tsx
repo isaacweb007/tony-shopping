@@ -12,6 +12,8 @@ import { useHistoryStore } from '@/stores/history-store';
 import { useSearch } from '@/hooks/use-search';
 import { ReportCard } from './report-card';
 import { VerdictCard } from './verdict-card';
+import { AnalysisTrail } from './analysis-trail';
+import { MetricsTiles } from './metrics-tiles';
 import { PriceDistribution } from './price-distribution';
 import { Clusters } from './clusters';
 import { ProductCard } from './product-card';
@@ -266,7 +268,11 @@ export function SearchView() {
         </div>
       </div>
 
-      <VerdictCard product={result.report.best} />
+      <VerdictCard product={result.report.best} peers={result.products} />
+
+      <AnalysisTrail products={result.products} report={result.report} />
+
+      <MetricsTiles products={result.products} report={result.report} />
 
       <Clusters query={q} products={result.products} />
 
