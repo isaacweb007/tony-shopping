@@ -498,7 +498,7 @@
       "filterAll": "Tất cả",
       "sortLabel": "Sắp xếp",
       "sortNewest": "Mới nhất",
-      "sortPopular": "Nhiều 👍",
+      "sortPopular": "Nhiều lượt thích",
       "sortBiggest": "Lớn nhất",
       "sortClones": "Sao chép nhiều",
       "mineToggle": "Chỉ của tôi",
@@ -692,7 +692,7 @@
   },
   "verdict": {
     "label": {
-      "strong": "✨ Tony tự tin đề xuất",
+      "strong": "Tony tự tin đề xuất",
       "recommended": "Tony đề xuất",
       "consider": "Tony đã chọn"
     },

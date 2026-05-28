@@ -498,7 +498,7 @@
       "filterAll": "All",
       "sortLabel": "Sort",
       "sortNewest": "Newest",
-      "sortPopular": "Most 👍",
+      "sortPopular": "Most liked",
       "sortBiggest": "Largest",
       "sortClones": "Most cloned",
       "mineToggle": "Mine only",
@@ -692,7 +692,7 @@
   },
   "verdict": {
     "label": {
-      "strong": "✨ Tony's strong pick",
+      "strong": "Tony's strong pick",
       "recommended": "Tony's pick",
       "consider": "Tony's choice"
     },

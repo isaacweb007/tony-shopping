@@ -26,60 +26,131 @@ interface CategoryDef {
   seedQuery: string;
   /** Tailwind tone token. */
   tone: 'accent' | 'amber' | 'emerald' | 'sky' | 'rose' | 'violet';
+  /** Background image (Unsplash CDN, free for any use). w=600 q=70 keeps it crisp without being heavy. */
+  imageUrl: string;
 }
 
 const CATEGORIES: CategoryDef[] = [
-  { key: 'electronics', icon: Cpu, seedQuery: 'airpods pro 2', tone: 'accent' },
-  { key: 'shoes', icon: Footprints, seedQuery: 'nike air force 1', tone: 'amber' },
-  { key: 'bag', icon: ShoppingBag, seedQuery: '여성 미니 백팩', tone: 'rose' },
-  { key: 'beauty', icon: Sparkles, seedQuery: '랑콤 마스카라', tone: 'violet' },
-  { key: 'clothes', icon: Shirt, seedQuery: '겨울 패딩 자켓', tone: 'sky' },
-  { key: 'sports', icon: Dumbbell, seedQuery: '아령 덤벨 세트', tone: 'emerald' },
-  { key: 'furniture', icon: Sofa, seedQuery: '거실 소파', tone: 'amber' },
-  { key: 'kitchen', icon: UtensilsCrossed, seedQuery: '에어프라이어', tone: 'rose' },
-  { key: 'lighting', icon: Lamp, seedQuery: '무드등 LED', tone: 'violet' },
-  { key: 'pet', icon: Dog, seedQuery: '강아지 사료', tone: 'emerald' },
-  { key: 'baby', icon: Baby, seedQuery: '아기 모빌', tone: 'sky' },
-  { key: 'jewelry', icon: Gem, seedQuery: '여성 목걸이', tone: 'accent' },
+  {
+    key: 'electronics',
+    icon: Cpu,
+    seedQuery: 'airpods pro 2',
+    tone: 'accent',
+    imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&q=70&auto=format&fit=crop',
+  },
+  {
+    key: 'shoes',
+    icon: Footprints,
+    seedQuery: 'nike air force 1',
+    tone: 'amber',
+    imageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=70&auto=format&fit=crop',
+  },
+  {
+    key: 'bag',
+    icon: ShoppingBag,
+    seedQuery: '여성 미니 백팩',
+    tone: 'rose',
+    imageUrl: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=70&auto=format&fit=crop',
+  },
+  {
+    key: 'beauty',
+    icon: Sparkles,
+    seedQuery: '랑콤 마스카라',
+    tone: 'violet',
+    imageUrl: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=70&auto=format&fit=crop',
+  },
+  {
+    key: 'clothes',
+    icon: Shirt,
+    seedQuery: '겨울 패딩 자켓',
+    tone: 'sky',
+    imageUrl: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=600&q=70&auto=format&fit=crop',
+  },
+  {
+    key: 'sports',
+    icon: Dumbbell,
+    seedQuery: '아령 덤벨 세트',
+    tone: 'emerald',
+    imageUrl: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&q=70&auto=format&fit=crop',
+  },
+  {
+    key: 'furniture',
+    icon: Sofa,
+    seedQuery: '거실 소파',
+    tone: 'amber',
+    imageUrl: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=70&auto=format&fit=crop',
+  },
+  {
+    key: 'kitchen',
+    icon: UtensilsCrossed,
+    seedQuery: '에어프라이어',
+    tone: 'rose',
+    imageUrl: 'https://images.unsplash.com/photo-1631898039121-acca15ed3a44?w=600&q=70&auto=format&fit=crop',
+  },
+  {
+    key: 'lighting',
+    icon: Lamp,
+    seedQuery: '무드등 LED',
+    tone: 'violet',
+    imageUrl: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=600&q=70&auto=format&fit=crop',
+  },
+  {
+    key: 'pet',
+    icon: Dog,
+    seedQuery: '강아지 사료',
+    tone: 'emerald',
+    imageUrl: 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=600&q=70&auto=format&fit=crop',
+  },
+  {
+    key: 'baby',
+    icon: Baby,
+    seedQuery: '아기 모빌',
+    tone: 'sky',
+    imageUrl: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?w=600&q=70&auto=format&fit=crop',
+  },
+  {
+    key: 'jewelry',
+    icon: Gem,
+    seedQuery: '여성 목걸이',
+    tone: 'accent',
+    imageUrl: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=70&auto=format&fit=crop',
+  },
 ];
 
-const TONE_STYLES: Record<CategoryDef['tone'], { bg: string; icon: string }> = {
-  accent: {
-    bg: 'bg-gradient-to-br from-accent-50 to-accent-100/60 dark:from-accent-950/40 dark:to-accent-900/20',
-    icon: 'text-accent-700 dark:text-accent-300',
-  },
-  amber: {
-    bg: 'bg-gradient-to-br from-amber-50 to-amber-100/60 dark:from-amber-950/40 dark:to-amber-900/20',
-    icon: 'text-amber-700 dark:text-amber-300',
-  },
-  emerald: {
-    bg: 'bg-gradient-to-br from-emerald-50 to-emerald-100/60 dark:from-emerald-950/40 dark:to-emerald-900/20',
-    icon: 'text-emerald-700 dark:text-emerald-300',
-  },
-  sky: {
-    bg: 'bg-gradient-to-br from-sky-50 to-sky-100/60 dark:from-sky-950/40 dark:to-sky-900/20',
-    icon: 'text-sky-700 dark:text-sky-300',
-  },
-  rose: {
-    bg: 'bg-gradient-to-br from-rose-50 to-rose-100/60 dark:from-rose-950/40 dark:to-rose-900/20',
-    icon: 'text-rose-700 dark:text-rose-300',
-  },
-  violet: {
-    bg: 'bg-gradient-to-br from-violet-50 to-violet-100/60 dark:from-violet-950/40 dark:to-violet-900/20',
-    icon: 'text-violet-700 dark:text-violet-300',
-  },
+const TONE_OVERLAY: Record<CategoryDef['tone'], string> = {
+  // Gradient overlay sits on top of the photo. Heavier at bottom (where the
+  // label lives) so text contrast stays AA against any photo content.
+  accent:
+    'bg-gradient-to-t from-accent-950/95 via-accent-900/60 to-accent-700/20',
+  amber: 'bg-gradient-to-t from-amber-950/95 via-amber-900/60 to-amber-700/20',
+  emerald:
+    'bg-gradient-to-t from-emerald-950/95 via-emerald-900/60 to-emerald-700/20',
+  sky: 'bg-gradient-to-t from-sky-950/95 via-sky-900/60 to-sky-700/20',
+  rose: 'bg-gradient-to-t from-rose-950/95 via-rose-900/60 to-rose-700/20',
+  violet: 'bg-gradient-to-t from-violet-950/95 via-violet-900/60 to-violet-700/20',
+};
+
+const TONE_ICON_BG: Record<CategoryDef['tone'], string> = {
+  accent: 'bg-accent-500/90 text-white',
+  amber: 'bg-amber-500/90 text-white',
+  emerald: 'bg-emerald-500/90 text-white',
+  sky: 'bg-sky-500/90 text-white',
+  rose: 'bg-rose-500/90 text-white',
+  violet: 'bg-violet-500/90 text-white',
 };
 
 /**
  * Visual category browse grid for the home page.
  *
  * Solves the "I don't know what to search for" empty-state. Each tile
- * is a tone-coded card with an icon + localized label. Clicking it
- * launches a curated seed search so users land on a useful result set
- * even without typing anything.
+ * is now a real photo card — a curated Unsplash photo of the category
+ * (headphones for electronics, sneakers for shoes, etc.) under a
+ * tone-coded gradient overlay that keeps the label readable. The
+ * small icon chip in the corner anchors which category it is in the
+ * brand colour. Clicking launches a curated seed search.
  *
- * Layout: 4 cols on mobile, 6 cols on md+. Compact enough to fit above
- * the fold below the ask-box without dominating the page.
+ * Layout: 2 cols on mobile, 6 cols on md+. Each tile is a 4:3 photo
+ * so the imagery has room to breathe without dominating the page.
  */
 export function BrowseCategories() {
   const t = useTranslations('home.browse');
@@ -107,21 +178,36 @@ export function BrowseCategories() {
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-4 gap-2.5 md:grid-cols-6 md:gap-3">
+      <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-6 md:gap-3">
         {CATEGORIES.map((c) => {
           const Icon = c.icon;
-          const styles = TONE_STYLES[c.tone];
           return (
             <button
               key={c.key}
               type="button"
               onClick={() => open(c.seedQuery)}
-              className={`group/cat flex flex-col items-center gap-1.5 rounded-2xl border border-ink-200/60 ${styles.bg} px-3 py-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-card dark:border-ink-800/60`}
+              className="group/cat relative aspect-[4/3] overflow-hidden rounded-2xl border border-ink-200/60 shadow-sm transition hover:-translate-y-0.5 hover:shadow-card dark:border-ink-800/60"
             >
-              <span className={`inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/70 ${styles.icon} shadow-sm dark:bg-ink-900/70`}>
-                <Icon className="h-[18px] w-[18px]" strokeWidth={1.7} />
+              {/* Photo */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={c.imageUrl}
+                alt=""
+                loading="lazy"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/cat:scale-105"
+              />
+              {/* Tone-coded gradient overlay so the label stays legible */}
+              <span className={`absolute inset-0 ${TONE_OVERLAY[c.tone]}`} aria-hidden="true" />
+
+              {/* Icon chip in the top-left corner */}
+              <span
+                className={`absolute left-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-lg shadow-sm ${TONE_ICON_BG[c.tone]}`}
+              >
+                <Icon className="h-3.5 w-3.5" strokeWidth={2.2} />
               </span>
-              <span className="text-[11.5px] font-bold tracking-tight text-ink-800 dark:text-ink-100">
+
+              {/* Label anchored to the bottom — readable against gradient */}
+              <span className="absolute inset-x-0 bottom-0 px-3 pb-2.5 text-[12.5px] font-extrabold tracking-tight text-white drop-shadow-md md:text-[13px]">
                 {tr(`cat.${c.key}`)}
               </span>
             </button>

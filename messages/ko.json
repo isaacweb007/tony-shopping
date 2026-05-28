@@ -497,7 +497,7 @@
       "filterAll": "전체",
       "sortLabel": "정렬",
       "sortNewest": "최신순",
-      "sortPopular": "👍 많은순",
+      "sortPopular": "좋아요 많은순",
       "sortBiggest": "비교 규모순",
       "sortClones": "복사 많은순",
       "mineToggle": "내 비교만",
@@ -691,7 +691,7 @@
   },
   "verdict": {
     "label": {
-      "strong": "✨ 토니의 강력 추천",
+      "strong": "토니의 강력 추천",
       "recommended": "토니의 추천",
       "consider": "토니가 골랐어요"
     },

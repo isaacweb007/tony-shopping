@@ -17,13 +17,26 @@ const MODEL = 'claude-sonnet-4-5';
 const ANTHROPIC_VERSION = '2023-06-01';
 const TIMEOUT_MS = 6000;
 
+export type RecommendationCategory =
+  | 'electronics'
+  | 'fashion'
+  | 'beauty'
+  | 'home'
+  | 'kitchen'
+  | 'sports'
+  | 'pet'
+  | 'baby'
+  | 'jewelry'
+  | 'food'
+  | 'other';
+
 export interface PersonalRecommendation {
   /** Concrete product name a user could search for. */
   name: string;
   /** One-line "why this fits your interests" in the user's locale. */
   reason: string;
-  /** Optional emoji to anchor the card visually. */
-  emoji?: string;
+  /** Category tag the UI uses to pick a matching lucide icon. */
+  category?: RecommendationCategory;
 }
 
 export interface PersonalResult {
@@ -47,7 +60,7 @@ Always answer in the user's locale (ko / en / vi) as strict JSON:
     {
       "name": "specific searchable product (brand + model when known)",
       "reason": "one short sentence why this matches their pattern",
-      "emoji": "🎧"
+      "category": "electronics" | "fashion" | "beauty" | "home" | "kitchen" | "sports" | "pet" | "baby" | "jewelry" | "food" | "other"
     }
   ]
 }
@@ -56,7 +69,8 @@ Guidelines (soft, not blockers):
 - Aim for 4 recommendations. Spanning different categories the user touched is better than 4 similar items.
 - Concrete product names ("Bose QuietComfort Ultra"), not vague ("good headphones").
 - Reasons should be SHORT and reference the pattern ("최근 노이즈캔슬링을 봤으니 ...").
-- Single emoji per item helps scanning.
+- Pick the most fitting category tag from the enumerated set. Use "other" only when none fits.
+- DO NOT include emojis in the name, reason, or anywhere — the UI renders an icon based on category.
 - Reply with ONLY the JSON. No prose, no code fences.`;
 
 interface ClaudeResponse {
@@ -142,16 +156,35 @@ function parsePersonal(text: string): PersonalRecommendation[] | null {
   if (!raw || typeof raw !== 'object') return null;
   const list = (raw as { recommendations?: unknown }).recommendations;
   if (!Array.isArray(list)) return null;
+  const validCategories: RecommendationCategory[] = [
+    'electronics',
+    'fashion',
+    'beauty',
+    'home',
+    'kitchen',
+    'sports',
+    'pet',
+    'baby',
+    'jewelry',
+    'food',
+    'other',
+  ];
+  // Strip any stray emoji the model might leak despite the no-emoji rule.
+  // Range covers emoji blocks + variation selectors + ZWJ combiners.
+  const EMOJI_RE = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu;
   const cleaned: PersonalRecommendation[] = [];
   for (const item of list) {
     if (!item || typeof item !== 'object') continue;
-    const it = item as Partial<PersonalRecommendation>;
+    const it = item as Partial<PersonalRecommendation> & { emoji?: string };
     if (typeof it.name !== 'string' || it.name.trim().length < 3) continue;
     if (typeof it.reason !== 'string' || it.reason.trim().length < 3) continue;
+    const category = validCategories.includes(it.category as RecommendationCategory)
+      ? (it.category as RecommendationCategory)
+      : 'other';
     cleaned.push({
-      name: it.name.trim().slice(0, 120),
-      reason: it.reason.trim().slice(0, 200),
-      emoji: typeof it.emoji === 'string' ? it.emoji.slice(0, 8) : undefined,
+      name: it.name.trim().replace(EMOJI_RE, '').replace(/\s+/g, ' ').trim().slice(0, 120),
+      reason: it.reason.trim().replace(EMOJI_RE, '').replace(/\s+/g, ' ').trim().slice(0, 200),
+      category,
     });
     if (cleaned.length >= 4) break;
   }
