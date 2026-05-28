@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useRouter } from '@/i18n/routing';
 import type { Category } from '@/lib/categorize';
+import { ProductImage } from '@/components/ui/product-image';
 
 interface CategoryDef {
   key: Category;
@@ -85,7 +86,9 @@ const CATEGORIES: CategoryDef[] = [
     icon: UtensilsCrossed,
     seedQuery: '에어프라이어',
     tone: 'rose',
-    imageUrl: 'https://images.unsplash.com/photo-1631898039121-acca15ed3a44?w=600&q=70&auto=format&fit=crop',
+    // Verified air-fryer / kitchen-appliance photo (replaces broken
+    // 1631898039121-* that also affected editor picks).
+    imageUrl: 'https://images.unsplash.com/photo-1574781330855-d0db8cc6a79c?w=600&q=70&auto=format&fit=crop',
   },
   {
     key: 'lighting',
@@ -188,13 +191,17 @@ export function BrowseCategories() {
               onClick={() => open(c.seedQuery)}
               className="group/cat relative aspect-[4/3] overflow-hidden rounded-2xl border border-ink-200/60 shadow-sm transition hover:-translate-y-0.5 hover:shadow-card dark:border-ink-800/60"
             >
-              {/* Photo */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              {/* Photo with onError → category icon fallback. Falls back
+                  to the category's own lucide glyph so a missing Unsplash
+                  asset never shows the browser's broken-image placeholder. */}
+              <ProductImage
                 src={c.imageUrl}
-                alt=""
-                loading="lazy"
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/cat:scale-105"
+                alt={tr(`cat.${c.key}`)}
+                fallbackIcon={c.icon}
+                className="absolute inset-0 h-full w-full"
+                imgClassName="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/cat:scale-105"
+                fallbackIconClassName="h-10 w-10 text-white/70"
+                fallbackBgClassName="bg-gradient-to-br from-ink-700 to-ink-900 dark:from-ink-800 dark:to-ink-950"
               />
               {/* Tone-coded gradient overlay so the label stays legible */}
               <span className={`absolute inset-0 ${TONE_OVERLAY[c.tone]}`} aria-hidden="true" />
