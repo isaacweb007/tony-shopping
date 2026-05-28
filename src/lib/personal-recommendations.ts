@@ -15,7 +15,12 @@ import 'server-only';
 const ENDPOINT = 'https://api.anthropic.com/v1/messages';
 const MODEL = 'claude-sonnet-4-5';
 const ANTHROPIC_VERSION = '2023-06-01';
-const TIMEOUT_MS = 6000;
+// Korean / Vietnamese responses observed at 5–8 seconds (verified via the
+// trace endpoint). 6 s was occasionally aborting MID-RESPONSE, sending
+// the route to fallback even when Claude was about to succeed. 12 s
+// gives enough headroom for ko / vi without making the home page hang
+// when Claude is genuinely unreachable.
+const TIMEOUT_MS = 12000;
 
 export type RecommendationCategory =
   | 'electronics'
