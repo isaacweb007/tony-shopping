@@ -622,6 +622,7 @@
     "errorInvalid": "Kiểm tra email hoặc mật khẩu.",
     "errorRequired": "Email và mật khẩu là bắt buộc.",
     "errorUnavailable": "Dịch vụ đăng nhập tạm thời không khả dụng.",
+    "errorGoogle": "Không thể bắt đầu đăng nhập với Google",
     "welcome": "Chào {name}",
     "myAccount": "Tài khoản",
     "settings": "Cài đặt",

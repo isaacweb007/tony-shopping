@@ -622,6 +622,7 @@
     "errorInvalid": "Check your email or password.",
     "errorRequired": "Email and password are required.",
     "errorUnavailable": "Auth isn't configured right now.",
+    "errorGoogle": "Couldn't start Google sign-in",
     "welcome": "Hi {name}",
     "myAccount": "My account",
     "settings": "Settings",

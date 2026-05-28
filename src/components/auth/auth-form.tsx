@@ -52,7 +52,10 @@ export function AuthForm({ mode }: { mode: Mode }) {
     const { error: err } = await fn;
     setLoading(false);
     if (err) {
-      setError(t('errorInvalid'));
+      // Surface the real Supabase reason so the user / operator can see
+      // WHY (unconfirmed email, wrong password, signup disabled, etc.)
+      // instead of a generic "invalid" message.
+      setError(err.message || t('errorInvalid'));
       return;
     }
     router.push('/');
@@ -74,21 +77,40 @@ export function AuthForm({ mode }: { mode: Mode }) {
     });
     setLoading(false);
     if (err) {
-      setError(t('errorInvalid'));
+      setError(err.message || t('errorInvalid'));
       return;
     }
     toast.success(t('magicLinkSent'));
   }
 
   async function withGoogle() {
-    if (!available || !supabase) return;
-    await supabase.auth.signInWithOAuth({
+    if (!available || !supabase) {
+      setError(t('errorUnavailable'));
+      return;
+    }
+    setError(null);
+    setLoading(true);
+    const { error: err } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo:
-          typeof window === 'undefined' ? undefined : `${window.location.origin}/auth/callback`,
+          typeof window === 'undefined'
+            ? undefined
+            : `${window.location.origin}/auth/callback`,
+        // Asking for the user's email scope so we can keep their email on
+        // their profile and seed shortlist sync — Google's default scopes
+        // don't always include profile email.
+        scopes: 'email profile',
       },
     });
+    setLoading(false);
+    if (err) {
+      // Most common failure: "provider is not enabled" — Supabase project
+      // doesn't have Google OAuth turned on yet. Surface verbatim so the
+      // operator can see what to fix in the Supabase dashboard.
+      setError(`${t('errorGoogle')}: ${err.message}`);
+    }
+    // On success, signInWithOAuth navigates to Google. No further work here.
   }
 
   return (
