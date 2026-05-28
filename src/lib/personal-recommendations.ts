@@ -136,6 +136,101 @@ export async function suggestPersonal(input: PersonalInput): Promise<PersonalRes
   }
 }
 
+/**
+ * Trace variant used by /api/recommendations?trace=1 — returns the
+ * raw Claude text + parse intermediate state so we can see exactly
+ * what's happening when prod inputs disagree with debug.
+ */
+export async function suggestPersonalWithTrace(input: PersonalInput): Promise<{
+  result: PersonalResult;
+  trace: {
+    rawTextLength: number;
+    rawTextFirst300: string;
+    parseFailed: boolean;
+    parseFailReason?: string;
+    parsedCount?: number;
+  };
+}> {
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) {
+    return {
+      result: { recommendations: [], source: 'fallback' },
+      trace: { rawTextLength: 0, rawTextFirst300: '', parseFailed: true, parseFailReason: 'no key' },
+    };
+  }
+
+  const userMsg = JSON.stringify({
+    locale: input.locale,
+    recentQueries: input.recentQueries.slice(0, 10),
+    recentClicks: input.recentClicks.slice(0, 10),
+  });
+
+  try {
+    const res = await fetch(ENDPOINT, {
+      method: 'POST',
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': ANTHROPIC_VERSION,
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 1500,
+        temperature: 0.3,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userMsg }],
+      }),
+      cache: 'no-store',
+    });
+    if (!res.ok) {
+      const body = await res.text().catch(() => '');
+      return {
+        result: { recommendations: [], source: 'fallback' },
+        trace: {
+          rawTextLength: 0,
+          rawTextFirst300: body.slice(0, 300),
+          parseFailed: true,
+          parseFailReason: `http ${res.status}`,
+        },
+      };
+    }
+    const data = (await res.json()) as ClaudeResponse;
+    const text = data.content?.find((c) => c.type === 'text')?.text?.trim() ?? '';
+    const parsed = parsePersonal(text);
+    if (parsed === null) {
+      return {
+        result: { recommendations: [], source: 'fallback' },
+        trace: {
+          rawTextLength: text.length,
+          rawTextFirst300: text.slice(0, 300),
+          parseFailed: true,
+          parseFailReason: 'parsePersonal returned null',
+        },
+      };
+    }
+    return {
+      result: { recommendations: parsed, source: 'anthropic' },
+      trace: {
+        rawTextLength: text.length,
+        rawTextFirst300: text.slice(0, 300),
+        parseFailed: false,
+        parsedCount: parsed.length,
+      },
+    };
+  } catch (e) {
+    return {
+      result: { recommendations: [], source: 'fallback' },
+      trace: {
+        rawTextLength: 0,
+        rawTextFirst300: e instanceof Error ? e.message : String(e),
+        parseFailed: true,
+        parseFailReason: 'threw',
+      },
+    };
+  }
+}
+
 function parsePersonal(text: string): PersonalRecommendation[] | null {
   let body = text
     .replace(/^```(?:json)?\s*/i, '')

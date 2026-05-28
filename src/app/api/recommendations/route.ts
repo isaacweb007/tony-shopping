@@ -11,9 +11,9 @@
  * mostly miss. Cost stays bounded by client-side staleTime in React
  * Query (15 min).
  */
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { z } from 'zod';
-import { suggestPersonal } from '@/lib/personal-recommendations';
+import { suggestPersonal, suggestPersonalWithTrace } from '@/lib/personal-recommendations';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -31,7 +31,7 @@ const Body = z.object({
   locale: z.enum(['ko', 'en', 'vi']),
 });
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   let parsed;
   try {
     const body = await req.json();
@@ -46,9 +46,16 @@ export async function POST(req: Request) {
     );
   }
 
+  const trace = req.nextUrl.searchParams.get('trace') === '1';
+  if (trace) {
+    const traced = await suggestPersonalWithTrace(parsed.data);
+    return NextResponse.json(traced, {
+      headers: { 'Cache-Control': 'private, no-store' },
+    });
+  }
+
   const result = await suggestPersonal(parsed.data);
   return NextResponse.json(result, {
-    // Per-user data — never share the response.
     headers: { 'Cache-Control': 'private, no-store' },
   });
 }
