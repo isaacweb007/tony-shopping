@@ -11,16 +11,28 @@ export const dynamic = 'force-dynamic';
 const ENDPOINT = 'https://api.anthropic.com/v1/messages';
 const MODEL = 'claude-sonnet-4-5';
 
-const SYSTEM_PROMPT = `You are Tony, an AI meta-shopping agent. The user has searched and clicked through a few products. Suggest 4 NEW products they should look at next.
+// Mirror the production system prompt so the debug trace reflects what
+// the real /api/recommendations call sees.
+const SYSTEM_PROMPT = `You are Tony, an AI meta-shopping agent. The user has searched and clicked through a few products. Suggest 4 NEW products they should look at next — products that fit the taste their recent activity shows.
 
 Always answer in the user's locale (ko / en / vi) as strict JSON:
 {
   "recommendations": [
-    {"name": "specific searchable product", "reason": "one short sentence", "emoji": "🎧"}
+    {
+      "name": "specific searchable product (brand + model when known)",
+      "reason": "one short sentence why this matches their pattern",
+      "category": "electronics" | "fashion" | "beauty" | "home" | "kitchen" | "sports" | "pet" | "baby" | "jewelry" | "food" | "other"
+    }
   ]
 }
 
-Reply with ONLY the JSON. No prose, no code fences.`;
+Guidelines (soft, not blockers):
+- Aim for 4 recommendations. Spanning different categories the user touched is better than 4 similar items.
+- Concrete product names ("Bose QuietComfort Ultra"), not vague ("good headphones").
+- Reasons should be SHORT and reference the pattern.
+- Pick the most fitting category tag from the enumerated set. Use "other" only when none fits.
+- DO NOT include emojis in the name, reason, or anywhere — the UI renders an icon based on category.
+- Reply with ONLY the JSON. No prose, no code fences.`;
 
 export async function GET() {
   const key = process.env.ANTHROPIC_API_KEY;
