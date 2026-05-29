@@ -11,7 +11,7 @@ import { getEnabledAdapters } from '@/lib/adapters/registry';
 import { withTimeout, type SearchAdapter } from '@/lib/adapters/base';
 import { recordAdapterCall } from '@/lib/adapter-stats';
 import { ADAPTER_MODE } from '@/lib/env';
-import { clusterProductsSmart } from './cluster';
+import { clusterProducts, clusterProductsSmart } from './cluster';
 
 // Pulled wider than the visible card count so the clusterer has material
 // to work with — a single adapter may surface the same product from many
@@ -52,22 +52,25 @@ function selectAdapters(all: SearchAdapter[]): SearchAdapter[] {
   return anyReal ? all.filter(adapterIsReal) : all;
 }
 
-export async function runServerSearch(
+/**
+ * Adapter fan-out — fetches raw products from every enabled adapter in
+ * parallel, tolerating individual failures. No clustering / tagging yet.
+ * Returns shallow-cloned products so downstream mutation (tags) is safe.
+ */
+export async function fetchRawProducts(
   query: SearchQuery,
   opts: { signal?: AbortSignal; locale?: 'ko' | 'en' | 'vi'; only?: string } = {},
-): Promise<SearchResult> {
+): Promise<Product[]> {
   const all = getEnabledAdapters();
   // `only` lets the /setup probe button drive a single adapter through the
   // runner so stats get stamped. Case-insensitive compare against the
-  // adapter's id (StoreId). Falls back to the full set on no-match so a
-  // typo doesn't return an empty search.
+  // adapter's id (StoreId). Falls back to the full set on no-match.
   const onlyFiltered = opts.only
     ? all.filter((a) => a.id.toLowerCase() === opts.only!.toLowerCase())
     : all;
   const baseSet = onlyFiltered.length > 0 ? onlyFiltered : all;
-  // When `only` is specified the operator is explicitly probing one adapter,
-  // so skip the real/mock filter — they want to see what that adapter returns.
   const adapters = opts.only ? baseSet : selectAdapters(baseSet);
+
   const results = await Promise.allSettled(
     adapters.map(async (a) => {
       const t0 = Date.now();
@@ -112,32 +115,63 @@ export async function runServerSearch(
     }),
   );
 
-  const rawProducts: Product[] = results
+  return results
     .flatMap((r) => (r.status === 'fulfilled' ? r.value : []))
-    .map((p) => ({ ...p })); // shallow clone — we'll mutate `tag` below
+    .map((p) => ({ ...p }));
+}
 
-  // Cluster sibling listings of the same product (e.g. Apple AirPods Pro 2
-  // from KREAM / 쿠팡 / 11번가) into one canonical row per product, with
-  // alternate merchants attached as MerchantOffer[]. Tagging + reporting
-  // operate on this de-duplicated set so scoring isn't biased by
-  // duplicate-name spam.
-  //
-  // LLM-first when ANTHROPIC_API_KEY is configured: Claude groups
-  // cross-language and reordered variants that Jaccard token-sets miss.
-  // Silently falls back to Jaccard if Claude is unreachable.
-  const products = await clusterProductsSmart(rawProducts);
-
-  assignTags(products);
-
-  const report = buildReport(products);
-
+/**
+ * Tag + report a clustered product set into a SearchResult. Mutates the
+ * passed products' `tag` field. Pure otherwise.
+ */
+export function finalizeResult(query: SearchQuery, clustered: Product[]): SearchResult {
+  assignTags(clustered);
+  const report = buildReport(clustered);
   return {
     id: 's_' + nanoid(8),
     query,
-    products,
+    products: clustered,
     report,
     createdAt: Date.now(),
   };
+}
+
+export async function runServerSearch(
+  query: SearchQuery,
+  opts: { signal?: AbortSignal; locale?: 'ko' | 'en' | 'vi'; only?: string } = {},
+): Promise<SearchResult> {
+  const rawProducts = await fetchRawProducts(query, opts);
+  // LLM-first clustering when ANTHROPIC_API_KEY is configured; Jaccard
+  // fallback otherwise. Groups sibling listings of the same product.
+  const products = await clusterProductsSmart(rawProducts);
+  return finalizeResult(query, products);
+}
+
+/**
+ * Streaming-friendly two-phase search:
+ *   onFast(result)    — fired ASAP with Jaccard-clustered results (~adapter
+ *                       latency only, no LLM wait)
+ *   returns           — the LLM-refined result (Claude clustering applied)
+ *
+ * Fetches raw products ONCE and clusters two ways, so the SerpAPI call (and
+ * its cost) happens a single time. The /api/search/stream route wires
+ * onFast → first NDJSON chunk, return value → second chunk.
+ */
+export async function runServerSearchStreaming(
+  query: SearchQuery,
+  opts: { signal?: AbortSignal; locale?: 'ko' | 'en' | 'vi' },
+  onFast: (result: SearchResult) => void,
+): Promise<SearchResult> {
+  const rawProducts = await fetchRawProducts(query, opts);
+
+  // Phase 1 — instant Jaccard clustering. Clone so phase-2 tagging doesn't
+  // collide with phase-1's mutated tags.
+  const fastClustered = clusterProducts(rawProducts.map((p) => ({ ...p })));
+  onFast(finalizeResult(query, fastClustered));
+
+  // Phase 2 — LLM clustering on a fresh clone.
+  const refinedClustered = await clusterProductsSmart(rawProducts.map((p) => ({ ...p })));
+  return finalizeResult(query, refinedClustered);
 }
 
 function assignTags(products: Product[]) {

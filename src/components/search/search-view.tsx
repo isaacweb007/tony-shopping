@@ -42,7 +42,7 @@ export function SearchView() {
   const q = params.get('q') ?? '';
   const storeParam = params.get('store');
   const sortParam = params.get('sort');
-  const { data: result, isFetching, isError, refetch } = useSearch(q);
+  const { data: result, isFetching, isRefining, isError, refetch } = useSearch(q);
   const products = useSearchStore((s) => s.result?.products);
   const sort = useSearchStore((s) => s.sort);
   const store = useSearchStore((s) => s.store);
@@ -260,8 +260,21 @@ export function SearchView() {
           U
         </div>
         <div className="min-w-0 flex-1">
-          <div className="text-[11px] uppercase tracking-widest text-ink-400 dark:text-ink-500">
-            {t('yourRequest')}
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] uppercase tracking-widest text-ink-400 dark:text-ink-500">
+              {t('yourRequest')}
+            </span>
+            {/* Subtle "still refining" hint — fast results are already shown;
+                Claude is regrouping in the background. Disappears on refine. */}
+            {isRefining && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-accent-50 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider text-accent-700 dark:bg-accent-950/40 dark:text-accent-300">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inset-0 animate-ping rounded-full bg-accent-500 opacity-70" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent-500" />
+                </span>
+                {t('refining')}
+              </span>
+            )}
           </div>
           <div className="mt-0.5 break-words text-[15px] font-semibold tracking-tight text-ink-900 dark:text-ink-50 md:text-[18px]">
             {q}

@@ -757,6 +757,7 @@
     "title": "Search · Tony Shopping",
     "back": "New search",
     "yourRequest": "Your request",
+    "refining": "Refining",
     "noQuery": "No query yet. Start from the home page.",
     "report": "Tony AI Report",
     "reportTpl": "Found {total} matches — {high} highly similar and {sim} similar. Fastest in Korea is {fastestStore} ({fastestEta}); the lowest final price is from {cheapestStore} at {cheapestPrice}. Considering review trust, I recommend {bestStore} — {bestName}.",

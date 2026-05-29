@@ -757,6 +757,7 @@
     "title": "Kết quả · Tony Shopping",
     "back": "Tìm mới",
     "yourRequest": "Yêu cầu của bạn",
+    "refining": "Đang tinh chỉnh",
     "noQuery": "Chưa có yêu cầu. Hãy bắt đầu từ trang chủ.",
     "report": "Báo cáo Tony AI",
     "reportTpl": "Tìm thấy {total} kết quả — {high} rất giống và {sim} tương tự. Nhanh nhất tại Hàn là {fastestStore} ({fastestEta}); rẻ nhất là {cheapestStore} với {cheapestPrice}. Xét độ tin cậy đánh giá, tôi đề xuất {bestStore} — {bestName}.",

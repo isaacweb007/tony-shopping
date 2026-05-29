@@ -756,6 +756,7 @@
     "title": "검색 결과 · Tony Shopping",
     "back": "새 검색",
     "yourRequest": "당신의 요청",
+    "refining": "정밀 분석 중",
     "noQuery": "검색어가 없습니다. 첫 화면에서 다시 시작해주세요.",
     "report": "토니 AI 리포트",
     "reportTpl": "총 {total}개 상품을 찾았습니다. 동일 상품 가능성이 높은 상품 {high}개, 유사 상품 {sim}개입니다. 한국 배송 기준으로는 {fastestStore} 상품이 가장 빠르고 ({fastestEta}), 가격 기준으로는 {cheapestStore} 상품이 가장 저렴합니다 ({cheapestPrice}). 리뷰 신뢰도까지 고려하면 {bestStore}의 {bestName}을 추천합니다.",
