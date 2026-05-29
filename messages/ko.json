@@ -27,6 +27,11 @@
     "recentQueries": {
       "label": "지난 검색 다시"
     },
+    "savings": {
+      "aria": "토니로 절약한 금액",
+      "label": "토니로 아낀 금액",
+      "subtitle": "추천 {count}건 기준"
+    },
     "personal": {
       "aria": "당신 맞춤 추천",
       "label": "당신만을 위한",
@@ -722,6 +727,7 @@
       "consider": "구매하러 가기"
     },
     "savingsPill": "시세보다 -{pct}%",
+    "savingsStatement": "이 선택으로 {amount} 아꼈어요",
     "availableAt": "이 상품을 판매하는 매장 {n}곳",
     "moreMerchants": "그 외 매장 +{n}곳",
     "alternative": "다른 선택지도 궁금하면 아래 TOP 3",

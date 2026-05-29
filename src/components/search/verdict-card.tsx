@@ -20,11 +20,13 @@ import { Button } from '@/components/ui/button';
 import { useShortlistStore } from '@/stores/shortlist-store';
 import { toast } from '@/stores/toast-store';
 import { recordProductClick } from '@/stores/click-store';
+import { recordSaving } from '@/stores/savings-store';
 import { affiliateUrl } from '@/lib/affiliate';
 import { useCheckoutGuide } from '@/hooks/use-checkout-guide';
 import { haptic } from '@/lib/haptic';
 import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shortlist';
 import { formatMoney, formatCount, shipLabel, storeDisplay } from '@/lib/format';
+import { computeSavings } from '@/lib/savings';
 import { DualMoney } from '@/components/ui/dual-money';
 import type { AppLocale } from '@/i18n/routing';
 
@@ -72,6 +74,15 @@ export function VerdictCard({ product, peers }: Props) {
         href: buyHref,
         onProceed: () => {
           recordProductClick(product, q, true);
+          // Bank the realized saving (vs market median) so the cumulative
+          // "토니로 ₩X 아꼈어요" total grows when the user acts on the pick.
+          if (savings.meaningful) {
+            recordSaving({
+              amount: savings.amount,
+              currency: savings.currency,
+              productName: product.name,
+            });
+          }
           window.open(buyHref, '_blank', 'noopener,noreferrer');
         },
       },
@@ -101,23 +112,14 @@ export function VerdictCard({ product, peers }: Props) {
         ? 'recommended'
         : 'consider';
 
-  // Savings versus the peer median. When the verdict pick is genuinely
-  // cheap relative to other candidates, surface a green pill — this is the
-  // single most persuasive number a shopper can see.
-  const savingsPct = React.useMemo(() => {
-    if (!peers || peers.length < 3) return 0;
-    const amounts = peers
-      .map((p) => p.finalPrice.amount)
-      .filter((a) => a > 0)
-      .sort((a, b) => a - b);
-    if (amounts.length < 3) return 0;
-    const mid = Math.floor(amounts.length / 2);
-    const median =
-      amounts.length % 2 === 0 ? (amounts[mid - 1]! + amounts[mid]!) / 2 : amounts[mid]!;
-    if (product.finalPrice.amount >= median) return 0;
-    const pct = Math.round(((median - product.finalPrice.amount) / median) * 100);
-    return pct >= 5 ? pct : 0;
-  }, [peers, product.finalPrice.amount]);
+  // Savings versus the peer median — the single most persuasive number a
+  // shopper can see. computeSavings gives us both the % and the concrete
+  // won/USD amount so we can show "시세보다 ₩42,000 저렴" not just "-18%".
+  const savings = React.useMemo(
+    () => computeSavings(product, peers ?? []),
+    [product, peers],
+  );
+  const savingsPct = savings.meaningful ? savings.pct : 0;
 
   // Evidence list — built in confidence-projecting order with icons that
   // match the type of reason. Keep to 4 max so the scan stays cheap.
@@ -259,6 +261,25 @@ export function VerdictCard({ product, peers }: Props) {
               </div>
             )}
           </div>
+
+          {/* Concrete savings statement — the felt "why Tony" number.
+              Shows the actual won/USD saved vs the market median, far more
+              persuasive than the % pill alone. */}
+          {savings.meaningful && (
+            <div className="mt-3 inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-gradient-to-r from-emerald-50 to-emerald-50/40 px-3 py-2 dark:border-emerald-800/50 dark:from-emerald-950/40 dark:to-emerald-950/10">
+              <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
+                <TrendingDown className="h-3.5 w-3.5" strokeWidth={2.6} />
+              </span>
+              <span className="text-[13.5px] font-bold text-emerald-800 dark:text-emerald-200">
+                {tv('savingsStatement', {
+                  amount: formatMoney(
+                    { amount: savings.amount, currency: savings.currency },
+                    locale,
+                  ),
+                })}
+              </span>
+            </div>
+          )}
 
           {/* Evidence list */}
           <div className="mt-5">

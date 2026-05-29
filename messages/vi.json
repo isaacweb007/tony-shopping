@@ -27,6 +27,11 @@
     "recentQueries": {
       "label": "Tiếp tục tìm kiếm gần đây"
     },
+    "savings": {
+      "aria": "Tổng tiết kiệm với Tony",
+      "label": "Tiết kiệm với Tony",
+      "subtitle": "qua {count} lựa chọn"
+    },
     "personal": {
       "aria": "Cá nhân hoá cho bạn",
       "label": "Dành riêng cho bạn",
@@ -723,6 +728,7 @@
       "consider": "Đi mua"
     },
     "savingsPill": "-{pct}% so với thị trường",
+    "savingsStatement": "Lựa chọn này giúp bạn tiết kiệm {amount}",
     "availableAt": "Có bán ở {n} cửa hàng",
     "moreMerchants": "+{n} cửa hàng khác",
     "alternative": "Muốn xem lựa chọn khác? Xem TOP 3 bên dưới",

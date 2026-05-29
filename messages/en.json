@@ -27,6 +27,11 @@
     "recentQueries": {
       "label": "Pick up a recent search"
     },
+    "savings": {
+      "aria": "Total saved with Tony",
+      "label": "Saved with Tony",
+      "subtitle": "across {count} picks"
+    },
     "personal": {
       "aria": "Personalised for you",
       "label": "Just for you",
@@ -723,6 +728,7 @@
       "consider": "Go to buy"
     },
     "savingsPill": "-{pct}% vs market",
+    "savingsStatement": "This pick saves you {amount}",
     "availableAt": "Available at {n} merchants",
     "moreMerchants": "+{n} more merchants",
     "alternative": "Curious about other options? See TOP 3 below",
