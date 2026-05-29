@@ -25,6 +25,7 @@ import { extractFromImage } from '@/lib/vision';
 import { identifyProductWithClaude } from '@/lib/vision-claude';
 import { detectProvider, fetchOembed } from '@/lib/oembed';
 import { fetchOgMeta } from '@/lib/og-scraper';
+import { extractYouTubeId, youtubeFrameUrls } from '@/lib/video-frames';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -86,17 +87,18 @@ async function fetchImageAsDataUrl(url: string): Promise<string | null> {
 }
 
 /**
- * Run vision pipeline on a thumbnail data URL: try Claude first (shopping-
- * grade phrasing + multiple candidates), then Google Vision. Returns null
- * if neither yields something usable.
+ * Run vision pipeline on one OR MORE frame data URLs: try Claude first
+ * (shopping-grade phrasing + multiple candidates, reasons across all
+ * frames), then Google Vision on the first frame. Returns null if neither
+ * yields something usable.
  */
-async function identifyFromThumbnail(dataUrl: string): Promise<{
+async function identifyFromThumbnail(dataUrls: string | string[]): Promise<{
   query: string;
   candidates: string[];
   tags: string[];
   provider: 'claude' | 'google';
 } | null> {
-  const claude = await identifyProductWithClaude(dataUrl);
+  const claude = await identifyProductWithClaude(dataUrls);
   if (claude) {
     return {
       query: claude.main,
@@ -105,7 +107,9 @@ async function identifyFromThumbnail(dataUrl: string): Promise<{
       provider: 'claude',
     };
   }
-  const v = await extractFromImage(dataUrl);
+  // Google Vision only takes one image — use the first (cover) frame.
+  const first = Array.isArray(dataUrls) ? dataUrls[0]! : dataUrls;
+  const v = await extractFromImage(first);
   if (v.source === 'vision' && v.suggestedQuery && v.suggestedQuery.length >= 3) {
     return {
       query: v.suggestedQuery,
@@ -115,6 +119,30 @@ async function identifyFromThumbnail(dataUrl: string): Promise<{
     };
   }
   return null;
+}
+
+/**
+ * Gather the image frames to analyse for a link. For YouTube we pull
+ * several timeline-sampled storyboard frames (catches mid-video products);
+ * for everything else we use the single oEmbed/OG thumbnail.
+ */
+async function gatherFrames(
+  link: string,
+  thumbnailUrl: string | undefined,
+): Promise<string[]> {
+  const ytId = extractYouTubeId(link);
+  if (ytId) {
+    const frameUrls = youtubeFrameUrls(ytId);
+    const settled = await Promise.all(frameUrls.map((u) => fetchImageAsDataUrl(u)));
+    const frames = settled.filter((d): d is string => d !== null);
+    if (frames.length > 0) return frames;
+  }
+  // Non-YouTube or YouTube frames all failed → single thumbnail.
+  if (thumbnailUrl) {
+    const single = await fetchImageAsDataUrl(thumbnailUrl);
+    if (single) return [single];
+  }
+  return [];
 }
 
 export async function POST(req: Request) {
@@ -164,23 +192,22 @@ export async function POST(req: Request) {
   if (oembed) {
     const titleQuery = deriveQueryFromTitle(oembed.title);
 
-    // If we have a thumbnail, also run vision — for TikTok/IG/short-form
-    // video the title is often a description ("click link above") rather
-    // than a product name, so the thumbnail is the only real signal.
+    // Run vision on the video frames — for TikTok/IG/short-form video the
+    // title is often a description ("click link above") rather than a
+    // product name, so the imagery is the only real signal. YouTube gets
+    // multiple timeline frames; others get the single thumbnail.
     let visionQuery = '';
     let visionCandidates: string[] = [];
     let visionTags: string[] = [];
     let visionProvider: 'claude' | 'google' | null = null;
-    if (oembed.image) {
-      const thumbData = await fetchImageAsDataUrl(oembed.image);
-      if (thumbData) {
-        const r = await identifyFromThumbnail(thumbData);
-        if (r) {
-          visionQuery = r.query;
-          visionCandidates = r.candidates;
-          visionTags = r.tags;
-          visionProvider = r.provider;
-        }
+    const frames = await gatherFrames(url, oembed.image);
+    if (frames.length > 0) {
+      const r = await identifyFromThumbnail(frames);
+      if (r) {
+        visionQuery = r.query;
+        visionCandidates = r.candidates;
+        visionTags = r.tags;
+        visionProvider = r.provider;
       }
     }
 
@@ -206,21 +233,20 @@ export async function POST(req: Request) {
   if (og) {
     const titleQuery = deriveQueryFromTitle(og.title, og.description);
 
-    // Same enrichment for OG: if the page has an og:image, run vision.
+    // Same enrichment for OG: gather frames (YouTube multi-frame, else the
+    // og:image) and run vision.
     let visionQuery = '';
     let visionCandidates: string[] = [];
     let visionTags: string[] = [];
     let visionProvider: 'claude' | 'google' | null = null;
-    if (og.image) {
-      const thumbData = await fetchImageAsDataUrl(og.image);
-      if (thumbData) {
-        const r = await identifyFromThumbnail(thumbData);
-        if (r) {
-          visionQuery = r.query;
-          visionCandidates = r.candidates;
-          visionTags = r.tags;
-          visionProvider = r.provider;
-        }
+    const frames = await gatherFrames(url, og.image);
+    if (frames.length > 0) {
+      const r = await identifyFromThumbnail(frames);
+      if (r) {
+        visionQuery = r.query;
+        visionCandidates = r.candidates;
+        visionTags = r.tags;
+        visionProvider = r.provider;
       }
     }
 

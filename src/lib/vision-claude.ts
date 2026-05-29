@@ -59,24 +59,52 @@ export interface ClaudeVisionResult {
   alternatives: string[];
 }
 
-/**
- * Identify product(s) visible in an image and return ranked shopping queries.
- * Returns null on: missing key, network error, JSON parse failure, or
- * empty/refusal response. Callers should fall back to Google Vision.
- */
-export async function identifyProductWithClaude(
-  dataUrl: string,
-  signal?: AbortSignal,
-): Promise<ClaudeVisionResult | null> {
-  const key = process.env.ANTHROPIC_API_KEY;
-  if (!key) return null;
+interface ImageBlock {
+  type: 'image';
+  source: { type: 'base64'; media_type: string; data: string };
+}
 
-  // Parse data URL: "data:image/jpeg;base64,..."
+/** Parse a data URL into a Claude image block, or null if unusable. */
+function toImageBlock(dataUrl: string): ImageBlock | null {
   const m = dataUrl.match(/^data:(image\/[a-zA-Z+]+);base64,(.+)$/);
   if (!m) return null;
   const mediaType = m[1]!;
   const base64 = m[2]!;
   if (!/^image\/(png|jpeg|gif|webp)$/.test(mediaType)) return null;
+  return { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } };
+}
+
+/**
+ * Identify product(s) visible in one OR MORE images and return ranked
+ * shopping queries. Accepts a single data URL or an array of them — when
+ * given multiple (e.g. video frames sampled across the timeline) Claude
+ * sees the product even if the cover frame is a talking-head intro.
+ *
+ * Returns null on: missing key, no decodable images, network error, JSON
+ * parse failure, or empty/refusal response. Callers fall back to Google
+ * Vision.
+ */
+export async function identifyProductWithClaude(
+  dataUrl: string | string[],
+  signal?: AbortSignal,
+): Promise<ClaudeVisionResult | null> {
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) return null;
+
+  const urls = Array.isArray(dataUrl) ? dataUrl : [dataUrl];
+  // Cap at 4 frames — enough timeline coverage without ballooning tokens.
+  const blocks = urls
+    .map(toImageBlock)
+    .filter((b): b is ImageBlock => b !== null)
+    .slice(0, 4);
+  if (blocks.length === 0) return null;
+
+  // When we have multiple frames, tell Claude they're from one video so it
+  // reasons across them rather than treating each as a separate product.
+  const promptText =
+    blocks.length > 1
+      ? `${PROMPT}\n\n참고: 위 이미지들은 같은 영상의 서로 다른 장면(프레임)들이야. 영상 전체에서 가장 핵심적으로 등장하는 상품 하나를 중심으로 후보를 골라줘.`
+      : PROMPT;
 
   try {
     const res = await fetch(ENDPOINT, {
@@ -93,13 +121,7 @@ export async function identifyProductWithClaude(
         messages: [
           {
             role: 'user',
-            content: [
-              {
-                type: 'image',
-                source: { type: 'base64', media_type: mediaType, data: base64 },
-              },
-              { type: 'text', text: PROMPT },
-            ],
+            content: [...blocks, { type: 'text', text: promptText }],
           },
         ],
       }),
