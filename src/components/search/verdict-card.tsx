@@ -28,6 +28,7 @@ import { pushShortlistItem, deleteShortlistItem } from '@/lib/supabase/sync-shor
 import { formatMoney, formatCount, shipLabel, storeDisplay } from '@/lib/format';
 import { computeSavings } from '@/lib/savings';
 import { DualMoney } from '@/components/ui/dual-money';
+import { TonyScoreBreakdown } from './tony-score-breakdown';
 import type { AppLocale } from '@/i18n/routing';
 
 interface Props {
@@ -304,6 +305,21 @@ export function VerdictCard({ product, peers }: Props) {
             </ul>
           </div>
 
+          {/* Tony Score transparency — expandable so the recommendation can
+              be audited (trust comes from "why 94?" being answerable). */}
+          <details className="group/score mt-4 rounded-xl border border-ink-200 bg-white/60 px-3.5 py-2.5 dark:border-ink-800 dark:bg-ink-900/50">
+            <summary className="flex cursor-pointer list-none items-center justify-between text-[12px] font-bold text-ink-700 dark:text-ink-200">
+              <span className="inline-flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400" strokeWidth={2.2} />
+                {tv('whyScore', { score: product.score.total })}
+              </span>
+              <span className="text-ink-400 transition-transform group-open/score:rotate-180 dark:text-ink-500">
+                <ArrowRight className="h-3.5 w-3.5 rotate-90" strokeWidth={2.2} />
+              </span>
+            </summary>
+            <TonyScoreBreakdown score={product.score} className="mt-3" />
+          </details>
+
           {/*
             Meta-shop offer rail — when the clusterer found this same
             product at other merchants, surface them as full rows so the
@@ -395,6 +411,13 @@ export function VerdictCard({ product, peers }: Props) {
 
           <p className="mt-3 text-[11.5px] text-ink-500 dark:text-ink-400">
             {tv('alternative')}
+          </p>
+
+          {/* Honest price disclaimer — sets expectations so a stale/changed
+              price never feels like a betrayal. Trust > polish. */}
+          <p className="mt-1.5 flex items-start gap-1 text-[11px] text-ink-400 dark:text-ink-500">
+            <ShieldCheck className="mt-0.5 h-3 w-3 shrink-0" strokeWidth={1.8} />
+            <span>{tv('priceDisclaimer')}</span>
           </p>
         </div>
       </div>

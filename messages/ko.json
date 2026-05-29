@@ -731,6 +731,8 @@
     "availableAt": "이 상품을 판매하는 매장 {n}곳",
     "moreMerchants": "그 외 매장 +{n}곳",
     "alternative": "다른 선택지도 궁금하면 아래 TOP 3",
+    "whyScore": "왜 {score}점인지 보기",
+    "priceDisclaimer": "토니가 방금 조회한 가격이에요. 매장에서 변동될 수 있으니 구매 전 최종 가격을 확인하세요.",
     "compareNote": "주저되면 비교함에 담아두세요"
   },
   "analysisTrail": {

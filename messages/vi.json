@@ -732,6 +732,8 @@
     "availableAt": "Có bán ở {n} cửa hàng",
     "moreMerchants": "+{n} cửa hàng khác",
     "alternative": "Muốn xem lựa chọn khác? Xem TOP 3 bên dưới",
+    "whyScore": "Vì sao {score} điểm?",
+    "priceDisclaimer": "Giá Tony vừa tra cứu. Giá có thể thay đổi ở cửa hàng — hãy kiểm tra giá cuối trước khi mua.",
     "compareNote": "Chưa chắc? Lưu vào so sánh để xem lại"
   },
   "analysisTrail": {

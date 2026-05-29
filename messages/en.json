@@ -732,6 +732,8 @@
     "availableAt": "Available at {n} merchants",
     "moreMerchants": "+{n} more merchants",
     "alternative": "Curious about other options? See TOP 3 below",
+    "whyScore": "Why {score}?",
+    "priceDisclaimer": "Price as Tony just fetched it. It can change at the store — confirm the final price before buying.",
     "compareNote": "Not sure? Save to compare for later"
   },
   "analysisTrail": {
