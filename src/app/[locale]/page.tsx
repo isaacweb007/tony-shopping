@@ -6,6 +6,7 @@ import { RecentProducts } from '@/components/home/recent-products';
 import { InstallPrompt } from '@/components/home/install-prompt';
 import { BrowseCategories } from '@/components/home/browse-categories';
 import { EditorPicks } from '@/components/home/editor-picks';
+import { DealFeed } from '@/components/home/deal-feed';
 import { PersonalRecommendations } from '@/components/home/personal-recommendations';
 import { SavingsBanner } from '@/components/home/savings-banner';
 
@@ -24,6 +25,7 @@ export default async function HomePage({
       <RecentProducts />
       <div className="container max-w-7xl">
         <SavingsBanner />
+        <DealFeed />
         <PersonalRecommendations />
         <BrowseCategories />
         <EditorPicks />
