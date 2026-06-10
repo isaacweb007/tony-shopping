@@ -15,6 +15,18 @@ describe('cleanTitle', () => {
   it('removes bracketed promo blocks', () => {
     expect(cleanTitle('[특가] Sony WH-1000XM5 (무료배송)')).toBe('Sony WH-1000XM5');
   });
+
+  it('keeps English brand names that contain common promo-ish words', () => {
+    // Token-level English stripping would wrongly turn these into "Balance 530"
+    // / "People dress". Only KO promo tokens + EN promo PHRASES are stripped.
+    expect(cleanTitle('New Balance 530 무료배송')).toBe('New Balance 530');
+    expect(cleanTitle('Free People summer dress')).toBe('Free People summer dress');
+  });
+
+  it('strips English promo phrases (not the brand-word tokens)', () => {
+    expect(cleanTitle('Logitech MX Master 3S free shipping')).toBe('Logitech MX Master 3S');
+    expect(cleanTitle('iPhone 15 case lowest price')).toBe('iPhone 15 case');
+  });
 });
 
 describe('deriveQueryFromLens', () => {

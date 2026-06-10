@@ -76,6 +76,9 @@ export async function reverseImageSearch(
     }
     const json = await res.json();
     const all = mapLensMatches(json, 48); // memo a generous set; callers slice
+    // Cap the memo (keyed by image URL → unbounded otherwise). Cheap reset
+    // rather than LRU bookkeeping; entries are 1h-disposable anyway.
+    if (memo.size > 200) memo.clear();
     memo.set(cacheKey, { at: Date.now(), matches: all });
     return opts.limit ? all.slice(0, opts.limit) : all;
   } catch (e) {

@@ -32,6 +32,9 @@ import type { LensMatch } from '@/lib/search/lens-map';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+// oEmbed + multi-frame fetch + Claude vision + (fallback) Lens can chain to
+// several seconds; give the function headroom over the 10s default.
+export const maxDuration = 30;
 
 const Body = z.object({
   imageDataUrl: z.string().startsWith('data:image/').optional(),

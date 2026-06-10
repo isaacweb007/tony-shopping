@@ -12,8 +12,9 @@
  */
 import type { LensMatch } from './lens-map';
 
-// Promo / logistics noise that clings to marketplace titles (KO + EN).
-const NOISE = new Set([
+// Korean promo / logistics tokens — unambiguous in marketplace titles (the
+// primary market). Safe to strip at the token level.
+const NOISE_KO = new Set([
   '정품',
   '정품인증',
   '무료배송',
@@ -33,29 +34,23 @@ const NOISE = new Set([
   '국내',
   '새상품',
   '미개봉',
-  'official',
-  'free',
-  'shipping',
-  'sale',
-  'genuine',
-  'authentic',
-  'brand',
-  'new',
-  'oem',
-  'deal',
-  'lowest',
-  'price',
 ]);
 
-/** Strip bracketed promo blocks + noise words; collapse whitespace. */
+// English promo is stripped only as PHRASES — token-level English stripping
+// breaks real brand names ("New Balance", "Free People", "Brandy Melville").
+const NOISE_EN_PHRASE =
+  /\b(?:free|fast)\s+shipping\b|\b(?:lowest|best)\s+price\b|\bofficial\s+store\b|\bbrand\s+new\b|\bon\s+sale\b/gi;
+
+/** Strip bracketed promo blocks + noise; collapse whitespace. */
 export function cleanTitle(title: string): string {
   const noBrackets = title
-    .replace(/[[(【\[][^\])】]*[\])】]/g, ' ') // remove [..] (..) 【..】 blocks
+    .replace(/[[(【][^\])】]*[\])】]/g, ' ') // remove [..] (..) 【..】 blocks
     .replace(/[|/]+/g, ' ');
-  const kept = noBrackets
+  const noEnPromo = noBrackets.replace(NOISE_EN_PHRASE, ' ');
+  const kept = noEnPromo
     .split(/\s+/)
     .map((t) => t.trim())
-    .filter((t) => t.length > 0 && !NOISE.has(t.toLowerCase()));
+    .filter((t) => t.length > 0 && !NOISE_KO.has(t));
   return kept.join(' ').trim();
 }
 
