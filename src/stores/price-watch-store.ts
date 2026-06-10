@@ -21,6 +21,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Product } from '@/types/product';
+import { mergeServerIntoSnapshots } from '@/lib/alerts/merge-observations';
 
 export interface PriceObservation {
   /** ms since epoch. */
@@ -32,6 +33,13 @@ export interface PriceSnapshot {
   productId: string;
   currency: 'KRW' | 'USD' | 'VND' | 'JPY';
   /** Oldest → newest. Capped at MAX_ENTRIES via observe(). */
+  entries: PriceObservation[];
+}
+
+/** Server-recorded timeline (from /api/alerts) before currency narrowing. */
+export interface ServerWatch {
+  productId: string;
+  currency: string;
   entries: PriceObservation[];
 }
 
@@ -49,6 +57,13 @@ interface PriceWatchState {
   observe: (products: Product[]) => Product[];
   /** Convenience: observe a single product. Used by the standalone watch UI. */
   track: (product: Product) => void;
+  /**
+   * Fold server-recorded observations (Tony's cron) into the per-device
+   * timeline. Entries are unioned by timestamp, consecutive equal amounts are
+   * collapsed (moves-only), and the series is re-capped. A currency mismatch
+   * leaves the local series untouched to avoid mixing scales.
+   */
+  mergeServerObservations: (incoming: ServerWatch[]) => void;
   /** Whether the product currently has at least one snapshot entry. */
   isTracked: (productId: string) => boolean;
   setThreshold: (t: number) => void;
@@ -140,6 +155,15 @@ export const usePriceWatchStore = create<PriceWatchState>()(
         // than firing a toast.
         get().observe([product]);
       },
+      mergeServerObservations: (incoming) =>
+        set((s) => {
+          const { snapshots, changed } = mergeServerIntoSnapshots(
+            s.snapshots,
+            incoming,
+            MAX_ENTRIES,
+          );
+          return changed ? { snapshots } : s;
+        }),
       isTracked: (productId) => productId in get().snapshots,
       setThreshold: (t) => set({ threshold: Math.max(0, Math.min(0.5, t)) }),
       dismiss: (productId) =>

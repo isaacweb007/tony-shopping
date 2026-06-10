@@ -15,5 +15,6 @@
     }
   ],
   "redirects": [],
-  "rewrites": []
+  "rewrites": [],
+  "crons": [{ "path": "/api/cron/price-watch", "schedule": "0 1 * * *" }]
 }
