@@ -96,8 +96,9 @@ export function QuickSearchFab() {
         />
       )}
 
-      {/* Action stack */}
-      <div className="fixed bottom-4 left-4 z-50 flex flex-col items-start gap-2 md:hidden">
+      {/* Action stack. Sits above the bottom tab bar (h-14 + safe area) so the
+          FAB doesn't cover the leftmost ("home") nav stop on mobile. */}
+      <div className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] left-4 z-50 flex flex-col items-start gap-2 md:hidden">
         {open && (
           <>
             <ActionBtn icon={Camera} label={t('photo')} onClick={pickPhoto} />

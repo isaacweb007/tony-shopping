@@ -151,7 +151,7 @@ export function ChatPanel() {
         onClick={() => setOpen(true)}
         aria-label={t('fabLong')}
         className={cn(
-          'fixed bottom-4 right-4 z-40 inline-flex h-12 items-center gap-2 rounded-full bg-ink-900 px-4 font-semibold text-white shadow-card-hover transition hover:shadow-pop dark:bg-white dark:text-ink-900 md:bottom-6 md:right-6 md:h-13 md:px-5',
+          'fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] right-4 z-40 inline-flex h-12 items-center gap-2 rounded-full bg-ink-900 px-4 font-semibold text-white shadow-card-hover transition hover:shadow-pop dark:bg-white dark:text-ink-900 md:bottom-6 md:right-6 md:h-13 md:px-5',
           open && 'pointer-events-none scale-95 opacity-0',
         )}
       >

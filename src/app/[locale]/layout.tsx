@@ -125,7 +125,11 @@ export default async function LocaleLayout({
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <QueryProvider>
               <Header />
-              <main className="flex-1 pb-16 md:pb-0">{children}</main>
+              {/* Bottom padding clears the mobile tab bar (h-14 + 1px border + iOS
+                  safe-area-inset-bottom). pb-16 = 64px was tight on Android and
+                  trapped the last content behind the home-indicator safe area
+                  on iPhone — this calc tracks the actual nav height. */}
+              <main className="flex-1 pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0">{children}</main>
               <Footer />
               <MobileBottomNav />
               <HistoryDrawer />
