@@ -26,6 +26,9 @@ import { identifyProductWithClaude } from '@/lib/vision-claude';
 import { detectProvider, fetchOembed } from '@/lib/oembed';
 import { fetchOgMeta } from '@/lib/og-scraper';
 import { extractYouTubeId, youtubeFrameUrls } from '@/lib/video-frames';
+import { reverseImageSearch } from '@/lib/search/reverse-image';
+import { deriveQueryFromLens } from '@/lib/search/derive-query';
+import type { LensMatch } from '@/lib/search/lens-map';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -35,6 +38,8 @@ const Body = z.object({
   /** Original filename — used by the Vision-less fallback heuristic. */
   filename: z.string().max(300).optional(),
   link: z.string().url().optional(),
+  /** Caller locale — geos the reverse-image (Lens) fallback to the right market. */
+  locale: z.enum(['ko', 'en', 'vi']).optional(),
 });
 
 /** Drop "- YouTube", "| Instagram" tail noise the platforms append. */
@@ -65,7 +70,10 @@ async function fetchImageAsDataUrl(url: string): Promise<string | null> {
     const res = await fetch(url, {
       signal: AbortSignal.timeout(IMG_FETCH_TIMEOUT_MS),
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; TonyShopping/1.0)',
+        // A real browser UA — social CDNs (Instagram, TikTok) sometimes refuse
+        // unknown bots, which would starve vision/Lens of the thumbnail.
+        'User-Agent':
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
         Accept: 'image/avif,image/webp,image/png,image/jpeg,image/gif,*/*',
       },
       cache: 'no-store',
@@ -92,13 +100,16 @@ async function fetchImageAsDataUrl(url: string): Promise<string | null> {
  * frames), then Google Vision on the first frame. Returns null if neither
  * yields something usable.
  */
-async function identifyFromThumbnail(dataUrls: string | string[]): Promise<{
+async function identifyFromThumbnail(
+  dataUrls: string | string[],
+  caption?: string,
+): Promise<{
   query: string;
   candidates: string[];
   tags: string[];
   provider: 'claude' | 'google';
 } | null> {
-  const claude = await identifyProductWithClaude(dataUrls);
+  const claude = await identifyProductWithClaude(dataUrls, { caption });
   if (claude) {
     return {
       query: claude.main,
@@ -145,6 +156,25 @@ async function gatherFrames(
   return [];
 }
 
+/**
+ * Lens-grounded identification fallback. When vision can't name the product
+ * (no ANTHROPIC_API_KEY, or it returned nothing) we run reverse-image search on
+ * the thumbnail and derive a clean product query from the REAL listings of the
+ * pictured item — accurate identification with only SERPAPI_KEY. Returns null
+ * when SerpAPI is unconfigured or there are no matches.
+ */
+async function identifyFromLens(
+  thumbnailUrl: string,
+  locale: 'ko' | 'en' | 'vi' | undefined,
+  signal?: AbortSignal,
+): Promise<{ query: string; matches: LensMatch[] } | null> {
+  const matches = await reverseImageSearch(thumbnailUrl, { locale, signal, limit: 12 });
+  if (matches.length === 0) return null;
+  const query = deriveQueryFromLens(matches);
+  if (!query) return null;
+  return { query, matches };
+}
+
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
   const parsed = Body.safeParse(body);
@@ -155,7 +185,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const { imageDataUrl, filename, link } = parsed.data;
+  const { imageDataUrl, filename, link, locale } = parsed.data;
   if (!imageDataUrl && !link) {
     return NextResponse.json({ error: 'empty_input' }, { status: 400 });
   }
@@ -202,7 +232,7 @@ export async function POST(req: Request) {
     let visionProvider: 'claude' | 'google' | null = null;
     const frames = await gatherFrames(url, oembed.image);
     if (frames.length > 0) {
-      const r = await identifyFromThumbnail(frames);
+      const r = await identifyFromThumbnail(frames, oembed.title);
       if (r) {
         visionQuery = r.query;
         visionCandidates = r.candidates;
@@ -211,20 +241,36 @@ export async function POST(req: Request) {
       }
     }
 
-    const suggestedQuery = visionQuery || titleQuery;
+    // Lens fallback: no vision query → derive one from real listings matching
+    // the thumbnail (works with only SERPAPI_KEY, no vision API).
+    let lensQuery = '';
+    let lensTags: string[] = [];
+    if (!visionQuery && oembed.image) {
+      const lens = await identifyFromLens(oembed.image, locale, req.signal);
+      if (lens) {
+        lensQuery = lens.query;
+        lensTags = lens.matches.slice(0, 3).map((m) => m.source);
+      }
+    }
+
+    const suggestedQuery = visionQuery || lensQuery || titleQuery;
+    const source = visionProvider ? ('vision' as const) : lensQuery ? ('lens' as const) : ('oembed' as const);
     return NextResponse.json({
       suggestedQuery,
       candidates: visionCandidates,
       hint: visionProvider
         ? `${visionProvider}-vision-${oembed.provider}`
-        : `${oembed.provider}:${oembed.author ?? ''}`,
+        : lensQuery
+          ? `lens-${oembed.provider}`
+          : `${oembed.provider}:${oembed.author ?? ''}`,
       tags: [
         ...visionTags,
+        ...lensTags,
         oembed.provider,
         ...(oembed.author ? [oembed.author] : []),
       ],
       image: oembed.image,
-      source: visionProvider ? ('vision' as const) : ('oembed' as const),
+      source,
     });
   }
 
@@ -241,7 +287,7 @@ export async function POST(req: Request) {
     let visionProvider: 'claude' | 'google' | null = null;
     const frames = await gatherFrames(url, og.image);
     if (frames.length > 0) {
-      const r = await identifyFromThumbnail(frames);
+      const r = await identifyFromThumbnail(frames, og.title ?? og.description);
       if (r) {
         visionQuery = r.query;
         visionCandidates = r.candidates;
@@ -250,23 +296,37 @@ export async function POST(req: Request) {
       }
     }
 
-    const tags: string[] = [...visionTags];
+    // Lens fallback when vision yielded nothing (see oembed branch).
+    let lensQuery = '';
+    let lensTags: string[] = [];
+    if (!visionQuery && og.image) {
+      const lens = await identifyFromLens(og.image, locale, req.signal);
+      if (lens) {
+        lensQuery = lens.query;
+        lensTags = lens.matches.slice(0, 3).map((m) => m.source);
+      }
+    }
+
+    const tags: string[] = [...visionTags, ...lensTags];
     if (provider !== 'unknown') tags.push(provider);
     if (og.siteName) tags.push(og.siteName);
     if (og.type) tags.push(og.type);
 
-    const suggestedQuery = visionQuery || titleQuery;
+    const suggestedQuery = visionQuery || lensQuery || titleQuery;
+    const source = visionProvider ? ('vision' as const) : lensQuery ? ('lens' as const) : ('og' as const);
     return NextResponse.json({
       suggestedQuery,
       candidates: visionCandidates,
       hint: visionProvider
         ? `${visionProvider}-vision-og`
-        : og.siteName
-          ? `og:${og.siteName}`
-          : 'og',
+        : lensQuery
+          ? 'lens-og'
+          : og.siteName
+            ? `og:${og.siteName}`
+            : 'og',
       tags,
       image: og.image,
-      source: visionProvider ? ('vision' as const) : ('og' as const),
+      source,
     });
   }
 

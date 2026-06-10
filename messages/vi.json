@@ -32,6 +32,16 @@
       "label": "Tiết kiệm với Tony",
       "subtitle": "qua {count} lựa chọn"
     },
+    "deals": {
+      "aria": "Ưu đãi hôm nay",
+      "label": "Ưu đãi hôm nay",
+      "headline": "Giá tốt nhất hôm nay",
+      "subtitle": "Cập nhật mỗi ngày — mức giảm lớn nhất Tony tìm thấy trên các sàn.",
+      "save": "Tiết kiệm {amount}",
+      "shipToday": "Hôm nay",
+      "shipTomorrow": "Ngày mai",
+      "shipDays": "{n} ngày"
+    },
     "personal": {
       "aria": "Cá nhân hoá cho bạn",
       "label": "Dành riêng cho bạn",
@@ -760,6 +770,11 @@
     "back": "Tìm mới",
     "yourRequest": "Yêu cầu của bạn",
     "refining": "Đang tinh chỉnh",
+    "visualMatches": {
+      "title": "Nơi bán sản phẩm trong ảnh",
+      "subtitle": "Tìm thấy {n} nơi qua hình ảnh — trang bán thực tế của sản phẩm này.",
+      "viewPage": "Xem trang"
+    },
     "noQuery": "Chưa có yêu cầu. Hãy bắt đầu từ trang chủ.",
     "report": "Báo cáo Tony AI",
     "reportTpl": "Tìm thấy {total} kết quả — {high} rất giống và {sim} tương tự. Nhanh nhất tại Hàn là {fastestStore} ({fastestEta}); rẻ nhất là {cheapestStore} với {cheapestPrice}. Xét độ tin cậy đánh giá, tôi đề xuất {bestStore} — {bestName}.",
@@ -943,6 +958,7 @@
     "detected": "Đã phát hiện \"{query}\" trong ảnh",
     "extracting": "Đang phân tích ảnh…",
     "linkAnalyzing": "Đang đọc liên kết…",
+    "linkFailed": "Không tìm thấy sản phẩm trong liên kết đó. Hãy thử tải ảnh lên.",
     "preview": {
       "aria": "Bản xem trước trích xuất của Tony",
       "dismissAria": "Đóng xem trước",
@@ -950,7 +966,8 @@
         "vision": "Phân tích hình ảnh",
         "oembed": "Dữ liệu nhúng",
         "og": "Metadata trang",
-        "fallback": "Heuristic"
+        "fallback": "Heuristic",
+        "lens": "Khớp hình ảnh"
       },
       "accept": "Tìm với này",
       "edit": "Chỉnh sửa",

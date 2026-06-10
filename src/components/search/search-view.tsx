@@ -17,6 +17,7 @@ import { AlternativesRail } from './alternatives-rail';
 import { MetricsTiles } from './metrics-tiles';
 import { PriceDistribution } from './price-distribution';
 import { Clusters } from './clusters';
+import { VisualMatches } from './visual-matches';
 import { ProductCard } from './product-card';
 import { StickyFilterBar } from './sticky-filter-bar';
 import { ResultsBadge } from './results-badge';
@@ -42,6 +43,9 @@ export function SearchView() {
   const q = params.get('q') ?? '';
   const storeParam = params.get('store');
   const sortParam = params.get('sort');
+  // Source SNS thumbnail carried from a link extraction → reverse-image "where
+  // to buy". Only ever a public http(s) URL; null for plain text searches.
+  const imgParam = params.get('img');
   const { data: result, isFetching, isRefining, isError, refetch } = useSearch(q);
   const products = useSearchStore((s) => s.result?.products);
   const sort = useSearchStore((s) => s.sort);
@@ -281,6 +285,8 @@ export function SearchView() {
           </div>
         </div>
       </div>
+
+      <VisualMatches imageUrl={imgParam} />
 
       <VerdictCard product={result.report.best} peers={result.products} />
 

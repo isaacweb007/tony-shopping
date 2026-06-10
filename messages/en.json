@@ -32,6 +32,16 @@
       "label": "Saved with Tony",
       "subtitle": "across {count} picks"
     },
+    "deals": {
+      "aria": "Today's deals",
+      "label": "Today's deals",
+      "headline": "Today's best prices",
+      "subtitle": "Refreshed daily — the biggest savings Tony found across the malls.",
+      "save": "Save {amount}",
+      "shipToday": "Today",
+      "shipTomorrow": "Tomorrow",
+      "shipDays": "{n}d"
+    },
     "personal": {
       "aria": "Personalised for you",
       "label": "Just for you",
@@ -760,6 +770,11 @@
     "back": "New search",
     "yourRequest": "Your request",
     "refining": "Refining",
+    "visualMatches": {
+      "title": "Where this photo is sold",
+      "subtitle": "{n} matches found by image — actual listings of this product.",
+      "viewPage": "View page"
+    },
     "noQuery": "No query yet. Start from the home page.",
     "report": "Tony AI Report",
     "reportTpl": "Found {total} matches — {high} highly similar and {sim} similar. Fastest in Korea is {fastestStore} ({fastestEta}); the lowest final price is from {cheapestStore} at {cheapestPrice}. Considering review trust, I recommend {bestStore} — {bestName}.",
@@ -943,6 +958,7 @@
     "detected": "Detected \"{query}\" in the image",
     "extracting": "Analysing the image…",
     "linkAnalyzing": "Reading the link…",
+    "linkFailed": "Couldn't find a product in that link. Try uploading a photo instead.",
     "preview": {
       "aria": "Tony's extraction preview",
       "dismissAria": "Dismiss preview",
@@ -950,7 +966,8 @@
         "vision": "Image analysis",
         "oembed": "Embed data",
         "og": "Page metadata",
-        "fallback": "Heuristic"
+        "fallback": "Heuristic",
+        "lens": "Image match"
       },
       "accept": "Search this",
       "edit": "Edit",

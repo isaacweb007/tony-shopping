@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useTranslations } from 'next-intl';
-import { ArrowRight, Eye, Image as ImageIcon, Link2, Pencil, X } from 'lucide-react';
+import { ArrowRight, Eye, Image as ImageIcon, Link2, Pencil, ScanSearch, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -10,7 +10,7 @@ export interface ExtractResult {
   suggestedQuery: string;
   /** Additional candidate queries — same shape as `suggestedQuery`, ranked. */
   candidates?: string[];
-  source: 'vision' | 'oembed' | 'og' | 'fallback';
+  source: 'vision' | 'oembed' | 'og' | 'fallback' | 'lens';
   hint?: string;
   tags?: string[];
   image?: string;
@@ -37,6 +37,7 @@ const SOURCE_ICON = {
   oembed: Link2,
   og: Link2,
   fallback: Eye,
+  lens: ScanSearch,
 } as const;
 
 /**

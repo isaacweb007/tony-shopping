@@ -11,6 +11,7 @@ import type { AppLocale } from '@/i18n/routing';
 import { useHistoryStore } from '@/stores/history-store';
 import { useUserProfileStore } from '@/stores/user-profile-store';
 import { categorize } from '@/lib/categorize';
+import { findFirstUrl } from '@/lib/extract/url';
 import { nanoid } from 'nanoid';
 import type { SearchAttachment } from '@/types/search';
 import { useSpeechRecognition } from '@/hooks/use-speech-recognition';
@@ -48,9 +49,27 @@ export function AskBox() {
   //   * ?focus=ask, autofocus the textarea so the user can type right away
   const searchParams = useSearchParams();
   const focusParam = searchParams?.get('focus');
+  // Guards the one-shot ingest so React 18 StrictMode's double-mount (dev) — or
+  // any remount — can't run extraction / add the link chip twice.
+  const ingestedRef = React.useRef(false);
   React.useEffect(() => {
     if (focusParam === 'ask') {
       requestAnimationFrame(() => textareaRef.current?.focus());
+    }
+    // Share-target handoff: /share redirects URLs to /?ingest=<url>. Run the
+    // same link-extraction pipeline the paste button uses, so a shared SNS
+    // post becomes a real product query instead of a raw-URL search.
+    const ingest = searchParams?.get('ingest');
+    if (ingest && !ingestedRef.current) {
+      ingestedRef.current = true;
+      const ingestUrl = findFirstUrl(ingest);
+      if (ingestUrl) {
+        setAttachments((prev) => [
+          ...prev,
+          { id: nanoid(6), type: 'link', value: ingestUrl, label: ingestUrl },
+        ]);
+        void runLinkExtract(ingestUrl, { autofillText: true, notifyOnMiss: true });
+      }
     }
     try {
       const raw = sessionStorage.getItem('tony.quickfab.image');
@@ -253,67 +272,68 @@ export function AskBox() {
     });
   }
 
-  async function onPasteLink() {
-    const url = window.prompt(t('linkPrompt'), '');
-    if (!url || !url.trim()) return;
-    const trimmed = url.trim();
-    setAttachments((prev) => [
-      ...prev,
-      { id: nanoid(6), type: 'link', value: trimmed, label: trimmed },
-    ]);
-
+  /**
+   * Shared link → product extraction. Posts the URL to /api/extract, shows the
+   * preview when a real product query comes back, and returns it (or null).
+   * On a miss it surfaces a gentle toast — we never fall through to searching
+   * the raw URL string, which would return garbage.
+   */
+  async function runLinkExtract(
+    url: string,
+    opts: { autofillText?: boolean; notifyOnMiss?: boolean } = {},
+  ): Promise<ExtractResult | null> {
     setExtracting(true);
     try {
       const res = await fetch('/api/extract', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ link: trimmed }),
+        body: JSON.stringify({ link: url, locale }),
       });
       if (res.ok) {
         const data = (await res.json()) as ExtractResult & { source: ExtractResult['source'] };
-        if (data.suggestedQuery) {
-          setExtractResult({
+        if (data.suggestedQuery && data.suggestedQuery.trim().length > 0) {
+          const result: ExtractResult = {
             suggestedQuery: data.suggestedQuery,
             candidates: data.candidates,
             source: data.source ?? 'fallback',
             hint: data.hint,
             tags: data.tags,
             image: data.image,
-          });
-          if (!text.trim()) {
+          };
+          setExtractResult(result);
+          if (opts.autofillText && !text.trim()) {
             setText(data.suggestedQuery);
             requestAnimationFrame(() => textareaRef.current && autoGrow(textareaRef.current));
           }
-        }
-        if ((data.source === 'oembed' || data.source === 'og') && data.suggestedQuery) {
-          toast.success(tg('extract.detected', { query: data.suggestedQuery }));
+          return result;
         }
       }
+      if (opts.notifyOnMiss) toast.warning(tg('extract.linkFailed'));
+      return null;
     } catch {
-      /* silent */
+      if (opts.notifyOnMiss) toast.warning(tg('extract.linkFailed'));
+      return null;
     } finally {
       setExtracting(false);
     }
+  }
+
+  async function onPasteLink() {
+    const input = window.prompt(t('linkPrompt'), '');
+    if (!input || !input.trim()) return;
+    const url = findFirstUrl(input) ?? input.trim();
+    setAttachments((prev) => [
+      ...prev,
+      { id: nanoid(6), type: 'link', value: url, label: url },
+    ]);
+    await runLinkExtract(url, { autofillText: true, notifyOnMiss: true });
   }
 
   function removeAttach(i: number) {
     setAttachments((prev) => prev.filter((_, idx) => idx !== i));
   }
 
-  /**
-   * Detect whether a raw input string is just a URL (with no human-typed
-   * product description around it). True positives go through /api/extract
-   * before hitting the shopping search — using a raw TikTok/Instagram URL
-   * as the search query returns garbage.
-   */
-  function isUrlLikeQuery(s: string): boolean {
-    const trimmed = s.trim();
-    if (!/^https?:\/\/\S+$/i.test(trimmed)) return false;
-    // single-token URL — no extra description
-    return !/\s/.test(trimmed);
-  }
-
-  async function submit(override?: string) {
+  async function submit(override?: string, imageUrl?: string) {
     const raw = (override ?? text).trim();
     let q = raw || (attachments.length ? '(attachments)' : '');
     if (!q) {
@@ -321,38 +341,18 @@ export function AskBox() {
       return;
     }
 
-    // URL-only input: run /api/extract first so the upstream search gets a
-    // real product-name query instead of "https://...". Skip if the caller
-    // already supplied an override (means user already accepted a preview).
-    if (!override && isUrlLikeQuery(raw)) {
-      setExtracting(true);
-      try {
-        const res = await fetch('/api/extract', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ link: raw }),
-        });
-        if (res.ok) {
-          const data = (await res.json()) as ExtractResult & { source: ExtractResult['source'] };
-          if (data.suggestedQuery && data.suggestedQuery.trim().length > 0) {
-            // Show the preview — DO NOT auto-navigate. The user clicks
-            // "이걸로 검색" (or picks a candidate) which calls submit(override)
-            // with the chosen query and falls through to navigation below.
-            setExtractResult({
-              suggestedQuery: data.suggestedQuery,
-              candidates: data.candidates,
-              source: data.source ?? 'fallback',
-              hint: data.hint,
-              tags: data.tags,
-              image: data.image,
-            });
-            return;
-          }
-        }
-      } catch {
-        /* fall through — let /search page show empty state */
-      } finally {
-        setExtracting(false);
+    // Input containing a URL (bare link, or a link inside caption text): run
+    // /api/extract first so the upstream search gets a real product-name query
+    // instead of "https://...". We extract from the URL even when there's
+    // caption text around it. Skip when the caller passed an override (the user
+    // already accepted a preview / candidate). On success we show the preview
+    // and STOP; on a miss runLinkExtract toasts and we STOP — we never search
+    // the raw URL string itself.
+    if (!override) {
+      const foundUrl = findFirstUrl(raw);
+      if (foundUrl) {
+        await runLinkExtract(foundUrl, { notifyOnMiss: true });
+        return;
       }
     }
 
@@ -360,6 +360,9 @@ export function AskBox() {
     addHistory(query);
     recordSearch({ q, categories: categorize(q) });
     const params = new URLSearchParams({ q });
+    // Carry the source thumbnail (only ever a public http(s) URL from a link
+    // extraction) so the results page can run reverse-image "where to buy".
+    if (imageUrl && /^https?:\/\//i.test(imageUrl)) params.set('img', imageUrl);
     router.push(`/search?${params.toString()}`);
   }
 
@@ -506,11 +509,11 @@ export function AskBox() {
         <ExtractPreview
           result={extractResult}
           onAccept={() => {
-            submit(extractResult.suggestedQuery);
+            submit(extractResult.suggestedQuery, extractResult.image);
             setExtractResult(null);
           }}
           onSelectCandidate={(q) => {
-            submit(q);
+            submit(q, extractResult.image);
             setExtractResult(null);
           }}
           onEdit={() => {

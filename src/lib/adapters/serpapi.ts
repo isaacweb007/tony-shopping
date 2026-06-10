@@ -14,7 +14,9 @@ import type { SearchAdapter, SearchInput } from './base';
 import { generateMockProducts } from './mock-factory';
 import { ADAPTER_MODE } from '@/lib/env';
 import { computeTonyScore } from '@/lib/scoring';
-import type { Product, Money, StoreId, CountryCode } from '@/types/product';
+import { relevanceScore } from '@/lib/search/relevance';
+import { mapSourceToStore } from '@/lib/search/store-map';
+import type { Product, Money, CountryCode } from '@/types/product';
 
 const ENDPOINT = 'https://serpapi.com/search.json';
 
@@ -38,23 +40,6 @@ interface SerpShoppingItem {
 interface SerpResponse {
   shopping_results?: SerpShoppingItem[];
   error?: string;
-}
-
-/** Map known merchant strings into our canonical StoreId; default to GoogleShopping. */
-function mapSource(source?: string): StoreId {
-  if (!source) return 'GoogleShopping';
-  const s = source.toLowerCase();
-  if (s.includes('amazon')) return 'Amazon';
-  if (s.includes('ebay')) return 'eBay';
-  if (s.includes('coupang')) return 'Coupang';
-  if (s.includes('shopee')) return 'Shopee';
-  if (s.includes('lazada')) return 'Lazada';
-  if (s.includes('naver')) return 'NaverShopping';
-  if (s.includes('aliexpress')) return 'AliExpress';
-  if (s.includes('11st') || s.includes('11번가')) return '11st';
-  if (s.includes('gmarket') || s.includes('g마켓')) return 'Gmarket';
-  if (s.includes('tiktok')) return 'TikTokShop';
-  return 'GoogleShopping';
 }
 
 function parseDeliveryDays(delivery?: string): number {
@@ -92,10 +77,15 @@ const LOCALE_REFERENCE_PRICE: Record<Money['currency'], number> = {
   JPY: 7000,
 };
 
-function toProduct(item: SerpShoppingItem, idx: number, locale: 'ko' | 'en' | 'vi'): Product | null {
+function toProduct(
+  item: SerpShoppingItem,
+  idx: number,
+  locale: 'ko' | 'en' | 'vi',
+  query: string,
+): Product | null {
   const price = item.extracted_price;
   if (!price || price <= 0 || !item.title) return null;
-  const store = mapSource(item.source);
+  const store = mapSourceToStore(item.source);
   const shipDays = parseDeliveryDays(item.delivery);
   const reviewCount = item.reviews ?? 0;
   const rating = item.rating ?? 4.2;
@@ -106,8 +96,13 @@ function toProduct(item: SerpShoppingItem, idx: number, locale: 'ko' | 'en' | 'v
   const country = LOCALE_COUNTRY[locale];
   const finalAmt = price;
 
+  // Real query↔title relevance (was 92 − idx·2, a pure position artifact).
+  // A small position nudge breaks ties for equally-relevant titles, keeping
+  // Google's own ordering as a weak signal without dominating.
+  const similarity = Math.max(30, Math.min(99, relevanceScore(query, item.title) - Math.floor(idx / 6)));
+
   const score = computeTonyScore({
-    similarity: 92 - idx * 2,
+    similarity,
     finalPrice: finalAmt,
     referencePrice: LOCALE_REFERENCE_PRICE[currency] ?? 50,
     reviewCount,
@@ -222,7 +217,7 @@ async function searchReal(
 
   const parsed = items
     .slice(0, limit)
-    .map((it, i) => toProduct(it, i, locale))
+    .map((it, i) => toProduct(it, i, locale, q))
     .filter((p): p is Product => p !== null);
 
   if (items.length > 0 && parsed.length === 0) {

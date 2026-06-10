@@ -1,17 +1,22 @@
 import { NextResponse } from 'next/server';
+import { findFirstUrl } from '@/lib/extract/url';
 
 /**
  * Web Share Target landing — the OS share sheet hands us {title, text, url}
  * from a sibling app (e.g. Safari sharing a product page, Instagram sharing
- * a post). We pick the most useful piece and bounce to /search with q.
+ * a post).
  *
- * Priority:
- *   1) url    — if it's a parseable URL, prefer it (the app's extractor can
- *               pull product info from SNS links).
- *   2) text   — usually the prose body of the share.
- *   3) title  — fallback when nothing else came through.
+ * Routing:
+ *   - If a URL is present (in `url`, or embedded in `text`/`title`), bounce to
+ *     the home page with `?ingest=<url>`. The AskBox picks that up on mount and
+ *     runs the full link-extraction pipeline (oEmbed/OG + vision) so the search
+ *     gets a real PRODUCT query — not the raw URL string, which the search
+ *     treats as a literal product name and returns garbage for.
+ *   - If there's no URL (plain shared text), it IS a usable query → /search?q=.
  *
- * Always 302 → /search?q=… so the user lands on a familiar surface.
+ * We deliberately do NOT run extraction here: it makes network + vision calls
+ * that can take several seconds, which would stall this redirect. The client
+ * runs it with a visible "분석 중" state instead.
  */
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -22,10 +27,17 @@ export async function GET(req: Request) {
   const text = (u.searchParams.get('text') ?? '').trim();
   const title = (u.searchParams.get('title') ?? '').trim();
 
-  // Pick the strongest signal.
-  const q = url || text || title;
+  // A shared link can arrive in any of the three fields — prefer a real URL.
+  const sharedUrl = findFirstUrl(url) || findFirstUrl(text) || findFirstUrl(title);
+  if (sharedUrl) {
+    const target = new URL('/', req.url);
+    target.searchParams.set('ingest', sharedUrl.slice(0, 2000));
+    return NextResponse.redirect(target, 302);
+  }
+
+  // No URL — treat the shared prose as a search query.
+  const q = text || title;
   if (!q) {
-    // Nothing came through — just open the app.
     return NextResponse.redirect(new URL('/', req.url), 302);
   }
   const target = new URL('/search', req.url);
